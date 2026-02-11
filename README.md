@@ -1,93 +1,272 @@
-# :package_description
+# EdStevo Standards
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+A Laravel package that provides opinionated coding standards, conventions, and best practices with seamless Laravel Boost integration. This package delivers AI-powered guidelines to help maintain consistency across all EdStevo Laravel projects.
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+## Why EdStevo Standards?
 
-## Support us
+When working with AI assistants like Claude Code or Cursor, having a consistent set of coding standards is crucial. EdStevo Standards packages these standards into a reusable Laravel package that automatically integrates with [Laravel Boost](https://github.com/laravel/boost), ensuring every project follows the same conventions.
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
+## Features
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+- 🤖 **Laravel Boost Integration** - Automatically discovered by Laravel Boost
+- 📐 **Project Structure Guidelines** - Domain-based organization and naming conventions
+- ✨ **Code Quality Standards** - Actions, DTOs, Services, and best practices
+- 🧪 **Testing Standards** - Pest PHP patterns and coverage guidelines
+- 📦 **Zero Configuration** - Install and forget
+- 🔄 **Auto-updating** - Stay in sync with your coding standards
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+## Requirements
+
+- PHP 8.4+
+- Laravel 11.x or 12.x
+- Laravel Boost
 
 ## Installation
 
-You can install the package via composer:
+Install via Composer in your Laravel project:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require edstevo/protocol --dev
 ```
 
-You can publish and run the migrations with:
+That's it! If you have Laravel Boost installed, the guidelines will be automatically discovered.
+
+## Usage with Laravel Boost
+
+### First Time Setup
+
+If Laravel Boost is installed in your project, run:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+php artisan boost:install
 ```
 
-You can publish the config file with:
+The EdStevo Standards guidelines will be automatically included when Boost generates your AI configuration files. Your AI agent will now understand and follow your coding standards.
+
+### Keeping Guidelines Updated
+
+After updating dependencies, refresh your AI guidelines:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-config"
+php artisan boost:update
 ```
 
-This is the contents of the published config file:
+Or automate it by adding to your `composer.json`:
 
+```json
+{
+  "scripts": {
+    "post-update-cmd": [
+      "@php artisan boost:update --ansi"
+    ]
+  }
+}
+```
+
+## What's Included
+
+EdStevo Standards provides comprehensive guidelines covering:
+
+### Project Structure Conventions
+
+- **Directory Organization**: Actions, DTOs, Enums, Services, ValueObjects
+- **Naming Conventions**: Controllers, Models, Actions, Services, Traits
+- **Domain-Based Structure**: Organize by feature/domain, not by layer
+
+Example structure the AI will understand:
+```
+app/
+├── Actions/User/
+│   ├── CreateUser.php
+│   └── UpdateUserProfile.php
+├── DataTransferObjects/User/
+│   └── CreateUserData.php
+├── Services/
+│   └── UserService.php
+└── Http/Controllers/User/
+    └── UserController.php
+```
+
+### Code Style & Best Practices
+
+- **Action Classes**: Single-purpose invokable classes for business logic
+- **DTOs**: Immutable data transfer objects with validation
+- **Service Classes**: Coordinate multiple actions and domain logic
+- **Native Enums**: Type-safe backed enums for fixed values
+- **Thin Controllers**: Delegate to actions and services
+- **Query Optimization**: Eager loading, indexes, select only needed columns
+- **Security**: Input validation, mass assignment protection, XSS prevention
+
+### Testing Standards
+
+- **Pest PHP**: Modern testing syntax with descriptive names
+- **Test Organization**: Unit tests in `tests/Unit/`, features in `tests/Feature/`
+- **Coverage Guidelines**: High coverage of critical business logic
+- **Database Testing**: In-memory SQLite, proper seeding, RefreshDatabase trait
+
+## Examples
+
+When you ask your AI to create a new feature, it will follow these patterns:
+
+**Action Class:**
 ```php
-return [
-];
+namespace App\Actions\User;
+
+class CreateUser
+{
+    public function handle(CreateUserData $data): User
+    {
+        return User::create([
+            'name' => $data->name,
+            'email' => $data->email,
+            'password' => bcrypt($data->password),
+        ]);
+    }
+}
 ```
 
-Optionally, you can publish the views using
+**DTO:**
+```php
+class CreateUserData
+{
+    public function __construct(
+        public readonly string $name,
+        public readonly string $email,
+        public readonly string $password,
+    ) {}
+
+    public static function fromRequest(array $data): self
+    {
+        return new self(
+            name: $data['name'],
+            email: $data['email'],
+            password: $data['password'],
+        );
+    }
+}
+```
+
+**Thin Controller:**
+```php
+class UserController extends Controller
+{
+    public function store(CreateUserRequest $request): JsonResponse
+    {
+        $data = CreateUserData::fromRequest($request->validated());
+        $user = $this->userService->register($data);
+
+        return response()->json($user, 201);
+    }
+}
+```
+
+## Without Laravel Boost
+
+You can manually reference the guidelines in your AI configuration:
+
+**Claude Code (`CLAUDE.md`):**
+```markdown
+@include('vendor/edstevo/protocol/resources/boost/guidelines/core.blade.php')
+```
+
+**Cursor (`.cursorrules`):**
+```markdown
+Include guidelines from vendor/edstevo/protocol/resources/boost/guidelines/core.blade.php
+```
+
+## Verifying Installation
+
+Check that the protocol is active:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-views"
+php artisan protocol:info
 ```
 
-## Usage
-
-```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+You should see:
+```
+EdStevo Standards is active!
+AI Boost guidelines are available for this project.
 ```
 
-## Testing
+## Customizing Guidelines
+
+### Extending
+
+Add your own project-specific guidelines in `.ai/guidelines/`:
+
+```bash
+# .ai/guidelines/custom-patterns.md
+## Custom Patterns
+
+Our app uses a specific payment processing pattern...
+```
+
+These will be merged with EdStevo Standards guidelines.
+
+### Overriding
+
+To override a specific guideline, create a file with the same path structure in your project's `.ai/guidelines/` directory. Your custom version takes precedence.
+
+## Configuration
+
+Publish the config file if you need to customize behavior:
+
+```bash
+php artisan vendor:publish --tag="protocol-config"
+```
+
+## Development
+
+### Running Tests
 
 ```bash
 composer test
 ```
 
+### Code Style
+
+```bash
+composer format
+```
+
+### Static Analysis
+
+```bash
+composer analyse
+```
+
+## How It Works
+
+1. **Discovery**: Laravel Boost scans installed packages for `resources/boost/guidelines/` directories
+2. **Loading**: Found guidelines are automatically included when running `boost:install` or `boost:update`
+3. **Context**: AI agents receive these guidelines in their system prompts
+4. **Consistency**: All code generated follows the same patterns across projects
+
+## Philosophy
+
+This package embodies the principle that **consistency is more valuable than perfection**. By standardizing patterns across all EdStevo projects:
+
+- **Onboarding is faster** - New team members see familiar patterns
+- **AI assistance is better** - Claude knows exactly how to structure code
+- **Maintenance is easier** - Predictable structure across all projects
+- **Code reviews are quicker** - Everyone follows the same conventions
+
+## Roadmap
+
+- [ ] Add Agent Skills for specific domains
+- [ ] Include Blade component patterns
+- [ ] Add API documentation standards
+- [ ] Database design conventions
+- [ ] Queue job patterns
+
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+See [CHANGELOG.md](CHANGELOG.md) for recent changes.
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). See [LICENSE.md](LICENSE.md) for details.
+
+---
+
+Built with ❤️ by [EdStevo](https://github.com/edstevo) for consistent Laravel development.

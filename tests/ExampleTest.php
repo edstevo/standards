@@ -1,5 +1,7 @@
 <?php
 
-it('can test', function () {
-    expect(true)->toBeTrue();
+it('can display protocol information', function () {
+    $this->artisan('protocol:info')
+        ->expectsOutput('EdStevo Standards is active!')
+        ->assertSuccessful();
 });
