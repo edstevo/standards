@@ -108,58 +108,6 @@ app/
 
 When you ask your AI to create a new feature, it will follow these patterns:
 
-**Action Class:**
-```php
-namespace App\Actions\User;
-
-class CreateUser
-{
-    public function handle(CreateUserData $data): User
-    {
-        return User::create([
-            'name' => $data->name,
-            'email' => $data->email,
-            'password' => bcrypt($data->password),
-        ]);
-    }
-}
-```
-
-**DTO:**
-```php
-class CreateUserData
-{
-    public function __construct(
-        public readonly string $name,
-        public readonly string $email,
-        public readonly string $password,
-    ) {}
-
-    public static function fromRequest(array $data): self
-    {
-        return new self(
-            name: $data['name'],
-            email: $data['email'],
-            password: $data['password'],
-        );
-    }
-}
-```
-
-**Thin Controller:**
-```php
-class UserController extends Controller
-{
-    public function store(CreateUserRequest $request): JsonResponse
-    {
-        $data = CreateUserData::fromRequest($request->validated());
-        $user = $this->userService->register($data);
-
-        return response()->json($user, 201);
-    }
-}
-```
-
 ## Without Laravel Boost
 
 You can manually reference the guidelines in your AI configuration:
@@ -188,21 +136,6 @@ EdStevo Standards is active!
 AI Boost guidelines are available for this project.
 ```
 
-## Customizing Guidelines
-
-### Extending
-
-Add your own project-specific guidelines in `.ai/guidelines/`:
-
-```bash
-# .ai/guidelines/custom-patterns.md
-## Custom Patterns
-
-Our app uses a specific payment processing pattern...
-```
-
-These will be merged with EdStevo Standards guidelines.
-
 ### Overriding
 
 To override a specific guideline, create a file with the same path structure in your project's `.ai/guidelines/` directory. Your custom version takes precedence.
@@ -212,7 +145,7 @@ To override a specific guideline, create a file with the same path structure in 
 Publish the config file if you need to customize behavior:
 
 ```bash
-php artisan vendor:publish --tag="protocol-config"
+php artisan vendor:publish --tag="standards-config"
 ```
 
 ## Development
