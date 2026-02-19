@@ -2,6 +2,17 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.1 - 2026-02-19
+
+### Changed
+- Expanded AI guideline instructions to be more explicit and execution-focused.
+- Added coding style defaults reflecting domain-first naming, explicit orchestration, and defensive patterns.
+- Added model construction and type-safety guidance, including explicit Eloquent construction and `associate()` usage.
+
+### Removed
+- Removed PHPStan/Larastan from project scaffolding and package configuration.
+- Removed PHPStan configuration files and static-analysis command documentation.
+
 ## 1.0.0 - 2026-02-11
 
 ### Added

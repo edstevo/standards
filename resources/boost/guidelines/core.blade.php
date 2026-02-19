@@ -1,6 +1,14 @@
 ## EdStevo Packages Code Guidelines
 
 This package provides coding standards, conventions, and best practices for EdStevo Laravel projects.
+Apply these rules when generating or modifying code.
+
+### AI Execution Rules
+
+- Treat these guidelines as defaults for new code and refactors.
+- Follow existing project conventions first when they conflict with these defaults.
+- Prefer explicit, deterministic implementations over clever or implicit behavior.
+- When tradeoffs exist, prioritize correctness, readability, and maintainability in that order.
 
 ### Project Structure Conventions
 
@@ -55,12 +63,22 @@ app/
 
 Each class should have a single, well-defined responsibility. Prefer small, focused classes over large, monolithic ones.
 
+**Coding Style Defaults:**
+
+- Prefer domain-first, intention-revealing names over abstract or clever names.
+- Prefer explicit orchestration with small private methods so business flow is easy to audit.
+- For non-trivial workflows, document the flow and key decision rules with short PHPDoc blocks.
+- Favor defensive code paths: fail fast on invalid configuration and protect multi-write operations with transactions.
+- Prefer deterministic fallback behavior when inputs are ambiguous, and encode fallback reasons with enums where possible.
+- Optimize for readability and correctness first; accept minor repetition when it keeps behavior obvious.
+- Avoid premature micro-optimization in business workflows unless profiling shows a real bottleneck.
+
 **Model Relationships:**
 
-I prefer to define relationships using reusable traits wherever possible rather than on the model themselves.
+Define relationships using reusable traits wherever practical instead of duplicating relationship methods across models.
 
 @verbatim
-<code-snippet name="DTO Example" lang="php">
+<code-snippet name="Relationship Trait Example" lang="php">
 <?php
 
 namespace App\Models\Concerns;
@@ -84,7 +102,7 @@ trait BelongsToUser
 
 **Data Transfer Objects:**
 
-I prefer to use DTOs to pass data between layers of my applications. DTOs should be immutable and validate data at construction. I use spatie/laravel-data to support this.
+Use DTOs to pass data between layers. DTOs should be immutable and validate data at construction. Use `spatie/laravel-data` where appropriate.
 
 @verbatim
 <code-snippet name="DTO Example" lang="php">
@@ -173,9 +191,38 @@ class UserController extends Controller
 
 **Jobs and Queues:**
 
-- I prefer to use jobs as much as possible to isolate business logic from the request lifecycle
+- Use jobs where practical to isolate business logic from the request lifecycle
 - Jobs should be short and simple - avoid complex logic in jobs. If there is more complex logic to do then it should trigger another job.
 - Use queues for long-running tasks that may take a long time to complete
+
+**Model Construction and Persistence:**
+
+- Use explicit model construction with `new Model`, explicit property assignment, and `save()` over large mass-assignment arrays for non-trivial domain flows.
+- Prefer `associate()` for relationships (including polymorphic relations) rather than manually assigning foreign keys.
+- Construct parent records and child records in clearly separated steps and methods.
+- When multiple related writes must succeed together, wrap them in one database transaction.
+- Prefer Eloquent model creation paths that keep observers/events active unless there is a deliberate performance reason to bypass them.
+
+@verbatim
+<code-snippet name="Explicit Model Construction Example" lang="php">
+<?php
+
+$reverseFulfillmentOrder = new ReverseFulfillmentOrder;
+$reverseFulfillmentOrder->status = OrderStatus::RAISED;
+$reverseFulfillmentOrder->routing_reason = $routingReason;
+$reverseFulfillmentOrder->shopReturn()->associate($shopReturn);
+$reverseFulfillmentOrder->returnable()->associate($destination);
+$reverseFulfillmentOrder->save();
+</code-snippet>
+@endverbatim
+
+**Type Safety and IDE Support:**
+
+- Use strict parameter and return types on methods whenever possible.
+- Use enums for finite domain states and routing outcomes instead of loose strings.
+- Prefer explicit method contracts and shaped PHPDoc (for example collections and tuple-like array returns) where native PHP types are not expressive enough.
+- Use explicit `@var` annotations where needed to help static analysis understand collection item types.
+- Keep method names intention-revealing and domain-specific so behavior is obvious at call sites.
 
 **Security Best Practices:**
 

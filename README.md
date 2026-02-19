@@ -162,12 +162,6 @@ composer test
 composer format
 ```
 
-### Static Analysis
-
-```bash
-composer analyse
-```
-
 ## How It Works
 
 1. **Discovery**: Laravel Boost scans installed packages for `resources/boost/guidelines/` directories
