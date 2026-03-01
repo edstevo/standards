@@ -31,26 +31,22 @@ Instead of relying on `updated`, define domain-specific events like:
 
 Explicit events reduce conditional spaghetti in observers and make intent obvious.
 
-@verbatim
-<code-snippet name="Behaviour method fires explicit event" lang="php">
+```php
 $this->saveQuietly();
 $this->fireModelEvent('fulfilled', false);
-</code-snippet>
-@endverbatim
+```
 
 ## 2) Register custom observable events inside the trait
 If you fire custom events, register them in the trait initializer with `addObservableEvents([...])`.
 
-@verbatim
-<code-snippet name="Trait registers custom events" lang="php">
+```php
 public function initializeCanBeFulfilled(): void
 {
     $this->addObservableEvents([
         'fulfilled',
     ]);
 }
-</code-snippet>
-@endverbatim
+```
 
 ## 3) Observers are the “reaction layer”
 Observers should be where side effects happen:
@@ -68,16 +64,14 @@ This avoids:
 - calling integrations for data that never persisted
 - dispatching orchestration jobs that operate on missing state
 
-@verbatim
-<code-snippet name="Observer after-commit contract" lang="php">
+```php
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
 class FulfillmentOrderObserver implements ShouldHandleEventsAfterCommit
 {
     // ...
 }
-</code-snippet>
-@endverbatim
+```
 
 ## 5) Observers dispatch orchestration jobs and integration jobs/actions
 Two common categories:
@@ -106,8 +100,7 @@ Observers should guard heavily:
 ## Example 1: Orchestrate “created → route → dispatch next step”
 A common pattern is: when something is created, write a timeline event, then dispatch follow-on jobs based on the model state.
 
-@verbatim
-<code-snippet name="Observer dispatches next-step jobs on created" lang="php">
+```php
 <?php
 
 namespace App\Observers;
@@ -151,8 +144,7 @@ class FulfillmentOrderObserver implements ShouldHandleEventsAfterCommit
         Timeline::for($fulfillmentOrder)->event(TimelineEventType::FulfillmentOrderArchived);
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 Notes:
 - The observer is an orchestrator, not a domain model.
@@ -161,8 +153,7 @@ Notes:
 ## Example 2: Integrations triggered on created / updated
 Integration sync often happens from observers, with `updated` guarded by `wasChanged()` to avoid noisy calls.
 
-@verbatim
-<code-snippet name="Observer triggers integration on created/updated with guards" lang="php">
+```php
 <?php
 
 namespace App\Observers;
@@ -191,8 +182,7 @@ class FulfillmentObserver implements ShouldHandleEventsAfterCommit
         }
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 Guidelines:
 - Keep `updated` handlers narrowly scoped and guarded.
@@ -201,8 +191,7 @@ Guidelines:
 ## Example 3: Behaviour trait → explicit event → observer reaction
 Traits produce a clean API in jobs/services, while observers centralise side effects.
 
-@verbatim
-<code-snippet name="Job calls behaviour methods; observer reacts after commit" lang="php">
+```php
 // In a job/service:
 $order->markAsSubmitted();
 $order->markAsAccepted();
@@ -221,8 +210,7 @@ public function accepted(PurchaseOrder $purchaseOrder): void
 
     // Optionally: dispatch next step jobs here too.
 }
-</code-snippet>
-@endverbatim
+```
 
 ## Design guidelines
 
@@ -238,16 +226,14 @@ If the integration:
 - needs retry/backoff
 then dispatch a job from the observer instead of calling directly.
 
-@verbatim
-<code-snippet name="Prefer integration job for reliability" lang="php">
+```php
 public function created(Fulfillment $fulfillment): void
 {
     Timeline::for($fulfillment)->event(TimelineEventType::FulfillmentCreated);
 
     SyncFulfillmentToShopify::dispatch($fulfillment);
 }
-</code-snippet>
-@endverbatim
+```
 
 ## Do / Don’t
 
