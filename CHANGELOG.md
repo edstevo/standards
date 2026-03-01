@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.2 - 2026-03-01
+
+### Added
+- Added `eloquent-relationship-traits` skill with conventions and templates for reusable Eloquent relationship traits.
+- Added `model-events-observers-workflows` skill with guidance for explicit model events, after-commit observers, and workflow orchestration patterns.
+
 ## 1.0.1 - 2026-02-19
 
 ### Changed
