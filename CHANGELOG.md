@@ -2,7 +2,7 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
-## 1.0.4 - 2026-03-02
+## 1.0.5 - 2026-03-02
 
 ### Added
 - Added `process-documentation-with-flowcharts` skill for maintaining workflow documentation with Mermaid top-down flowcharts, strict entry-point semantics, and synchronized key files/tests updates.
