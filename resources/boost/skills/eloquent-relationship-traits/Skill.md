@@ -38,11 +38,9 @@ Keep the trait name aligned with the relationship type and related model(s).
 - Traits live in `app/Models/Relationships`
 - Namespace: `App\Models\Relationships`
 
-@verbatim
-<code-snippet name="Trait namespace" lang="php">
+```php
 namespace App\Models\Relationships;
-</code-snippet>
-@endverbatim
+```
 
 ### 3) Relationship method names are the domain language
 Use the most natural relationship method name for the domain:
@@ -59,8 +57,7 @@ If a relationship requires a foreign key that should be mass-assignable, use the
 - Method name must match `initialize{TraitClassBasename}()`
 - Merge required columns into `$fillable` using `mergeFillable([...])`
 
-@verbatim
-<code-snippet name="BelongsTo with initializer merging fillable" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -84,8 +81,7 @@ trait BelongsToShop
         $this->mergeFillable(['shop_id']);
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 Guidelines:
 - Only do this when the FK being fillable is intentional for the app.
@@ -97,13 +93,11 @@ Every trait should document:
 - The related model property
 - Collections for `HasMany` / `MorphMany` etc.
 
-@verbatim
-<code-snippet name="HasMany docblock example" lang="php">
+```php
 /**
  * @property \Illuminate\Database\Eloquent\Collection<int, FulfillmentLine> $fulfillmentLines
  */
-</code-snippet>
-@endverbatim
+```
 
 This improves IDE/static analysis support and makes relationships discoverable.
 
@@ -115,22 +109,19 @@ Return the concrete relation type:
 - `MorphMany`
 - etc.
 
-@verbatim
-<code-snippet name="HasMany relationship method with correct return type" lang="php">
+```php
 public function fulfillmentLines(): HasMany
 {
     return $this->hasMany(FulfillmentLine::class);
 }
-</code-snippet>
-@endverbatim
+```
 
 ### 7) Polymorphic relationships: keep morph names consistent
 For morph relations:
 - The morph name (`'fulfillable'`, `'profileable'`, etc.) must match database columns (`*_type`, `*_id`) and
 stay consistent across the codebase.
 
-@verbatim
-<code-snippet name="MorphOne example" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -148,8 +139,7 @@ trait MorphOneAiProfile
         return $this->morphOne(AiProfile::class, 'profileable');
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 If introducing a new morph, choose a name that is:
 - Clear in the domain
@@ -162,8 +152,7 @@ When adding a new relationship trait:
 - Add relationship + optional initializer + docblock
 - Import the trait into the model using `use {TraitName};`
 
-@verbatim
-<code-snippet name="Model using relationship traits" lang="php">
+```php
 <?php
 
 namespace App\Models;
@@ -181,14 +170,12 @@ use MorphManyFulfillments;
 
 // ...
 }
-</code-snippet>
-@endverbatim
+```
 
 ## Implementation templates
 
 ### BelongsTo template
-@verbatim
-<code-snippet name="BelongsTo relationship trait template" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -212,12 +199,10 @@ trait BelongsToRelatedModel
         $this->mergeFillable(['related_model_id']);
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 ### HasMany template
-@verbatim
-<code-snippet name="HasMany relationship trait template" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -235,12 +220,10 @@ trait HasManyRelatedModels
         return $this->hasMany(RelatedModel::class);
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 ### MorphOne template
-@verbatim
-<code-snippet name="MorphOne relationship trait template" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -258,12 +241,10 @@ trait MorphOneRelatedModel
         return $this->morphOne(RelatedModel::class, 'morphable');
     }
 }
-</code-snippet>
-@endverbatim
+```
 
 ### MorphMany template
-@verbatim
-<code-snippet name="MorphMany relationship trait template" lang="php">
+```php
 <?php
 
 namespace App\Models\Relationships;
@@ -283,8 +264,7 @@ trait MorphManyRelatedModels
     }
 }
 
-</code-snippet>
-@endverbatim
+```
 
 ## Do / Don’t
 
