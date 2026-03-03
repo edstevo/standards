@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.9 - 2026-03-03
+
+### Changed
+- Added core baseline guidance for Laravel-native integration boundary fakes, including fake-first testing posture and contract/facade expectations.
+- Strengthened core documentation policy to require process-doc updates alongside workflow behavior changes and to explicitly activate `process-documentation-with-flowcharts`.
+- Standardized process documentation flowchart notation to use Mermaid `flowchart TB`.
+- Added core baseline guidance for reusable Eloquent relationship traits and explicit activation guidance for `eloquent-relationship-traits`.
+
 ## 1.0.8 - 2026-03-03
 
 ### Changed

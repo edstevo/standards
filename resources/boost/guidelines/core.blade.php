@@ -89,6 +89,14 @@ Each class should have a single, well-defined responsibility. Prefer small, focu
 
 Define relationships using reusable traits wherever practical instead of duplicating relationship methods across models.
 
+- Prefer one relationship per trait so traits stay composable and searchable.
+- Use concrete Eloquent relation return types (`BelongsTo`, `HasMany`, `MorphOne`, `MorphMany`, etc.).
+- Add relationship property docblocks on traits for IDE/static-analysis support.
+- Keep relationship method names domain-natural (`shop()`, `fulfillmentLines()`) even when trait names are explicit.
+- If a relationship implies an intentionally fillable FK, use a trait initializer with `mergeFillable([...])`.
+- Prefer `app/Models/Relationships` for relationship traits unless the project already uses another established location.
+- For full conventions and implementation templates, activate `eloquent-relationship-traits`.
+
 @verbatim
 <code-snippet name="Relationship Trait Example" lang="php">
 <?php
