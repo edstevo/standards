@@ -205,6 +205,7 @@ class UserController extends Controller
 - Use jobs where practical to isolate business logic from the request lifecycle
 - Jobs should be short and simple - avoid complex logic in jobs. If there is more complex logic to do then it should trigger another job.
 - Use queues for long-running tasks that may take a long time to complete
+- In observer-driven workflows, observers must never execute synchronous external follow-up actions inline. They should only dispatch events/jobs or call methods that trigger further explicit events (for example `closed` handler -> `markAsArchived()`), and side effects should run after commit.
 
 **Model Construction and Persistence:**
 
@@ -226,6 +227,15 @@ $reverseFulfillmentOrder->returnable()->associate($destination);
 $reverseFulfillmentOrder->save();
 </code-snippet>
 @endverbatim
+
+**Event-Driven Architecture (Model + Observer Pattern):**
+
+- Prefer event-driven workflows centered on models and observers.
+- Use explicit domain transition methods for lifecycle changes and fire one explicit event per transition.
+- In transition methods, guard first, mutate state, `saveQuietly()`, then `fireModelEvent(...)`.
+- Keep orchestration in observers (one handler per event), and chain follow-up state changes by calling the next transition method.
+- Observer handlers should dispatch events/jobs or call methods that trigger further explicit events (for example `closed` handler -> `markAsArchived()`), and run after commit.
+- For full event design, observable registration, transaction/after-commit semantics, and lifecycle testing patterns, activate `model-events-observers-workflows`.
 
 **Type Safety and IDE Support:**
 
@@ -327,6 +337,7 @@ it('validates required fields when registering', function () {
 - Use dataset testing for testing multiple scenarios
 - Mock external services and APIs in tests
 - Reset database state between tests using `RefreshDatabase` trait
+- For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
 
 **Database Testing:**
 

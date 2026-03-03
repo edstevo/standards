@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.8 - 2026-03-03
+
+### Changed
+- Reduced `core.blade.php` event-driven guidance to concise defaults and added explicit direction to activate `model-events-observers-workflows` for full implementation detail.
+- Expanded `model-events-observers-workflows` skill with detailed lifecycle patterns for `saveQuietly()` transitions, transaction + after-commit semantics, and isolated model event testing strategy.
+- Clarified observer orchestration rules: observers should not run synchronous external follow-up actions inline; they should fire events, dispatch jobs, or call methods that trigger further explicit model events.
+- Updated skill examples to use dispatched jobs/events for timeline and integration follow-up work rather than direct synchronous observer execution.
+
 ## 1.0.7 - 2026-03-03
 
 ### Changed
