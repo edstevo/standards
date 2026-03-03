@@ -259,6 +259,17 @@ $reverseFulfillmentOrder->save();
 - Services depending on integrations must depend on Contracts, not implementations
 - Bindings must be registered in a dedicated Service Provider
 
+### Integration Boundaries and Fakes
+
+- Treat any external system (ERP, courier, payment provider, third-party API) as an integration boundary behind a Contract.
+- In tests, prefer Laravel-style integration fakes over ad-hoc mocks for these boundaries.
+- Integration fakes should be in-memory recorders that expose assertion helpers (for example `assertSent`, `assertSentCount`, `assertRouteUsed`).
+- Integration fakes should support seeded responses/exceptions so test flows stay deterministic.
+- Use fake-by-default for feature tests so real integration calls are not made accidentally.
+- Keep app code unaware of fake vs real implementations (resolve contracts or facades backed by contracts).
+- If a facade entrypoint exists for an integration boundary, it should support `fake()` and `restore()` for tests.
+- For full integration-fake implementation patterns and templates, activate `laravel-integration-fakes`.
+
 ### Configuration
 
 - No hardcoded values
@@ -335,9 +346,10 @@ it('validates required fields when registering', function () {
 - Use descriptive test names that explain what is being tested
 - Follow the AAA pattern: Arrange, Act, Assert
 - Use dataset testing for testing multiple scenarios
-- Mock external services and APIs in tests
+- Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait
 - For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
+- For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-integration-fakes`.
 
 **Database Testing:**
 
