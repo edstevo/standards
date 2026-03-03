@@ -10,6 +10,17 @@ Apply these rules when generating or modifying code.
 - Prefer explicit, deterministic implementations over clever or implicit behavior.
 - When tradeoffs exist, prioritize correctness, readability, and maintainability in that order.
 
+### Skills Activation
+
+Laravel Boost may inject a `## Skills Activation` section with project-specific skills and trigger rules.
+
+- Treat matching skills as required, not optional. Activate relevant skills as soon as the task enters that domain.
+- Do not wait until blocked before applying a relevant skill.
+- Skills are specialized guidance layered on top of these core defaults.
+- If multiple skills apply, follow all relevant skills together.
+- Resolve conflicts in this order: explicit user request, existing project conventions, relevant skill guidance, then these core defaults.
+- If no relevant skill is listed for the task, follow these core guidelines as the baseline.
+
 ### Project Structure Conventions
 
 **Directory Organization:**
