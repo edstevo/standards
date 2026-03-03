@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.6 - 2026-03-03
+
+### Added
+- Added `filament-supplier-portals` skill for Filament multi-panel apps with role-aware login/logout redirects, panel guard middleware, and `canAccessPanel` authorization guidance.
+- Added `laravel-integration-fakes` skill for building Laravel-native integration fakes using contracts, container bindings, facade swaps, and assertion-friendly in-memory recorders.
+- Added `laravel-tdd` skill for Laravel-specific TDD workflows with Pest, database testing patterns, and red-green-refactor execution.
+
 ## 1.0.5 - 2026-03-02
 
 ### Added
