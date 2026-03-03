@@ -1,61 +1,52 @@
 {
-    "name": "edstevo/standards",
-    "description": "Coding standards, conventions, and best practices for EdStevo Laravel projects with AI Boost integration",
-    "keywords": [
-        "edstevo",
-        "laravel",
-        "protocol",
-        "coding-standards",
-        "boost",
-        "ai-guidelines"
-    ],
-    "homepage": "https://github.com/edstevo/standards",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "EdStevo",
-            "email": "ed@edstevo.com",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": "^8.4",
-        "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0"
-    },
-    "require-dev": {
-        "laravel/pint": "^1.14",
-        "orchestra/testbench": "^10.0.0||^9.0.0",
-        "spatie/laravel-ray": "^1.35"
-    },
-    "autoload": {
-        "psr-4": {
-            "EdStevo\\Standards\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "EdStevo\\Standards\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
-        }
-    },
-    "scripts": {},
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "EdStevo\\Standards\\StandardsServiceProvider"
-            ],
-            "aliases": {
-                "Standards": "EdStevo\\Standards\\Facades\\Standards"
-            }
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "edstevo/standards",
+  "description": "Coding standards, conventions, and best practices for EdStevo Laravel projects with AI Boost integration",
+  "keywords": [
+    "edstevo",
+    "laravel",
+    "protocol",
+    "coding-standards",
+    "boost",
+    "ai-guidelines"
+  ],
+  "homepage": "https://github.com/edstevo/standards",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "EdStevo",
+      "email": "ed@edstevo.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.4"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "EdStevo\\Standards\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {}
+  },
+  "scripts": {},
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EdStevo\\Standards\\StandardsServiceProvider"
+      ],
+      "aliases": {
+        "Standards": "EdStevo\\Standards\\Facades\\Standards"
+      }
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

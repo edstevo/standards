@@ -17,7 +17,6 @@ class StandardsServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('standards')
-            ->hasConfigFile()
-            ->hasCommand(StandardsCommand::class);
+            ->hasConfigFile();
     }
 }

@@ -2,6 +2,17 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.7 - 2026-03-03
+
+### Changed
+- Simplified package bootstrap by removing command registration from `StandardsServiceProvider`.
+- Reduced package dependencies in `composer.json` to only require PHP and removed development/autoload-dev package wiring.
+
+### Removed
+- Removed `edstevo:standards` command implementation.
+- Removed package test scaffolding files under `tests/`.
+- Removed Dependabot configuration.
+
 ## 1.0.6 - 2026-03-03
 
 ### Added
