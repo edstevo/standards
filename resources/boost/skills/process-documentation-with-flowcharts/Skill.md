@@ -1,6 +1,6 @@
 ---
 name: process-documentation-with-flowcharts
-description: Create and maintain process documentation with Mermaid flowcharts (TD) for each workflow. When changing application behaviour, always update the relevant process docs, flowcharts, and associated key files/tests lists.
+description: Create and maintain process documentation with Mermaid flowcharts (TB) for each workflow. When changing application behaviour, always update the relevant process docs, flowcharts, and associated key files/tests lists.
 ---
 
 # Process Documentation With Flowcharts
@@ -42,7 +42,7 @@ Each process doc must include:
 
 4) **Flowchart (required)**
 - Always include a Mermaid diagram.
-- Must be top-down: `flowchart TD` (or `flowchart TB`).
+- Must be top-down and use `flowchart TB`.
 
 **Swimlanes (required)**
 - Must use swimlanes grouped by domain, specifically:
@@ -83,9 +83,7 @@ Each process doc must include:
 ## Flowchart rules (Mermaid)
 
 ### Mermaid format
-- Always use Mermaid flowcharts, top-down:
-    - Prefer `flowchart TD`
-    - `flowchart TB` is acceptable as equivalent top-down direction.
+- Always use Mermaid flowcharts, top-down, with `flowchart TB`.
 
 ### Swimlane rules
 - Use `subgraph` lanes per domain and keep the grouping meaningful.
@@ -204,7 +202,7 @@ When code changes affect a workflow, update the doc by doing all of the below:
     
     ## Flowchart
     ```mermaid
-    flowchart TD
+    flowchart TB
       %% Lanes (group by domain)
       subgraph SHOPIFY["Shopify Integration lane"]
         direction TD
