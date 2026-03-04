@@ -18,7 +18,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Do not wait until blocked before applying a relevant skill.
 - Skills are specialized guidance layered on top of these core defaults.
 - If multiple skills apply, follow all relevant skills together.
-- When workflow behavior changes, activate `process-documentation-with-flowcharts` and update documentation in the same change.
+- When workflow behavior changes, activate `process-documentation-with-flowcharts` and update both process docs and related class/method documentation in the same change.
 - Resolve conflicts in this order: explicit user request, existing project conventions, relevant skill guidance, then these core defaults.
 - If no relevant skill is listed for the task, follow these core guidelines as the baseline.
 
@@ -80,6 +80,8 @@ Each class should have a single, well-defined responsibility. Prefer small, focu
 - Prefer domain-first, intention-revealing names over abstract or clever names.
 - Prefer explicit orchestration with small private methods so business flow is easy to audit.
 - For non-trivial workflows, document local decision rules with short PHPDoc blocks and maintain process docs with flowcharts for system-level behavior.
+- Individual classes should be documented with clear intent, especially jobs and action classes.
+- Internal/private methods in non-trivial classes should include concise PHPDoc where needed and should align with the class-level intent documentation.
 - Favor defensive code paths: fail fast on invalid configuration and protect multi-write operations with transactions.
 - Prefer deterministic fallback behavior when inputs are ambiguous, and encode fallback reasons with enums where possible.
 - Optimize for readability and correctness first; accept minor repetition when it keeps behavior obvious.
@@ -291,6 +293,8 @@ $reverseFulfillmentOrder->save();
 - Documentation is part of delivery. If behavior or workflow changes, update the relevant process documentation in the same change.
 - Process docs should include Mermaid top-down flowcharts using `flowchart TB` that reflect current behavior.
 - Keep process doc “Key files” and “Key tests” sections aligned with the code and coverage.
+- Class-level documentation is also required, especially for jobs and action classes, explaining intent and behavior.
+- Internal methods should be documented when non-obvious, and method documentation should stay aligned with the class-level documentation.
 - For full process documentation and flowchart conventions, activate `process-documentation-with-flowcharts`.
 
 ### Testing Standards

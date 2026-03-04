@@ -1,11 +1,11 @@
 ---
 name: process-documentation-with-flowcharts
-description: Create and maintain process documentation with Mermaid flowcharts (TB) for each workflow. When changing application behaviour, always update the relevant process docs, flowcharts, and associated key files/tests lists.
+description: Create and maintain process documentation with Mermaid flowcharts (TB) for each workflow, plus aligned class/method documentation in key implementation classes.
 ---
 
 # Process Documentation With Flowcharts
 
-This codebase relies on **process docs + flowcharts** to understand and maintain complex backend workflows. When you make changes to application behaviour, you must also update the relevant documentation so it stays accurate.
+This codebase relies on **process docs + flowcharts + class-level documentation** to understand and maintain complex backend workflows. When you make changes to application behaviour, you must also update the relevant documentation so it stays accurate.
 
 ## Non-negotiable rule
 
@@ -13,6 +13,7 @@ If you change any workflow behaviour (routing, events, jobs, observers, integrat
 1. Update the relevant process documentation markdown file(s)
 2. Update the Mermaid flowchart(s) inside those docs
 3. Update the “Key files” and “Key tests” lists
+4. Update related class-level and method-level documentation in key implementation classes (especially jobs and actions)
 
 Treat docs as part of the feature, not optional.
 
@@ -79,6 +80,11 @@ Each process doc must include:
 9) **Key tests**
 - List the most important test files that validate the workflow.
 - Mention scenario builders / fakes where relevant.
+
+10) **Class and method documentation alignment**
+- Key implementation classes in the workflow (especially jobs/actions) must explain class intent in docblocks.
+- Non-obvious internal methods should include concise method-level docs.
+- Method-level docs should align with class-level intent and the process documentation narrative.
 
 ## Flowchart rules (Mermaid)
 
@@ -188,6 +194,8 @@ When code changes affect a workflow, update the doc by doing all of the below:
 - [ ] Update “Key tests” list if coverage changed / needs adding
 - [ ] Add/adjust failure modes if new exceptions, retries, or idempotency rules were introduced
 - [ ] Ensure naming matches the actual code (job names, event names, observer methods)
+- [ ] Update class-level docs in changed key classes (especially jobs/actions) so intent matches current behavior
+- [ ] Update non-obvious internal method docs to align with class docs and process narrative
 
 ## Process doc template (copy/paste)
 
@@ -261,5 +269,9 @@ When code changes affect a workflow, update the doc by doing all of the below:
     ## Key tests
     - tests/Feature/...
     - tests/Unit/...
+
+    ## Class/Method documentation notes
+    - Update key jobs/actions docblocks to explain class intent and workflow role.
+    - Update non-obvious internal method docs so they align with class intent and the process flow.
 
 ```
