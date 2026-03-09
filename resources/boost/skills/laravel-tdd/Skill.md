@@ -253,6 +253,7 @@ If the test is broad enough that failures no longer point at one broken behaviou
 - Prefer Pest chainable expectations via `expect(...)` for assertions in Pest tests
 - Do not use `PHPUnit\\Framework\\Assert` / `Assert::` in Pest tests unless Pest or Laravel has no suitable equivalent
 - Laravel-native assertions such as response assertions and `assertDatabaseHas()` are still appropriate when they are the correct API
+- In tests, prefer one clear failure path over layered defensive branches when an expectation already proves the condition
 - Use factories for setup, and prefer factory states / `configure()` hooks over manual model assembly when the scenario is recurring
 - Use `RefreshDatabase`
 - Fake integration boundaries by default

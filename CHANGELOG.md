@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.12 - 2026-03-09
+
+### Changed
+- Softened the new redundant-test-defensiveness guidance so it distinguishes between production fail-fast guards and test code, steering tests toward one clear failure path without implying that defensive production code is undesirable.
+
 ## 1.0.11 - 2026-03-09
 
 ### Changed

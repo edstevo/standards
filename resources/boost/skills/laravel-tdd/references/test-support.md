@@ -60,6 +60,21 @@ If the helper needs constructor arguments, internal state, or several related me
 - helper methods that hide important domain setup
 - giant assertion helpers that verify several unrelated behaviours at once
 - file-local abstractions that cannot be reused by other tests
+- layered defensive branches that repeat what the assertion already proves
+
+Usually unnecessary in a test:
+
+```php
+expect($fulfillmentLine)->toBeInstanceOf(FulfillmentLine::class);
+
+if (! $fulfillmentLine instanceof FulfillmentLine) {
+    throw new RuntimeException('Expected credit note line to reference a fulfillment line.');
+}
+```
+
+In production code, fail-fast guards can be valuable. In tests, once an expectation already proves the condition, an extra `throw` usually adds no new signal and tends to bloat the file.
+
+Prefer a single clear failure path unless the second branch adds genuinely different diagnostic value.
 
 The goal is not merely less code. The goal is a test API that makes intent clearer.
 

@@ -308,6 +308,7 @@ $reverseFulfillmentOrder->save();
 - Use Pest PHP for testing with clear, descriptive test names
 - Prefer Pest `expect()` assertions for assertions in Pest tests, and chain them where that improves readability
 - Do not use `PHPUnit\Framework\Assert` / `Assert::` in Pest tests unless Pest or Laravel has no suitable equivalent
+- In tests, prefer one clear failure path over layered defensive branches when an assertion already proves the condition
 - Laravel-native assertions such as response assertions and `assertDatabaseHas()` remain appropriate when they are the correct API. E.g:
 
 @verbatim
