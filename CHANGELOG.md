@@ -2,6 +2,15 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.11 - 2026-03-09
+
+### Changed
+- Expanded the `laravel-tdd` skill from a lightweight overview into a fuller Laravel/Pest testing guide with explicit red/green/refactor flow, test-layer selection, and behavioural test-design rules.
+- Added load-on-demand `laravel-tdd` references for workflow/E2E refactors, shared test support, grouped `describe()` structure, and factory-driven test data.
+- Strengthened testing guidance to prefer Pest `expect()` chains over `PHPUnit\Framework\Assert` in Pest tests while still allowing Laravel-native assertions where appropriate.
+- Clarified that helper functions inside test files are a last resort and that shared test logic should prefer `tests/TestCase.php`, `tests/Support`, factory states, or richer factory configuration.
+- Added stronger defaults for splitting bloated workflow tests by responsibility and for using factories and factory hooks (`state()`, `configure()`, `afterMaking()`, `afterCreating()`) to keep tests small and behavioural.
+
 ## 1.0.9 - 2026-03-03
 
 ### Changed

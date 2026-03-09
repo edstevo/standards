@@ -306,7 +306,9 @@ $reverseFulfillmentOrder->save();
 - Otherwise organise tests to mirror the application structure
 - As per the directory structure above, Shopify Tests should go in `tests/Integrations/Shopify/`
 - Use Pest PHP for testing with clear, descriptive test names
-- expect() assertions should be used for assertions and should be chained. E.g:
+- Prefer Pest `expect()` assertions for assertions in Pest tests, and chain them where that improves readability
+- Do not use `PHPUnit\Framework\Assert` / `Assert::` in Pest tests unless Pest or Laravel has no suitable equivalent
+- Laravel-native assertions such as response assertions and `assertDatabaseHas()` remain appropriate when they are the correct API. E.g:
 
 @verbatim
 <code-snippet name="Expect Assertion Chaining" lang="php">
@@ -363,11 +365,17 @@ it('validates required fields when registering', function () {
 **Testing Best Practices:**
 
 - Use factories for creating test data
+- Prefer factories wherever possible so tests do not become bulky model-construction scripts
+- If a factory exists but the scenario is awkward, improve it with named states or `configure()` hooks instead of hand-building the model graph in the test
 - Use descriptive test names that explain what is being tested
+- Group related tests with `describe()` blocks when a file covers multiple behaviours or methods on the same class/workflow
+- Use `beforeEach()` at the narrowest useful scope so each describe group only sets up the scenario it needs
 - Follow the AAA pattern: Arrange, Act, Assert
+- Keep each test focused on one behavioural concern; split large workflow/E2E assertions by responsibility
 - Use dataset testing for testing multiple scenarios
 - Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait
+- Functions or methods inside test classes/files are an absolute last resort; prefer reusable helpers in `tests/TestCase.php` or richer support classes in `tests/Support`
 - For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
 - For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-integration-fakes`.
 
