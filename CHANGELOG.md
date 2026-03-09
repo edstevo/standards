@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.13 - 2026-03-09
+
+### Changed
+- Added reusable guidance for deterministic scenario/test-data builders, including explicit graph-shaping flags, builder result usage, and group-level setup patterns.
+- Expanded Laravel workflow/E2E testing guidance to cover positive-vs-defensive grouping, shared post-act `beforeEach()` setup, and preferring persisted outcomes over faking internal domain work in true end-to-end tests.
+- Refined test-structure and shared-support references with more reusable, project-agnostic examples and a clearer static-analysis pattern after `toBeInstanceOf(...)` assertions.
+
 ## 1.0.12 - 2026-03-09
 
 ### Changed

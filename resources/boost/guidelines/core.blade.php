@@ -368,11 +368,13 @@ it('validates required fields when registering', function () {
 - Use factories for creating test data
 - Prefer factories wherever possible so tests do not become bulky model-construction scripts
 - If a factory exists but the scenario is awkward, improve it with named states or `configure()` hooks instead of hand-building the model graph in the test
+- When using builders that construct a test graph, make the graph-shaping flags explicit in the same scope as the assertions or describe-group setup
 - Use descriptive test names that explain what is being tested
 - Group related tests with `describe()` blocks when a file covers multiple behaviours or methods on the same class/workflow
 - Use `beforeEach()` at the narrowest useful scope so each describe group only sets up the scenario it needs
 - Follow the AAA pattern: Arrange, Act, Assert
 - Keep each test focused on one behavioural concern; split large workflow/E2E assertions by responsibility
+- For end-to-end workflow tests, prefer asserting persisted outcomes and fake external boundaries rather than faking the internal domain work you are trying to prove
 - Use dataset testing for testing multiple scenarios
 - Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait

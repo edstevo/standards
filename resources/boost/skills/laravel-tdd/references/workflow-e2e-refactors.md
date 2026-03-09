@@ -12,7 +12,10 @@ The examples in this file are illustrative patterns, not project-specific rules.
 - Smells that a workflow test is too large
 - How to choose split boundaries
 - Refactor pattern
+- Workflow group structure
+- Shared post-act setup
 - Common concern categories
+- Persisted outcomes over mocked internals
 - Defensive behaviour tests
 - Alternate workflow scenarios
 - Practical naming guidance
@@ -56,6 +59,39 @@ If two assertions answer different questions, they usually belong in different t
 5. Move truly different workflow branches into separate files or top-level `describe()` groups.
 6. Add defensive and idempotency cases separately.
 
+## Workflow group structure
+
+When a workflow file grows beyond a couple of tests, a good default structure is:
+
+- positive path tests
+- defensive or idempotent tests
+- a separate file, or at least a separate top-level `describe()`, for materially different workflow variants
+
+This keeps the file readable and makes failures easier to interpret.
+
+Do not mix:
+- the normal success path
+- retry, reopen, override, or admin-only variants
+- defensive no-op or duplicate-call rules
+
+unless the workflow is genuinely small enough that separation would add noise.
+
+## Shared post-act setup
+
+If every test in a `describe()` block asserts outcomes after the same transition or business act, it is acceptable to perform that act once in that block's `beforeEach()`.
+
+Use this when:
+- the act is the same for every test in the group
+- the group is asserting different concerns after that same act
+- repeating the act inline in every test would add noise rather than clarity
+
+Rules:
+- keep the act visible in the group's `beforeEach()`; do not hide it in a file-local helper
+- keep the assertions split by concern even when the act is shared
+- if some tests need a meaningfully different act, give them a separate nested group
+
+The point is to reduce repetition without hiding the workflow.
+
 ## Common concern categories
 
 These are typical concern boundaries for workflow-heavy tests:
@@ -70,6 +106,17 @@ These are typical concern boundaries for workflow-heavy tests:
 - idempotency or repeated-call safety
 
 Not every workflow needs all of these. Use only the concerns that genuinely exist in the code being tested.
+
+## Persisted outcomes over mocked internals
+
+For end-to-end workflow tests, prefer proving persisted outcomes rather than faking internal domain jobs, events, or listeners.
+
+If the goal is to prove the workflow end to end:
+- fake external boundaries when needed
+- let internal workflow orchestration run
+- assert persisted outcomes such as statuses, created records, timeline rows, sync records, or other durable artefacts
+
+If you fake the internal domain work, you are no longer proving the full workflow. That can still be valid, but it becomes a different test layer.
 
 ## Defensive behaviour tests
 

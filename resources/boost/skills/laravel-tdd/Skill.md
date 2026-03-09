@@ -50,6 +50,7 @@ Load detailed guidance based on context:
 | Large workflow / E2E refactors | `references/workflow-e2e-refactors.md` | A feature or E2E test has become too large, one test asserts several side effects, or a workflow needs splitting by responsibility |
 | Shared test support | `references/test-support.md` | Setup or assertions are repeating, you are tempted to add helper methods inside a test file, or reusable builders/assertions/fakes belong in `tests/TestCase.php` or `tests/Support` |
 | Test grouping and describe blocks | `references/test-structure.md` | A test file covers several related behaviours or methods on the same class, you need nested `describe()` blocks, or different groups need different `beforeEach()` setup |
+| Scenario builders and graph determinism | `references/scenario-builders.md` | A builder or fixture helper constructs a model graph, the test depends on a specific graph shape, or a builder result object should be promoted into group-level setup |
 | Factory-driven test data | `references/factories.md` | A test is manually constructing models, associating related records by hand, mutating many fields inline, or a factory should be extended with `state()` / `configure()` instead |
 
 ## The loop
@@ -209,12 +210,18 @@ Prefer, in order:
 
 Prefer factories wherever possible so tests do not become bulky model-construction scripts.
 
+When using a scenario builder or richer test-data builder:
+- make builder flags that determine graph shape explicit in the same scope as the assertions or group setup
+- resolve the models you need from the builder result instead of recreating them manually
+- if a whole `describe()` group shares the same result/models, promote them in that group's `beforeEach()`
+
 If a factory already exists for the model or graph you need:
 - use the factory instead of `new Model`, manual `associate()`, and repeated `save()` calls
 - prefer named `state()` methods for recurring attribute combinations
 - use `configure()`, `afterMaking()`, or `afterCreating()` when the factory needs smarter relation wiring
 
 If test data construction is becoming the problem, load `references/factories.md`.
+If builder determinism or builder-result usage is becoming the problem, load `references/scenario-builders.md`.
 
 Good candidates for `tests/Support`:
 - scenario builders

@@ -37,10 +37,12 @@ Good practice:
 - keep common file-wide setup at the top level only if nearly every test needs it
 - move behaviour-specific setup into the closest enclosing `describe()`
 - let nested groups add setup for their own scenario instead of bloating the parent setup
+- if every test in a group asserts outcomes after the same business act, it is acceptable to perform that act once in that group's `beforeEach()`
 
 Avoid:
 - one giant top-level `beforeEach()` that prepares every possible scenario
 - repeated inline setup across many tests when the repetition clearly belongs to one behavioural group
+- hiding the business act in a helper when keeping it visible in the group's `beforeEach()` would better explain the workflow
 
 ## When to use nested describes
 
@@ -65,37 +67,37 @@ Flat does not mean unstructured. Even in small files, related tests should still
 ```php
 <?php
 
-describe('Fulfillment::markAsCarrierLoss', function () {
+describe('CompleteWorkflow', function () {
     beforeEach(function () {
-        $this->scenario = CarrierLossScenarioBuilder::purchaseOrderBacked()->build();
-        $this->fulfillment = $this->scenario->fulfillments->sole()->refresh();
+        $this->result = WorkflowScenarioBuilder::new()->withCompleteOrder()->build();
+        $this->workflow = $this->result->workflow->refresh();
     });
 
     describe('state resolution', function () {
-        it('closes and archives the fulfillment', function () {
-            $this->fulfillment->markAsCarrierLoss();
+        it('marks the workflow as complete', function () {
+            CompleteWorkflow::dispatchSync($this->workflow);
 
-            expect($this->fulfillment->refresh()->closed_reason)->toBe('CARRIER_LOSS');
+            expect($this->workflow->refresh()->status)->toBe(WorkflowStatus::COMPLETE);
         });
     });
 
-    describe('credit note creation', function () {
-        it('creates a supplier credit note', function () {
-            $this->fulfillment->markAsCarrierLoss();
+    describe('artefact creation', function () {
+        it('creates the expected workflow artefact', function () {
+            CompleteWorkflow::dispatchSync($this->workflow);
 
-            expect(CreditNote::count())->toBe(1);
+            expect(WorkflowArtefact::count())->toBe(1);
         });
     });
 
     describe('when called twice', function () {
         beforeEach(function () {
-            $this->fulfillment->markAsCarrierLoss();
+            CompleteWorkflow::dispatchSync($this->workflow);
         });
 
-        it('does not create duplicate credit notes', function () {
-            $this->fulfillment->markAsCarrierLoss();
+        it('does not create duplicate artefacts', function () {
+            CompleteWorkflow::dispatchSync($this->workflow);
 
-            expect(CreditNote::count())->toBe(1);
+            expect(WorkflowArtefact::count())->toBe(1);
         });
     });
 });

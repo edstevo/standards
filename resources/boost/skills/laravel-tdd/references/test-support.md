@@ -74,6 +74,14 @@ if (! $fulfillmentLine instanceof FulfillmentLine) {
 
 In production code, fail-fast guards can be valuable. In tests, once an expectation already proves the condition, an extra `throw` usually adds no new signal and tends to bloat the file.
 
+If static analysis needs narrowing after a type assertion, prefer a local `@var` annotation over an extra defensive branch:
+
+```php
+expect($fulfillmentLine)->toBeInstanceOf(FulfillmentLine::class);
+
+/** @var FulfillmentLine $fulfillmentLine */
+```
+
 Prefer a single clear failure path unless the second branch adds genuinely different diagnostic value.
 
 The goal is not merely less code. The goal is a test API that makes intent clearer.
@@ -92,8 +100,8 @@ Extract when any of these are true:
 Good shared support makes tests read more clearly, not more mysteriously.
 
 Prefer:
-- `CarrierLossScenarioBuilder::purchaseOrderBacked()->build()`
-- `assertCarrierLossShopRefundMatchesUndeliveredQuantities($fulfillment)`
+- `WorkflowScenarioBuilder::withCompleteOrder()->build()`
+- `assertRefundMatchesExpectedQuantities($workflow)`
 
 Be cautious with:
 - generic `makeScenario()`
