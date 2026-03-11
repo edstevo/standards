@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.14 - 2026-03-11
+
+### Changed
+- Added shared delivery-workflow guidance requiring larger refactors, project-sized work, and issue fixes to be tracked in a pull request with an upfront plan and checklist, then merged back into the project's `dev` branch after approval.
+
 ## 1.0.13 - 2026-03-09
 
 ### Changed

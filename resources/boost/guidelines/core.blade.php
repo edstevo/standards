@@ -10,6 +10,14 @@ Apply these rules when generating or modifying code.
 - Prefer explicit, deterministic implementations over clever or implicit behavior.
 - When tradeoffs exist, prioritize correctness, readability, and maintainability in that order.
 
+### Delivery Workflow
+
+- For larger refactors, project-sized work, or issue fixes, always open a pull request so the work is stored and reviewable while it is in progress.
+- Open the PR against the project's `dev` branch unless the project has an explicit different integration-branch convention.
+- Add a plan and detailed checklist to the PR timeline or description at the start of the work.
+- Keep that checklist updated and check items off as the work develops so the PR remains the source of truth for progress.
+- Once the work is approved, merge the PR back into the `dev` branch.
+
 ### Skills Activation
 
 Laravel Boost may inject a `## Skills Activation` section with project-specific skills and trigger rules.
