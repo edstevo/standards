@@ -89,9 +89,10 @@ app/
 
 ### Code Style & Best Practices
 
-- **Action Classes**: Single-purpose invokable classes for business logic
+- **Action Classes**: Use `lorisleiva/laravel-actions` for one-class-one-task business actions, typically called via `::run()`
 - **DTOs**: Immutable data transfer objects with validation
 - **Service Classes**: Coordinate multiple actions and domain logic
+- **Jobs and Queues**: Use native Laravel jobs and queues for queued or asynchronous work
 - **Native Enums**: Type-safe backed enums for fixed values
 - **Thin Controllers**: Delegate to actions and services
 - **Query Optimization**: Eager loading, indexes, select only needed columns

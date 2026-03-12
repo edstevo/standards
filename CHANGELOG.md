@@ -2,6 +2,15 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.15 - 2026-03-12
+
+### Added
+- Added a new `laravel-actions` skill covering `lorisleiva/laravel-actions` conventions for one-class-one-task action classes, `AsAction` usage, `::run(...)` call sites, and action-specific mocking and spying in tests.
+
+### Changed
+- Updated shared Laravel guidance to prefer Laravel Actions for application action classes while keeping queued and asynchronous classes on native Laravel Jobs and Queues.
+- Updated the package README summary to reflect the new Laravel Actions preference and the explicit action-vs-job split.
+
 ## 1.0.14 - 2026-03-11
 
 ### Changed

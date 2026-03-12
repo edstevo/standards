@@ -219,11 +219,23 @@ class UserController extends Controller
 - Prefer query builders for complex queries over raw SQL
 - Use `select()` to only retrieve needed columns
 
+**Action Classes:**
+
+- Use `lorisleiva/laravel-actions` for application action classes
+- Keep action classes in `app/Actions/` or domain-local `Actions/` folders and name them as explicit verb-led tasks
+- Use `Lorisleiva\Actions\Concerns\AsAction` and keep the core behaviour in `handle(...)`
+- Keep actions container-resolvable so constructor injection, `::run(...)`, and package-native testing helpers work consistently
+- Prefer `ActionClass::run(...)` at call sites over ad-hoc invokable classes or manual instantiation
+- Laravel Actions can expose controllers, jobs, listeners, and commands, but the default convention in these projects is narrower: use the package for action classes
+- For full action-class package conventions and testing patterns, activate `laravel-actions`
+
 **Jobs and Queues:**
 
-- Use jobs where practical to isolate business logic from the request lifecycle
-- Jobs should be short and simple - avoid complex logic in jobs. If there is more complex logic to do then it should trigger another job.
+- Use native Laravel Jobs and Queues for queued, delayed, asynchronous, and after-response work
+- Jobs should be short and simple. Keep queue concerns on the job, and move reusable business logic into actions or other collaborators where appropriate
+- If a job needs shared application logic, the job should call an action rather than absorb that logic itself
 - Use queues for long-running tasks that may take a long time to complete
+- Do not default to modelling queued classes as Laravel Actions; reserve Laravel Actions for action classes and Laravel Jobs for queued classes
 - In observer-driven workflows, observers must never execute synchronous external follow-up actions inline. They should only dispatch events/jobs or call methods that trigger further explicit events (for example `closed` handler -> `markAsArchived()`), and side effects should run after commit.
 
 **Model Construction and Persistence:**
@@ -387,6 +399,7 @@ it('validates required fields when registering', function () {
 - Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait
 - Functions or methods inside test classes/files are an absolute last resort; prefer reusable helpers in `tests/TestCase.php` or richer support classes in `tests/Support`
+- For Laravel Actions package usage, `::run(...)` calling conventions, and action-specific mock/spy helpers, activate `laravel-actions`.
 - For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
 - For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-integration-fakes`.
 
