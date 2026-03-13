@@ -393,6 +393,7 @@ it('validates required fields when registering', function () {
 - Group related tests with `describe()` blocks when a file covers multiple behaviours or methods on the same class/workflow
 - Use `beforeEach()` at the narrowest useful scope so each describe group only sets up the scenario it needs
 - Follow the AAA pattern: Arrange, Act, Assert
+- In time-sensitive tests, do not stack multiple `$this->travelTo(...)` calls during arrange with no behaviour between them; derive timestamp values separately, then travel immediately before each act or use the closure-based time helpers
 - Keep each test focused on one behavioural concern; split large workflow/E2E assertions by responsibility
 - For end-to-end workflow tests, prefer asserting persisted outcomes and fake external boundaries rather than faking the internal domain work you are trying to prove
 - Use dataset testing for testing multiple scenarios

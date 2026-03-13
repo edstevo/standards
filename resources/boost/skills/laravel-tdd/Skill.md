@@ -52,6 +52,7 @@ Load detailed guidance based on context:
 | Test grouping and describe blocks | `references/test-structure.md` | A test file covers several related behaviours or methods on the same class, you need nested `describe()` blocks, or different groups need different `beforeEach()` setup |
 | Scenario builders and graph determinism | `references/scenario-builders.md` | A builder or fixture helper constructs a model graph, the test depends on a specific graph shape, or a builder result object should be promoted into group-level setup |
 | Factory-driven test data | `references/factories.md` | A test is manually constructing models, associating related records by hand, mutating many fields inline, or a factory should be extended with `state()` / `configure()` instead |
+| Time travel and clock control | `references/time-testing.md` | A test uses `now()`, `$this->travel()`, `$this->travelTo()`, `freezeTime()`, or simulates several time-based workflow steps |
 
 ## The loop
 
@@ -262,6 +263,8 @@ If the test is broad enough that failures no longer point at one broken behaviou
 - Laravel-native assertions such as response assertions and `assertDatabaseHas()` are still appropriate when they are the correct API
 - In tests, prefer one clear failure path over layered defensive branches when an expectation already proves the condition
 - Use factories for setup, and prefer factory states / `configure()` hooks over manual model assembly when the scenario is recurring
+- Do not stack multiple `$this->travelTo(...)` calls during arrange just to build timestamps; each call replaces the frozen clock, so travel immediately before the relevant act or use the closure-based helpers
+- If the test only needs several timestamp values, derive them from a base Carbon value without time travel and freeze the clock only around the behaviour being exercised
 - Use `RefreshDatabase`
 - Fake integration boundaries by default
 - Test happy paths and defensive/idempotent paths

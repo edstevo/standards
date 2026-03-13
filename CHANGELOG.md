@@ -2,6 +2,15 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.16 - 2026-03-13
+
+### Added
+- Added a `laravel-tdd` reference for time-sensitive tests covering Laravel time travel helpers, clearer clock-control patterns, and when to use scoped time-freezing helpers.
+
+### Changed
+- Updated shared testing guidance to discourage stacking multiple `$this->travelTo(...)` calls during arrange with no behaviour between them, and to prefer deriving timestamps separately or travelling immediately before each act.
+- Updated the main `laravel-tdd` skill to surface the new time-testing guidance directly from its reference guide and default testing rules.
+
 ## 1.0.15 - 2026-03-12
 
 ### Added
