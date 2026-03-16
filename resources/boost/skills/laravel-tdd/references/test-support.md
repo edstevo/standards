@@ -12,6 +12,17 @@ Functions or methods defined inside test classes/files are an absolute last reso
 
 If logic is worth reusing, it usually deserves a real home in the test support layer instead of being hidden inside one file.
 
+For workflow-oriented tests, there is an extra rule:
+- prefer file-local narrative readability over extracting a helper that hides the domain story
+
+If the test reads more clearly with visible steps such as:
+- build the graph
+- evolve the scenario
+- perform the business act
+- assert the resulting domain graph
+
+then keep those steps local even if a helper would technically be reusable.
+
 ## Prefer these options first
 
 ### 1. Keep it inline
@@ -19,6 +30,11 @@ If logic is worth reusing, it usually deserves a real home in the test support l
 If setup is short, used once, and still readable, keep it inside the test.
 
 The test should still read as a short story: arrange, act, assert.
+
+For workflow tests, "short story" is literal:
+- show the important domain state changes in order
+- let the reader see how the scenario moves from one state to the next
+- do not compress the interesting parts into a helper only because duplication exists
 
 ### 2. Use factory states or builders
 
@@ -58,6 +74,7 @@ If the helper needs constructor arguments, internal state, or several related me
 
 - private/protected helper methods added only to shorten a long test
 - helper methods that hide important domain setup
+- helper methods that hide scenario evolution or the order of domain steps
 - giant assertion helpers that verify several unrelated behaviours at once
 - file-local abstractions that cannot be reused by other tests
 - layered defensive branches that repeat what the assertion already proves
@@ -107,6 +124,11 @@ Be cautious with:
 - generic `makeScenario()`
 - `prepareEverything()`
 - helpers that obscure which models and states matter
+
+When the support would hide the workflow itself, keep the workflow visible and let shared support handle only the repeatable edges around it:
+- graph construction
+- broad environment setup
+- domain-specific assertions that stay focused on one concept
 
 ## Interaction with TDD
 

@@ -10,7 +10,9 @@ Load it when the main `Skill.md` points here or when a builder constructs a grap
 - Deterministic graph shape
 - Result object usage
 - Group-level setup
+- Reuse visible builder state
 - Keep the business act visible
+- Assert through the domain graph when it helps
 - What to avoid
 - Example pattern
 
@@ -63,6 +65,25 @@ Good pattern:
 
 This keeps the group deterministic while avoiding repeated setup noise.
 
+## Reuse visible builder state
+
+If a group shares the same builder configuration but each test needs a slightly different follow-on scenario:
+- keep the builder itself visible in group setup
+- extend or adjust it locally in the relevant test or nested group
+- prefer this over file-local helper methods that hide how the scenario changes
+
+This is especially useful when a builder has explicit flags or methods that describe domain evolution clearly.
+
+Good:
+- a group-level builder stored on `$this`
+- a test that adds one more builder flag before `build()`
+- follow-on scenarios expressed as visible builder changes
+
+Bad:
+- detached helper functions that quietly add several builder flags
+- re-creating the same builder chain in many hidden wrappers
+- hiding the meaningful scenario difference outside the test body
+
 ## Keep the business act visible
 
 Builders should create the starting graph. They should not usually hide the business act being tested.
@@ -81,8 +102,26 @@ The test should still read like a workflow:
 - file-local builder helpers that simply wrap `build()`
 - hidden builder defaults that determine the asserted graph shape
 - mixing builder setup with the business act under test
+- detached helpers that hide how a shared builder configuration evolves across related scenarios
 - building one graph per test when the whole group shares the same starting graph
 - using a builder so magical that the reader cannot tell what was created
+- reaching straight for fresh queries when the loaded result graph already expresses the assertion more clearly
+
+## Assert through the domain graph when it helps
+
+If the builder result already exposes the relevant relationships, prefer asserting through that loaded graph when it makes the workflow clearer.
+
+Good:
+- `$workflow->creditNotes`
+- `$bill->creditNotes`
+- `$purchaseOrder->lines`
+
+Use detached queries when:
+- persistence itself is what you are proving
+- the relationship is not loaded and loading it would be noisier
+- the query expresses a constraint more clearly than the object graph
+
+The point is not "never query in tests". The point is to prefer the most readable way to show the result of the workflow.
 
 ## Example pattern
 
@@ -96,7 +135,7 @@ describe('CompleteWorkflow', function () {
             ->withExternalSyncEnabled()
             ->build();
 
-        $this->workflow = $this->result->workflow->refresh();
+        $this->workflow = $this->result->workflow->refresh()->loadMissing('artefacts');
         $this->lineItems = $this->result->lineItems;
     });
 
@@ -111,7 +150,7 @@ describe('CompleteWorkflow', function () {
         });
 
         it('creates the expected artefact', function () {
-            expect(Artefact::query()->count())->toBe(1);
+            expect($this->workflow->artefacts)->toHaveCount(1);
         });
     });
 });

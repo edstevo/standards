@@ -190,6 +190,21 @@ This keeps test output readable and prevents one large file from becoming a flat
 
 If file structure and grouped setup are becoming important to the task, load `references/test-structure.md`.
 
+### Let workflow tests read like domain documentation
+
+For workflow-oriented tests, treat the file as documentation of how the domain behaviour unfolds.
+
+Prefer:
+- keeping graph construction, scenario evolution, the business act, and the resulting domain graph visible in the test or group `beforeEach()`
+- local narrative readability over extracting a technically reusable helper that hides the story
+- assertions through the loaded domain graph when that is the clearest way to show the result
+- Pest chained or scoped expectations when they make nested domain assertions easier to follow
+
+Be cautious with:
+- helper methods that make the workflow shorter but harder to understand
+- detached query helpers when the relevant relationships are already loaded
+- rebuilding or rewrapping a scenario in file-local helpers when a group can reuse one visible builder configuration
+
 ### Use datasets for input variation, not unrelated behaviour
 
 Datasets are good for:
@@ -215,6 +230,7 @@ When using a scenario builder or richer test-data builder:
 - make builder flags that determine graph shape explicit in the same scope as the assertions or group setup
 - resolve the models you need from the builder result instead of recreating them manually
 - if a whole `describe()` group shares the same result/models, promote them in that group's `beforeEach()`
+- if related tests evolve the same builder configuration, keep that builder visible in the group and adjust it locally instead of hiding follow-on scenarios behind detached helper functions
 
 If a factory already exists for the model or graph you need:
 - use the factory instead of `new Model`, manual `associate()`, and repeated `save()` calls
@@ -263,6 +279,9 @@ If the test is broad enough that failures no longer point at one broken behaviou
 - Laravel-native assertions such as response assertions and `assertDatabaseHas()` are still appropriate when they are the correct API
 - In tests, prefer one clear failure path over layered defensive branches when an expectation already proves the condition
 - Use factories for setup, and prefer factory states / `configure()` hooks over manual model assembly when the scenario is recurring
+- Treat workflow-oriented tests as narrative documentation of the domain flow; if an abstraction hides the graph setup, state evolution, business act, or resulting graph, keep that logic visible instead
+- When the relevant domain relationships are already loaded, prefer assertions through that domain graph over detached query helpers unless the query itself is part of what you are proving
+- Use Pest chained and scoped expectations as a readability tool when they make nested domain assertions easier to follow
 - Do not stack multiple `$this->travelTo(...)` calls during arrange just to build timestamps; each call replaces the frozen clock, so travel immediately before the relevant act or use the closure-based helpers
 - If the test only needs several timestamp values, derive them from a base Carbon value without time travel and freeze the clock only around the behaviour being exercised
 - Use `RefreshDatabase`

@@ -393,9 +393,13 @@ it('validates required fields when registering', function () {
 - Group related tests with `describe()` blocks when a file covers multiple behaviours or methods on the same class/workflow
 - Use `beforeEach()` at the narrowest useful scope so each describe group only sets up the scenario it needs
 - Follow the AAA pattern: Arrange, Act, Assert
+- Treat workflow-oriented test files as documentation of the domain flow. Prefer local narrative readability over helper extraction when a helper would hide graph construction, scenario evolution, the business act, or the resulting domain graph
 - In time-sensitive tests, do not stack multiple `$this->travelTo(...)` calls during arrange with no behaviour between them; derive timestamp values separately, then travel immediately before each act or use the closure-based time helpers
 - Keep each test focused on one behavioural concern; split large workflow/E2E assertions by responsibility
 - For end-to-end workflow tests, prefer asserting persisted outcomes and fake external boundaries rather than faking the internal domain work you are trying to prove
+- When the relevant domain relationships are already loaded, prefer assertions through that domain graph over detached query helpers unless the query itself is what the test needs to prove
+- If related tests share one builder configuration, it is acceptable to keep that builder visible in the describe group and evolve it locally rather than hiding follow-on scenarios behind detached helper functions
+- Use Pest chained and scoped expectations as a readability tool when they make nested domain assertions easier to follow
 - Use dataset testing for testing multiple scenarios
 - Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait

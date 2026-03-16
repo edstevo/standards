@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.17 - 2026-03-16
+
+### Changed
+- Strengthened Laravel testing guidance to prefer workflow-oriented tests that read like domain documentation, keeping graph construction, scenario evolution, the business act, and the resulting domain graph visible when that improves readability.
+- Expanded `laravel-tdd` guidance on helper extraction, shared builder usage, and domain-graph assertions so local narrative clarity is preferred over technically reusable abstractions that hide the workflow.
+- Clarified that Pest chained and scoped expectations can be used as a readability tool for nested domain assertions, not just as a lower-level assertion mechanism.
+
 ## 1.0.16 - 2026-03-13
 
 ### Added
