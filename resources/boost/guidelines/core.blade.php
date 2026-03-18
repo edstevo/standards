@@ -16,6 +16,7 @@ Apply these rules when generating or modifying code.
 - Open the PR against the project's `dev` branch unless the project has an explicit different integration-branch convention.
 - Add a plan and detailed checklist to the PR timeline or description at the start of the work.
 - Keep that checklist updated and check items off as the work develops so the PR remains the source of truth for progress.
+- When work starts from a thin GitHub issue or rough brief, activate `github-issue-brief-refinement` first so the issue becomes codebase-grounded before implementation begins.
 - Once the work is approved, merge the PR back into the `dev` branch.
 
 ### Skills Activation

@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.18 - 2026-03-18
+
+### Added
+- Added a `github-issue-brief-refinement` skill for reviewing GitHub issues and rough briefs against the codebase, then rewriting them into implementation-ready briefs with affected files, key tests, and explicit open questions.
+
+### Changed
+- Updated delivery workflow guidance to require activating the new issue-brief refinement skill before implementation when work starts from an underspecified GitHub issue or brief.
+
 ## 1.0.17 - 2026-03-16
 
 ### Changed
