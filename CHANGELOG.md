@@ -2,6 +2,15 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.19 - 2026-03-18
+
+### Added
+- Added an `execution-plans` skill with detailed ExecPlan authoring and implementation guidance for complex features and significant refactors.
+
+### Changed
+- Added core guideline guidance to require ExecPlans for complex features and significant refactors.
+- Replaced the `.agent/PLANS.md` reference in the shared guideline entry with the new `execution-plans` skill.
+
 ## 1.0.18 - 2026-03-18
 
 ### Added

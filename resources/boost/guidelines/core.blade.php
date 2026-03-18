@@ -19,6 +19,10 @@ Apply these rules when generating or modifying code.
 - When work starts from a thin GitHub issue or rough brief, activate `github-issue-brief-refinement` first so the issue becomes codebase-grounded before implementation begins.
 - Once the work is approved, merge the PR back into the `dev` branch.
 
+### ExecPlans
+
+- When writing complex features or significant refactors, activate `execution-plans` and use an ExecPlan from design to implementation as described in that skill.
+
 ### Skills Activation
 
 Laravel Boost may inject a `## Skills Activation` section with project-specific skills and trigger rules.
