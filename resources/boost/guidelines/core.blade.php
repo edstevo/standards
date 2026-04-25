@@ -10,6 +10,16 @@ Apply these rules when generating or modifying code.
 - Prefer explicit, deterministic implementations over clever or implicit behavior.
 - When tradeoffs exist, prioritize correctness, readability, and maintainability in that order.
 
+### GPT-5.5 Agent Behavior
+
+- Start from the requested outcome, existing project conventions, and concrete success criteria before choosing an implementation path.
+- Treat process-heavy guidance in this package as decision rules: apply it when its trigger matches, and keep trivial changes proportionately small.
+- Inspect the relevant code, documentation, and tests before editing so changes are grounded in the actual project.
+- Preserve unrelated user changes and avoid refactors that are not needed for the requested outcome.
+- Validate with the narrowest useful command or test suite, and report any validation that could not be run.
+- Stop when the requested behavior is delivered, required docs/tests are aligned, and the verification result or blocker is clear.
+- When evidence is missing, state the uncertainty and resolve it with the smallest safe check before making broad assumptions.
+
 ### Delivery Workflow
 
 - For larger refactors, project-sized work, or issue fixes, always open a pull request so the work is stored and reviewable while it is in progress.

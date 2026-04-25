@@ -4,7 +4,7 @@ A Laravel package that provides opinionated coding standards, conventions, and b
 
 ## Why EdStevo Standards?
 
-When working with AI assistants like Claude Code or Cursor, having a consistent set of coding standards is crucial. EdStevo Standards packages these standards into a reusable Laravel package that automatically integrates with [Laravel Boost](https://github.com/laravel/boost), ensuring every project follows the same conventions.
+When working with AI coding agents like GPT-5.5, Codex, Claude Code, or Cursor, having a consistent set of coding standards is crucial. EdStevo Standards packages these standards into a reusable Laravel package that automatically integrates with [Laravel Boost](https://github.com/laravel/boost), ensuring every project follows the same conventions.
 
 ## Features
 
@@ -14,6 +14,7 @@ When working with AI assistants like Claude Code or Cursor, having a consistent 
 - 🧪 **Testing Standards** - Pest PHP patterns and coverage guidelines
 - 📦 **Zero Configuration** - Install and forget
 - 🔄 **Auto-updating** - Stay in sync with your coding standards
+- 🧠 **GPT-5.5-aligned prompts** - Outcome-first agent guidance with explicit validation and stopping rules
 
 ## Requirements
 
@@ -175,7 +176,7 @@ composer format
 This package embodies the principle that **consistency is more valuable than perfection**. By standardizing patterns across all EdStevo projects:
 
 - **Onboarding is faster** - New team members see familiar patterns
-- **AI assistance is better** - Claude knows exactly how to structure code
+- **AI assistance is better** - Coding agents know exactly how to structure code
 - **Maintenance is easier** - Predictable structure across all projects
 - **Code reviews are quicker** - Everyone follows the same conventions
 

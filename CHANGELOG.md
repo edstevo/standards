@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## Unreleased
+
+### Changed
+- Added GPT-5.5-oriented agent behavior guidance to the shared Boost prompt, emphasizing outcome-first work, scoped process use, evidence checks, validation, and clear stopping conditions.
+- Updated the README to describe GPT-5.5-aligned prompt behavior for Laravel Boost consumers.
+
 ## 1.0.19 - 2026-03-18
 
 ### Added
