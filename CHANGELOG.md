@@ -2,7 +2,7 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
-## Unreleased
+## 1.0.20 - 2026-04-25
 
 ### Changed
 - Added GPT-5.5-oriented agent behavior guidance to the shared Boost prompt, emphasizing outcome-first work, scoped process use, evidence checks, validation, and clear stopping conditions.
