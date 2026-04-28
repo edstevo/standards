@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## Unreleased
+
+### Changed
+- Clarified queued job guidance so dispatched job constructors are data-only payload assignment and all executable work, collaborator resolution, guards, and errors happen inside `handle(...)`.
+
+### Removed
+- Removed the bundled `laravel-actions` Boost skill because it now lives in its own Composer package.
+
 ## 1.0.20 - 2026-04-25
 
 ### Changed
