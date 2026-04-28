@@ -2,7 +2,7 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
-## Unreleased
+## 1.0.21 - 2026-04-28
 
 ### Changed
 - Clarified queued job guidance so dispatched job constructors are data-only payload assignment and all executable work, collaborator resolution, guards, and errors happen inside `handle(...)`.
