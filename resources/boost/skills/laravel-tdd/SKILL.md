@@ -39,7 +39,7 @@ Use them deliberately:
 - do not load every reference automatically; load only the ones that fit
 
 Why references exist:
-- they keep `Skill.md` short and readable
+- they keep `SKILL.md` short and readable
 - they hold deeper guidance that would otherwise bloat the main skill
 - they give you more precise instructions for specific test-design problems
 

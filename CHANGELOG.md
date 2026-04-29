@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.23 - 2026-04-29
+
+### Changed
+- Renamed all bundled Boost skill entry files from `Skill.md` to `SKILL.md` and updated matching skill reference text.
+
 ## 1.0.22 - 2026-04-29
 
 ### Changed
@@ -131,7 +136,7 @@ All notable changes to `edstevo/protocol` will be documented in this file.
 ## 1.0.3 - 2026-03-01
 
 ### Changed
-- Renamed Boost skill files to `Skill.md` within dedicated skill directories for improved naming consistency.
+- Renamed Boost skill files within dedicated skill directories for improved naming consistency.
 - Updated `model-events-observers-workflows` skill content following naming adjustments.
 
 ## 1.0.2 - 2026-03-01

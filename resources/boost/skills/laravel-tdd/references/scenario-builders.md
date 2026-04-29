@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: using scenario builders or rich test-data builders without making tests implicit or fragile.
 
-Load it when the main `Skill.md` points here or when a builder constructs a graph of related models for the test.
+Load it when the main `SKILL.md` points here or when a builder constructs a graph of related models for the test.
 
 ## Contents
 

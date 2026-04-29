@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: refactoring oversized workflow and E2E tests.
 
-Load it when the main `Skill.md` points here or when one test is trying to prove several unrelated outcomes at once.
+Load it when the main `SKILL.md` points here or when one test is trying to prove several unrelated outcomes at once.
 
 The examples in this file are illustrative patterns, not project-specific rules. Adapt the split to the workflow in front of you.
 

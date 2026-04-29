@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: organising Pest tests with `describe()` blocks and scoped `beforeEach()` setup.
 
-Load it when the main `Skill.md` points here or when a file contains several related tests for the same class, method, or workflow.
+Load it when the main `SKILL.md` points here or when a file contains several related tests for the same class, method, or workflow.
 
 ## Contents
 

@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: where reusable test logic should live.
 
-Load it when the main `Skill.md` points here or when you are considering helper methods inside a test file.
+Load it when the main `SKILL.md` points here or when you are considering helper methods inside a test file.
 
 Use this reference when test setup or assertion logic starts repeating, or when a test file is tempted to grow helper methods.
 

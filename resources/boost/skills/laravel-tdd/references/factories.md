@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: using factories to keep test data concise, intentional, and reusable.
 
-Load it when the main `Skill.md` points here or when a test is manually assembling Eloquent models and relationships inline.
+Load it when the main `SKILL.md` points here or when a test is manually assembling Eloquent models and relationships inline.
 
 ## Contents
 
