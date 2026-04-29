@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.22 - 2026-04-29
+
+### Changed
+- Tightened the GitHub issue brief refinement skill so refined briefs use only `Current implementation`, `Target behavior`, `Open questions`, `Scope`, `Risks`, `Affected areas`, and `Key tests`, with overlapping acceptance criteria, desired outcome, and edge-case content condensed into those sections.
+
 ## 1.0.21 - 2026-04-28
 
 ### Changed

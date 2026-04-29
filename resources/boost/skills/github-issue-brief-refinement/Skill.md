@@ -1,12 +1,12 @@
 ---
 name: github-issue-brief-refinement
-description: Review a GitHub issue or rough implementation brief, explore the codebase to identify real impact, and rewrite the issue into an implementation-ready brief with explicit open questions, affected files, and key tests. Use when work begins from a GitHub issue URL or a thin brief that is not yet codebase-grounded.
+description: Review a GitHub issue or rough implementation brief, explore the codebase to identify real impact, and rewrite the issue into a concise implementation-ready brief with explicit open questions, affected areas, and key tests. Use when work begins from a GitHub issue URL or a thin brief that is not yet codebase-grounded.
 license: MIT
 metadata:
   domain: workflow
   role: specialist
   scope: planning
-  triggers: GitHub issue URL, review brief, improve brief, refine issue, implementation brief, affected files, key tests, codebase impact
+  triggers: GitHub issue URL, review brief, improve brief, refine issue, concise implementation brief, affected areas, key tests, codebase impact
 ---
 
 # GitHub Issue Brief Refinement
@@ -15,14 +15,16 @@ Use this skill when implementation work starts from a GitHub issue or a rough br
 
 ## Goal
 
-Produce a codebase-grounded brief inside GitHub, not in a local markdown handoff.
+Produce a concise, codebase-grounded brief inside GitHub, not in a local markdown handoff.
 
 The improved issue should:
-- clarify the problem and target outcome
-- identify the likely impact on the codebase
+- use only the seven brief headings listed below
+- explain the current implementation and target behavior without repeating the same point under different labels
+- identify the likely impact on the codebase as affected areas
 - separate confirmed impact from informed inference
 - ask the smallest set of questions needed to remove scope ambiguity
-- finish with `Affected files` and `Key tests`
+- fold acceptance criteria into `Target behavior` and edge cases into `Risks`
+- finish with `Affected areas` and `Key tests`
 
 ## When to use
 
@@ -54,16 +56,20 @@ Do not use this skill when:
    - Do not move the work into a local markdown file.
 
 4. Refine the brief.
-   - Rewrite it so the problem, target behavior, scope, constraints, and acceptance criteria are implementation-ready.
-   - Add codebase impact, edge cases, dependencies, and sequencing concerns only when the code supports them.
+   - Rewrite it using only these headings, in this order: `Current implementation`, `Target behavior`, `Open questions`, `Scope`, `Risks`, `Affected areas`, `Key tests`.
+   - Fold desired outcomes and acceptance criteria into `Target behavior`.
+   - Fold non-goals, assumptions, dependencies, and sequencing concerns into `Scope`.
+   - Fold edge cases, regression concerns, and uncertainty into `Risks`.
+   - Put files, modules, routes, jobs, integrations, data stores, and tests impacted by the work under `Affected areas`.
    - Keep recommendations concrete and concise. Do not invent detailed solutions where the code only supports a likely direction.
+   - Avoid repeating the same detail across sections; mention it once in the section where it will help implementation most.
 
 5. Ask clarifying questions when needed.
-   - Ask only the questions that materially affect scope, architecture, data shape, or acceptance criteria.
+   - Ask only the questions that materially affect scope, architecture, data shape, or target behavior.
    - Put those questions both in the GitHub update and in the final response if they remain unresolved.
 
 6. Finish with a structured final response.
-   - End with `Affected files` and `Key tests`.
+   - End with `Affected areas` and `Key tests`.
    - Prefer absolute file paths for files.
    - Prefer the smallest confidence-building test set rather than a broad wishlist.
 
@@ -71,16 +77,15 @@ Do not use this skill when:
 
 Use this structure when rewriting or commenting on the brief:
 
-- Problem statement
-- Current behavior or limitation
-- Desired outcome
-- Scope and non-goals
-- Codebase impact
-- Acceptance criteria
-- Edge cases and risks
+- Current implementation
+- Target behavior
 - Open questions
-- Affected files
+- Scope
+- Risks
+- Affected areas
 - Key tests
+
+Do not add separate `Problem statement`, `Desired outcome`, `Acceptance criteria`, `Edge cases`, `Codebase impact`, `Scope and non-goals`, or `Dependencies` sections. Condense that content into the seven headings above.
 
 ## Output rules
 
@@ -88,3 +93,4 @@ Use this structure when rewriting or commenting on the brief:
 - Preserve useful original context rather than replacing it with a cleaner but narrower rewrite.
 - Do not hide uncertainty. If the codebase does not answer a key question, surface it plainly.
 - Keep the wording tight enough to live directly in the GitHub issue.
+- Use short paragraphs or compact bullets. Keep each section focused on implementation-critical detail only.
