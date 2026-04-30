@@ -7,6 +7,8 @@ Load this first when a task adds, changes, or refactors tests for Filament resou
 After loading this file, also load the focused reference that matches the page or behaviour:
 - `testing-list-pages.md` for list pages, tables, search, filters, columns, and table/header/bulk actions
 - `testing-view-pages.md` for view pages, infolists, relation managers, and record/page actions
+- `testing-edit-pages.md` for edit pages, forms, save/update workflows, validation, and header actions
+- `testing-create-pages.md` for create pages, forms, record creation workflows, validation, and header actions
 - `testing-authorization-panel-access.md` for auth, guests, roles, policies, tenants, guards, panel access, redirects, and `canAccessPanel()` behaviour
 
 ## Non-negotiable Test File Structure

@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.26 - 2026-04-30
+
+### Changed
+- Added Filament testing references for create and edit pages, including page rendering, authorization, form submission, validation, and header action coverage.
+- Updated the Filament testing guide map so agents load create-page and edit-page references for the matching page workflows.
+
 ## 1.0.25 - 2026-04-30
 
 ### Changed
