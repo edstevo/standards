@@ -2,7 +2,13 @@
 
 Load this reference after `testing.md` when a task involves a Filament relation manager, owner-record table, relation table action, attach/create/edit/delete/detach action, relation manager search/filter, or relation manager validation.
 
-Relation manager tests must live beside the relation manager's mirrored test path. Do not put full relation manager coverage inside page tests.
+Relation manager tests must live beside the relation manager's mirrored test path. Do not put relation manager coverage inside page tests.
+
+This is non-negotiable. A relation manager class gets its own test file, matching its application directory structure exactly, the same way page classes do.
+
+Do not test relation manager tables, search, filters, columns, actions, validation, owner scoping, or page-context behaviour inside `View*Test.php` or `Edit*Test.php`, even under a dedicated `describe()` block. Put those tests in the relation manager's own test file.
+
+If another reference or older generated skill text says to keep relation manager coverage in a page test file, ignore it and follow this reference.
 
 Example application file:
 

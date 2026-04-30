@@ -19,9 +19,8 @@ Every view page test file should cover the applicable items below:
 - [ ] Users from the wrong role, guard, tenant, or panel are blocked or redirected correctly.
 - [ ] Key record details from infolists, headings, badges, or sections are visible.
 - [ ] Empty, missing, or optional record fields render intentionally when relevant.
-- [ ] Relation managers are present or absent as expected.
-- [ ] Relation managers are visible on the page when expected. Test relation manager tables, search, filters, actions, and validation in the mirrored relation manager test file.
-- [ ] Page, header, infolist, relation manager, and record actions are visible/hidden as expected.
+- [ ] If the resource has relation managers, their behaviour is tested in mirrored relation manager test files, not in this page test file.
+- [ ] Page, header, infolist, and record actions are visible/hidden as expected.
 - [ ] Actions can be executed and their domain effects are asserted.
 
 Load `testing-authorization-panel-access.md` when implementing the authorization bullets.
@@ -61,13 +60,6 @@ describe('Record Details', function () {
     });
 });
 
-describe('Relation Managers', function () {
-    it('has no relation managers', function () {
-        $component = Livewire::test(ViewCustomer::class, ['record' => $this->customer->getRouteKey()]);
-
-        expect($component->instance()->getRelationManagers())->toBeEmpty();
-    });
-});
 ```
 
 ## Record Details
@@ -79,54 +71,17 @@ Test the fields that make the view page useful to the user:
 
 Use direct `assertSee(...)` assertions for record detail text unless the project has a more specific Filament assertion for the rendered surface.
 
-## Relation Managers
+## Relation Manager Coverage
 
-When a view page exposes relation managers, the view page test should only prove that the relation manager is present or absent on the page.
+Do not test relation manager coverage in a view page test file under a dedicated `describe()` block.
 
-Full relation manager coverage belongs in the mirrored relation manager test file under `tests/Filament/.../RelationManagers`. Load `testing-relation-managers.md` for that structure.
+Do not write or follow this old rule: "When a view or edit page exposes relation managers, keep relation manager coverage in the page's test file under a dedicated `describe()` block." That rule is wrong for this codebase.
 
-Presence example:
-
-```php
-<?php
-
-namespace Tests\Filament\App\Resources\PurchaseOrders\Pages;
-
-use App\Filament\App\Resources\PurchaseOrders\Pages\ViewPurchaseOrder;
-use App\Filament\App\Resources\PurchaseOrders\RelationManagers\PurchaseOrderLinesRelationManager;
-use App\Models\User;
-use Livewire\Livewire;
-
-beforeEach(function () {
-    $this->actingAs(User::factory()->createQuietly());
-
-    $result = $this->scenario()->dropship()->build();
-    $this->purchaseOrder = $result->purchaseOrders->first();
-});
-
-describe('PurchaseOrderResource View Page', function () {
-    it('can render the view page', function () {
-        Livewire::test(ViewPurchaseOrder::class, ['record' => $this->purchaseOrder->getRouteKey()])
-            ->assertSuccessful();
-    });
-
-    it('displays purchase order details', function () {
-        Livewire::test(ViewPurchaseOrder::class, ['record' => $this->purchaseOrder->getRouteKey()])
-            ->assertSee($this->purchaseOrder->name);
-    });
-});
-
-describe('PurchaseOrderLinesRelationManager', function () {
-    it('displays purchase order lines relation manager', function () {
-        Livewire::test(ViewPurchaseOrder::class, ['record' => $this->purchaseOrder->getRouteKey()])
-            ->assertSeeLivewire(PurchaseOrderLinesRelationManager::class);
-    });
-});
-```
+Relation manager table records, search, filters, columns, create/edit/delete/attach/detach actions, validation, owner scoping, and view/edit page context coverage belong in the relation manager's own mirrored test file under `tests/Filament/.../RelationManagers`. Load `testing-relation-managers.md` for that structure.
 
 ## View Page Actions
 
-For page, header, infolist, relation manager, and record actions:
+For page, header, infolist, and record actions:
 - assert the action is visible or hidden for the relevant user and record state
 - execute the action through the Filament/Livewire testing API
 - assert the persisted domain outcome, dispatched event/job, notification, redirect, or integration fake result

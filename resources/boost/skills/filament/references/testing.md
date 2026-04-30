@@ -68,7 +68,7 @@ tests/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{RelationMana
 
 ## Default Pest Shape
 
-Use file-level `beforeEach()` for authentication and setup that every group in the file needs. Use nested `beforeEach()` inside `describe()` blocks for page-specific records, scenarios, relation managers, actions, or authorization states.
+Use file-level `beforeEach()` for authentication and setup that every group in the file needs. Use nested `beforeEach()` inside `describe()` blocks for page-specific records, scenarios, actions, authorization states, or relation-manager owner records when the file is a relation manager test.
 
 Split different testing focuses into their own `describe()` blocks. Do this across all Filament tests, including pages and relation managers. Use clear group names such as:
 - `Authorization`
@@ -78,9 +78,10 @@ Split different testing focuses into their own `describe()` blocks. Do this acro
 - `Validation`
 - `Header Actions`
 - `Record Actions`
-- the relation manager class name, when a page test only checks relation manager presence
 
 Do not leave a mixed file as one broad page-level `describe()` block when it covers authorization, table behaviour, form behaviour, validation, and actions. Grouping by focus keeps failures readable and makes each file easier to scan.
+
+Relation manager behaviour is never covered in a page test file. Each relation manager class has its own mirrored test file under `tests/Filament/.../RelationManagers`, and table interaction, search, filters, actions, validation, owner scoping, and page-context coverage all belong there.
 
 Prefer Livewire tests against the Filament page class:
 

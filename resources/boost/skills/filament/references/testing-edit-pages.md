@@ -138,3 +138,11 @@ When edit pages expose header actions:
 - test unauthorized or invalid action calls when the state or permission boundary matters
 
 Use the action testing examples in `testing.md` for form-backed and workflow/state actions.
+
+## Relation Manager Coverage
+
+Do not test relation manager coverage in an edit page test file under a dedicated `describe()` block.
+
+Do not write or follow this old rule: "When a view or edit page exposes relation managers, keep relation manager coverage in the page's test file under a dedicated `describe()` block." That rule is wrong for this codebase.
+
+Relation manager table records, search, filters, columns, create/edit/delete/attach/detach actions, validation, owner scoping, and view/edit page context coverage belong in the relation manager's own mirrored test file under `tests/Filament/.../RelationManagers`. Load `testing-relation-managers.md` for that structure.

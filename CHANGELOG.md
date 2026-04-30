@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.28 - 2026-04-30
+
+### Changed
+- Clarified Filament relation manager testing guidance so relation manager behaviour is never tested in page test files and must live in mirrored relation manager test files.
+- Updated view and edit page testing references to call out the old relation-manager-in-page-test rule as incorrect for this codebase.
+
 ## 1.0.27 - 2026-04-30
 
 ### Changed
