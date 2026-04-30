@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.24 - 2026-04-30
+
+### Changed
+- Rebuilt the Filament Boost skill as a general `filament` skill with focused references for UX, testing, list pages, view pages, authorization/panel access, and supplier/customer portals.
+- Added Filament testing guidance requiring page tests to mirror the app's Filament page structure under `tests/Filament`, with dedicated references for list pages, view pages, and authorization/panel access.
+- Added Filament UX guidance requiring concise action labels with useful icons, with longer explanatory copy moved to modals, descriptions, helper text, or confirmations.
+
 ## 1.0.23 - 2026-04-29
 
 ### Changed

@@ -1,11 +1,8 @@
----
-name: filament-supplier-portals
-description: Build Filament apps with two distinct user portals (for example admin and supplier/customer) using separate panels, a single login entrypoint, role-aware login/logout redirects, panel-protection middleware, and User::canAccessPanel authorization rules.
----
-
-# Filament Supplier Portals
+# Filament Supplier Portals Reference
 
 Implement multi-portal Filament apps with one primary panel (admin) and one secondary panel (supplier/customer), while keeping authentication and authorization predictable.
+
+Load this reference from the general `filament` skill when a task involves separate admin and supplier/customer portals, shared login flow, role-aware panel redirects, or panel access rules.
 
 ## Follow this architecture
 
@@ -57,7 +54,7 @@ class LoginResponse extends \Filament\Auth\Http\Responses\LoginResponse
 
             return redirect()->intended(Dashboard::getUrl(panel: 'supplier'));
         }
-        
+
         if ($user?->isAdmin()) {
             $url = Redirect::getIntendedUrl() ?? '';
 
@@ -66,7 +63,7 @@ class LoginResponse extends \Filament\Auth\Http\Responses\LoginResponse
             }
 
             return redirect()->intended(Dashboard::getUrl(panel: 'admin'));
-        }        
+        }
 
         return parent::toResponse($request);
     }
