@@ -131,7 +131,7 @@ Define relationships using reusable traits wherever practical instead of duplica
 - Keep relationship method names domain-natural (`shop()`, `fulfillmentLines()`) even when trait names are explicit.
 - If a relationship implies an intentionally fillable FK, use a trait initializer with `mergeFillable([...])`.
 - Prefer `app/Models/Relationships` for relationship traits unless the project already uses another established location.
-- For full conventions and implementation templates, activate `eloquent-relationship-traits`.
+- For full Laravel model, relationship, observer, and lifecycle workflow conventions, activate `laravel-coding-style`.
 
 @verbatim
 <code-snippet name="Relationship Trait Example" lang="php">
@@ -295,7 +295,7 @@ $reverseFulfillmentOrder->save();
 - In transition methods, guard first, mutate state, `saveQuietly()`, then `fireModelEvent(...)`.
 - Keep orchestration in observers (one handler per event), and chain follow-up state changes by calling the next transition method.
 - Observer handlers should dispatch events/jobs or call methods that trigger further explicit events (for example `closed` handler -> `markAsArchived()`), and run after commit.
-- For full event design, observable registration, transaction/after-commit semantics, and lifecycle testing patterns, activate `model-events-observers-workflows`.
+- For full Laravel model, relationship, observer, and lifecycle workflow conventions, activate `laravel-coding-style`.
 
 **Type Safety and IDE Support:**
 
@@ -436,7 +436,7 @@ it('validates required fields when registering', function () {
 - Fake integration boundaries in tests and assert what was dispatched/sent via the fake.
 - Reset database state between tests using `RefreshDatabase` trait
 - Functions or methods inside test classes/files are an absolute last resort; prefer reusable helpers in `tests/TestCase.php` or richer support classes in `tests/Support`
-- For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
+- For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `laravel-coding-style`.
 - For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-tdd` and load its `references/integration-fakes.md` guidance.
 
 **Database Testing:**

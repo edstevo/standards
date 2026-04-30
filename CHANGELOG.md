@@ -2,6 +2,18 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.30 - 2026-04-30
+
+### Added
+- Added a `laravel-coding-style` skill as the general entry point for preferred Laravel framework coding style, covering lean models, explicit domain methods, relationship traits, after-commit observers, jobs/actions, and lifecycle tests.
+- Split Laravel coding style details into focused references for relationship traits, model construction and persistence, model lifecycle events, after-commit observers, workflow jobs/actions, and model lifecycle testing.
+
+### Changed
+- Updated core guidelines and Laravel TDD references to activate `laravel-coding-style` for relationship, model lifecycle, observer, and event orchestration conventions.
+
+### Removed
+- Removed the standalone `eloquent-relationship-traits` and `model-events-observers-workflows` skill entry points now that their guidance is covered by `laravel-coding-style` references.
+
 ## 1.0.29 - 2026-04-30
 
 ### Added

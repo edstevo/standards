@@ -131,7 +131,7 @@ Use for:
 - state transitions
 - explicit model events
 
-For event/orchestration patterns, activate `model-events-observers-workflows`.
+For event/orchestration patterns, activate `laravel-coding-style`.
 
 ### Feature tests
 
