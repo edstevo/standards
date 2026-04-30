@@ -20,7 +20,7 @@ Every view page test file should cover the applicable items below:
 - [ ] Key record details from infolists, headings, badges, or sections are visible.
 - [ ] Empty, missing, or optional record fields render intentionally when relevant.
 - [ ] Relation managers are present or absent as expected.
-- [ ] Relation manager tables can load and show the expected related records.
+- [ ] Relation managers are visible on the page when expected. Test relation manager tables, search, filters, actions, and validation in the mirrored relation manager test file.
 - [ ] Page, header, infolist, relation manager, and record actions are visible/hidden as expected.
 - [ ] Actions can be executed and their domain effects are asserted.
 
@@ -42,22 +42,26 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('CustomerResource View Page', function () {
-    beforeEach(function () {
-        $this->customer = Customer::factory()->createQuietly();
-    });
+beforeEach(function () {
+    $this->customer = Customer::factory()->createQuietly();
+});
 
+describe('Rendering', function () {
     it('can render the view page', function () {
         Livewire::test(ViewCustomer::class, ['record' => $this->customer->getRouteKey()])
             ->assertSuccessful();
     });
+});
 
+describe('Record Details', function () {
     it('displays customer details', function () {
         Livewire::test(ViewCustomer::class, ['record' => $this->customer->getRouteKey()])
             ->assertSee($this->customer->fullName)
             ->assertSee($this->customer->email);
     });
+});
 
+describe('Relation Managers', function () {
     it('has no relation managers', function () {
         $component = Livewire::test(ViewCustomer::class, ['record' => $this->customer->getRouteKey()]);
 
@@ -77,9 +81,11 @@ Use direct `assertSee(...)` assertions for record detail text unless the project
 
 ## Relation Managers
 
-When a view or edit page exposes relation managers, keep relation manager coverage in the page's test file under a dedicated `describe()` block.
+When a view page exposes relation managers, the view page test should only prove that the relation manager is present or absent on the page.
 
-Test both presence on the page and the relation manager component itself:
+Full relation manager coverage belongs in the mirrored relation manager test file under `tests/Filament/.../RelationManagers`. Load `testing-relation-managers.md` for that structure.
+
+Presence example:
 
 ```php
 <?php
@@ -114,28 +120,6 @@ describe('PurchaseOrderLinesRelationManager', function () {
     it('displays purchase order lines relation manager', function () {
         Livewire::test(ViewPurchaseOrder::class, ['record' => $this->purchaseOrder->getRouteKey()])
             ->assertSeeLivewire(PurchaseOrderLinesRelationManager::class);
-    });
-
-    it('can load the relation manager', function () {
-        Livewire::test(PurchaseOrderLinesRelationManager::class, [
-            'ownerRecord' => $this->purchaseOrder,
-            'pageClass' => ViewPurchaseOrder::class,
-        ])
-            ->assertSuccessful()
-            ->assertCanSeeTableRecords($this->purchaseOrder->lines);
-    });
-
-    it('displays correct columns', function () {
-        Livewire::test(PurchaseOrderLinesRelationManager::class, [
-            'ownerRecord' => $this->purchaseOrder,
-            'pageClass' => ViewPurchaseOrder::class,
-        ])
-            ->assertCanRenderTableColumn('line')
-            ->assertCanRenderTableColumn('sku')
-            ->assertCanRenderTableColumn('spn')
-            ->assertCanRenderTableColumn('description')
-            ->assertCanRenderTableColumn('quantity')
-            ->assertCanRenderTableColumn('net_unit_value');
     });
 });
 ```

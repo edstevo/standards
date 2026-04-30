@@ -42,12 +42,14 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('CustomerResource Index Page', function () {
+describe('Rendering', function () {
     it('can render the index page', function () {
         Livewire::test(ListCustomers::class)
             ->assertSuccessful();
     });
+});
 
+describe('Table Interaction', function () {
     it('can list customers', function () {
         $customers = Customer::factory()->count(3)->createQuietly();
 
@@ -83,6 +85,8 @@ describe('CustomerResource Index Page', function () {
     });
 });
 ```
+
+Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
 
 ## Table Records
 

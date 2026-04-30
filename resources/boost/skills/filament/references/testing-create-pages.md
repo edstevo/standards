@@ -39,12 +39,14 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('CustomerResource Create Page', function () {
+describe('Rendering', function () {
     it('can render the create page', function () {
         Livewire::test(CreateCustomer::class)
             ->assertSuccessful();
     });
+});
 
+describe('Form Submission', function () {
     it('can create a customer', function () {
         Livewire::test(CreateCustomer::class)
             ->fillForm([
@@ -59,7 +61,9 @@ describe('CustomerResource Create Page', function () {
             ->where('email', 'ada@example.test')
             ->exists())->toBeTrue();
     });
+});
 
+describe('Validation', function () {
     it('validates required fields', function () {
         Livewire::test(CreateCustomer::class)
             ->fillForm([
@@ -74,6 +78,8 @@ describe('CustomerResource Create Page', function () {
     });
 });
 ```
+
+Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
 
 ## Creating Records
 

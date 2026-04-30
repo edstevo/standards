@@ -58,6 +58,7 @@ Use them deliberately:
 | Testing view pages | `references/testing-view-pages.md` | A Filament `View*` page, infolist, relation manager, record action, page action, or record-detail page is involved |
 | Testing edit pages | `references/testing-edit-pages.md` | A Filament `Edit*` page, edit form, save/update workflow, form validation, header action, or edit-page authorization is involved |
 | Testing create pages | `references/testing-create-pages.md` | A Filament `Create*` page, create form, record creation workflow, form validation, header action, or create-page authorization is involved |
+| Testing relation managers | `references/testing-relation-managers.md` | A Filament relation manager, owner-record table, relation table action, attach/create/edit/delete/detach action, relation manager search/filter, or relation manager validation is involved |
 | Testing authorization and panel access | `references/testing-authorization-panel-access.md` | Auth, guests, roles, policies, tenants, guards, panel access, cross-panel redirects, or `canAccessPanel()` behaviour are involved |
 | Multi-panel supplier/customer portals | `references/supplier-portals.md` | A Filament app needs separate admin and supplier/customer panels, one shared login entry point, role-aware redirects, panel middleware, or `User::canAccessPanel()` rules |
 
@@ -73,7 +74,7 @@ Default to:
 - table, form, and action assertions that target the Filament surface instead of only asserting database side effects
 - factories and named scenario setup that make the domain state obvious
 
-Load `references/testing.md` before designing, adding, or refactoring Filament page/resource tests. Then load the matching list page, view page, edit page, create page, or authorization reference for the specific behaviour under test.
+Load `references/testing.md` before designing, adding, or refactoring Filament page/resource tests. Then load the matching list page, view page, edit page, create page, relation manager, or authorization reference for the specific behaviour under test.
 
 ## Validation Checklist
 

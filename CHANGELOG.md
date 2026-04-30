@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.27 - 2026-04-30
+
+### Changed
+- Added Filament relation manager testing guidance with mirrored test paths, owner-record scoping, page-context coverage, table interaction, actions, and validation expectations.
+- Updated Filament testing guidance to split different test focuses into dedicated `describe()` blocks such as authorization, rendering, table interaction, form submission, validation, header actions, and record actions.
+- Adjusted view-page testing guidance so page tests verify relation manager presence while full relation manager behaviour is tested in the mirrored relation manager test file.
+
 ## 1.0.26 - 2026-04-30
 
 ### Changed

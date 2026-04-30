@@ -40,16 +40,18 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('CustomerResource Edit Page', function () {
-    beforeEach(function () {
-        $this->customer = Customer::factory()->createQuietly();
-    });
+beforeEach(function () {
+    $this->customer = Customer::factory()->createQuietly();
+});
 
+describe('Rendering', function () {
     it('can render the edit page', function () {
         Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
             ->assertSuccessful();
     });
+});
 
+describe('Form Submission', function () {
     it('can save the form without changes', function () {
         Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
             ->call('save')
@@ -71,7 +73,9 @@ describe('CustomerResource Edit Page', function () {
             ->last_name->toBe('Lovelace')
             ->email->toBe('ada@example.test');
     });
+});
 
+describe('Validation', function () {
     it('validates required fields', function () {
         Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
             ->fillForm([
@@ -86,6 +90,8 @@ describe('CustomerResource Edit Page', function () {
     });
 });
 ```
+
+Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
 
 ## Saving Without Changes
 
