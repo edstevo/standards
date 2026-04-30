@@ -94,14 +94,25 @@ app/
 
 ### Code Style & Best Practices
 
-**Single Responsibility:**
+**SOLID Design Principles:**
 
-Each class should have a single, well-defined responsibility. Prefer small, focused classes over large, monolithic ones.
+All production code and tests should follow SOLID. Use these principles as practical design pressure, not abstract ceremony.
+
+- Single Responsibility: each class, action, job, fake, and test should have one clear reason to change. Do not put authorization, persistence, formatting, integration calls, and domain decisions into one class.
+- Open/Closed: extend behaviour by adding focused implementations, strategies, policies, actions, events, or fakes rather than repeatedly modifying the same class with new conditionals.
+- Liskov Substitution: subclasses, contract implementations, and test fakes must be substitutable anywhere the abstraction is accepted. Keep return shapes, errors, and preconditions consistent with the contract.
+- Interface Segregation: prefer small role-based contracts over broad interfaces. Do not force implementations to add unused methods, null returns, or no-op behaviour just to satisfy a fat interface.
+- Dependency Inversion: high-level workflow and domain code should depend on abstractions it needs, not low-level vendors, SDKs, storage details, or concrete infrastructure. Bind concrete implementations at the Laravel container/service-provider boundary.
+- Do not create monolithic classes, catch-all services, bloated actions, or unreadable "manager" objects. Split distinct responsibilities into intention-revealing collaborators when a class mixes workflow, persistence, formatting, authorization, validation, or integration concerns.
+- Treat `instanceof`, class-name switches, and type-specific branching as design smells. When behaviour varies by type, prefer a common contract and polymorphic implementations unless there is a clear framework boundary reason not to.
+- For detailed SOLID guidance covering production and test code, activate `solid-design`.
 
 **Coding Style Defaults:**
 
 - Prefer domain-first, intention-revealing names over abstract or clever names.
-- Prefer explicit orchestration with small private methods so business flow is easy to audit.
+- Prefer explicit orchestration with small private methods for local steps and separate classes for distinct responsibilities, so business flow is easy to audit.
+- Keep code readable over clever. If a method or class cannot be understood by scanning names and the main control flow, improve the design before adding more behaviour.
+- Avoid vague class names like `Manager`, `Processor`, or `Service` unless the surrounding domain language makes the responsibility specific and obvious.
 - For non-trivial workflows, document local decision rules with short PHPDoc blocks and maintain process docs with flowcharts for system-level behavior.
 - Individual classes should be documented with clear intent, especially jobs and action classes.
 - Internal/private methods in non-trivial classes should include concise PHPDoc where needed and should align with the class-level intent documentation.
@@ -317,7 +328,7 @@ $reverseFulfillmentOrder->save();
 - Use fake-by-default for feature tests so real integration calls are not made accidentally.
 - Keep app code unaware of fake vs real implementations (resolve contracts or facades backed by contracts).
 - If a facade entrypoint exists for an integration boundary, it should support `fake()` and `restore()` for tests.
-- For full integration-fake implementation patterns and templates, activate `laravel-integration-fakes`.
+- For full integration-fake implementation patterns and templates, activate `laravel-tdd` and load its `references/integration-fakes.md` guidance.
 
 ### Configuration
 
@@ -414,6 +425,9 @@ it('validates required fields when registering', function () {
 - Treat workflow-oriented test files as documentation of the domain flow. Prefer local narrative readability over helper extraction when a helper would hide graph construction, scenario evolution, the business act, or the resulting domain graph
 - In time-sensitive tests, do not stack multiple `$this->travelTo(...)` calls during arrange with no behaviour between them; derive timestamp values separately, then travel immediately before each act or use the closure-based time helpers
 - Keep each test focused on one behavioural concern; split large workflow/E2E assertions by responsibility
+- Apply SOLID to tests as well as production code: each test should prove one responsibility, test fakes must obey the same contracts as real implementations, and reusable support should be small, role-based, and substitutable.
+- If a test needs repeated `instanceof` checks, broad mocks, local fixture helpers, or assertions that vary by concrete class, treat that as a signal to improve the production abstraction or test support design.
+- For detailed SOLID guidance covering production and test code, activate `solid-design`.
 - For end-to-end workflow tests, prefer asserting persisted outcomes and fake external boundaries rather than faking the internal domain work you are trying to prove
 - When the relevant domain relationships are already loaded, prefer assertions through that domain graph over detached query helpers unless the query itself is what the test needs to prove
 - If related tests share one builder configuration, it is acceptable to keep that builder visible in the describe group and evolve it locally rather than hiding follow-on scenarios behind detached helper functions
@@ -423,7 +437,7 @@ it('validates required fields when registering', function () {
 - Reset database state between tests using `RefreshDatabase` trait
 - Functions or methods inside test classes/files are an absolute last resort; prefer reusable helpers in `tests/TestCase.php` or richer support classes in `tests/Support`
 - For model lifecycle event testing strategy (isolated event tests and faked follow-up events), activate `model-events-observers-workflows`.
-- For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-integration-fakes`.
+- For full Laravel-native integration fake patterns (contracts, facade swapping, call recorders), activate `laravel-tdd` and load its `references/integration-fakes.md` guidance.
 
 **Database Testing:**
 

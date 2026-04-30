@@ -106,11 +106,27 @@ $this->get(CustomerResource::getUrl('index'))->assertOk();
 ## Test Data And Setup
 
 - Prefer factories and scenario builders over manual model graph assembly.
+- Do not add top-level Pest helper functions, private helper methods, or file-local fixture functions to hide setup.
+- If setup is short and only used once, keep it inline in the test or the nearest useful `beforeEach()`.
+- If setup repeats because it represents a data shape, prefer a named factory state, factory `configure()` hook, or explicit scenario builder.
+- If reusable setup or assertions are genuinely needed, put broad helpers in `tests/TestCase.php` and domain-specific support in `tests/Support`.
+- If tempted to extract a helper inside the test file, load `laravel-tdd/references/test-support.md` first and choose the proper support layer.
 - Use `createQuietly()` when model events are irrelevant to the page behaviour being tested.
 - Use normal `create()` when the test intentionally depends on model events, observers, or workflow side effects.
 - Authenticate in file-level `beforeEach()` only when every group needs a signed-in user.
 - Use role-specific helpers like `actAsAdminUser()` or `actAsCustomerUser()` when the project provides them.
 - Keep tenant, panel, and permission setup visible enough that the access rules can be understood from the test.
+
+Avoid this pattern in Filament tests:
+
+```php
+function editPageAccreditationWithUpload(array $attributes = []): Accreditation
+{
+    // Hidden fixture setup that belongs inline, in a factory state, or in tests/Support.
+}
+```
+
+If the setup is part of the story the test is proving, keep the important records and state changes visible in the test or scoped `beforeEach()`. If the setup is a reusable domain fixture, promote it to a named factory state or support class instead of creating a local function.
 
 ## Actions
 

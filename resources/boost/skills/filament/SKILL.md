@@ -73,8 +73,11 @@ Default to:
 - role- and permission-specific tests for authorization-sensitive UI
 - table, form, and action assertions that target the Filament surface instead of only asserting database side effects
 - factories and named scenario setup that make the domain state obvious
+- no file-local helper functions in Pest files for setup shortcuts; follow `laravel-tdd` test-support rules and use inline setup, factory states, scenario builders, `tests/TestCase.php`, or `tests/Support` instead
 
 Load `references/testing.md` before designing, adding, or refactoring Filament page/resource tests. Then load the matching list page, view page, edit page, create page, relation manager, or authorization reference for the specific behaviour under test.
+
+When Filament test setup starts repeating, also apply the `laravel-tdd` shared test support guidance before extracting anything. Do not add Pest file functions, private helper methods, or local fixture helpers merely to shorten a test.
 
 ## Validation Checklist
 

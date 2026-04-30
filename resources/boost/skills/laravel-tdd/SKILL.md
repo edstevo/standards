@@ -1,12 +1,12 @@
 ---
 name: laravel-tdd
-description: Apply Test-Driven Development to Laravel applications using Pest PHP. Use when implementing or refactoring Laravel features, bug fixes, model workflows, API endpoints, and tests. Write the failing test first, keep each test focused on one behavioural concern, split large workflow/E2E tests by responsibility, and prefer reusable test support in tests/TestCase.php or tests/Support over helper functions inside test classes.
+description: Apply Test-Driven Development to Laravel applications using Pest PHP. Use when implementing or refactoring Laravel features, bug fixes, model workflows, API endpoints, integration boundaries, Laravel-style integration fakes, and tests. Write the failing test first, keep each test focused on one behavioural concern, split large workflow/E2E tests by responsibility, fake external boundaries with first-class Laravel fakes, and prefer reusable test support in tests/TestCase.php or tests/Support over helper functions inside test classes.
 license: MIT
 metadata:
   domain: testing
   role: specialist
   scope: implementation
-  triggers: Laravel, Pest, PHPUnit, TDD, feature tests, model tests, workflow tests, E2E refactors
+  triggers: Laravel, Pest, PHPUnit, TDD, feature tests, model tests, workflow tests, E2E refactors, integration fakes, external integrations
 ---
 
 # Laravel TDD
@@ -19,6 +19,7 @@ Use this skill whenever you:
 - refactor tests
 - split oversized feature or E2E tests
 - need to decide whether something belongs in a unit, model, feature, or integration test
+- design or use Laravel-style integration fakes for external boundaries such as couriers, ERPs, payment gateways, or third-party APIs
 
 ## Core Workflow
 
@@ -53,6 +54,7 @@ Load detailed guidance based on context:
 | Scenario builders and graph determinism | `references/scenario-builders.md` | A builder or fixture helper constructs a model graph, the test depends on a specific graph shape, or a builder result object should be promoted into group-level setup |
 | Factory-driven test data | `references/factories.md` | A test is manually constructing models, associating related records by hand, mutating many fields inline, or a factory should be extended with `state()` / `configure()` instead |
 | Time travel and clock control | `references/time-testing.md` | A test uses `now()`, `$this->travel()`, `$this->travelTo()`, `freezeTime()`, or simulates several time-based workflow steps |
+| Laravel integration fakes | `references/integration-fakes.md` | A feature or workflow test crosses an external boundary, a contract/facade fake is needed, or you need fake-by-default integration testing with call assertions and seeded responses |
 
 ## The loop
 
@@ -145,7 +147,7 @@ Feature tests may still be narrow. "Feature" does not mean "assert every side ef
 
 Use fakes for external boundaries and assert what was sent or synced.
 
-For Laravel-native contract/facade fake patterns, activate `laravel-integration-fakes`.
+For Laravel-native contract/facade fake patterns, load `references/integration-fakes.md`.
 
 ## Core test design rules
 

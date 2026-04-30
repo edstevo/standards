@@ -2,6 +2,20 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.29 - 2026-04-30
+
+### Added
+- Added a standalone `solid-design` skill for applying SOLID principles to production code and tests, including guidance against monolithic classes, mixed responsibilities, concrete-type branching, fat interfaces, and poor dependency direction.
+- Added Laravel TDD integration-fake reference guidance for contract-backed fakes, facade swapping, seeded responses, call assertions, and fake-by-default feature tests.
+
+### Changed
+- Updated core coding and testing guidelines to make SOLID a general production-code and test-code standard, with explicit guidance against monolithic unreadable classes.
+- Updated Filament testing guidance to prohibit file-local Pest helper functions for setup shortcuts and require inline setup, factory states, scenario builders, `tests/TestCase.php`, or `tests/Support`.
+- Folded the standalone `laravel-integration-fakes` skill into `laravel-tdd`.
+
+### Removed
+- Removed the standalone `laravel-integration-fakes` skill now that its guidance lives under `laravel-tdd`.
+
 ## 1.0.28 - 2026-04-30
 
 ### Changed
