@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.25 - 2026-04-30
+
+### Changed
+- Updated the `execution-plans` skill so ExecPlans live only in the GitHub PR body, never local Markdown plan files.
+- Simplified ExecPlan structure by combining plan-of-work tracking into `Progress`, folding context and retrospective guidance into `Purpose / Big Picture`, and clarifying `Artifacts and Notes`.
+- Updated core delivery workflow guidance to keep PR plans and checklists in the PR body as the source of truth.
+
 ## 1.0.24 - 2026-04-30
 
 ### Changed

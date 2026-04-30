@@ -6,7 +6,7 @@ metadata:
   domain: workflow
   role: specialist
   scope: planning
-  triggers: ExecPlan, execution plan, PLANS.md, complex feature, significant refactor, design doc, milestone, living plan
+  triggers: ExecPlan, execution plan, pull request plan, PR plan, complex feature, significant refactor, design doc, milestone, living plan
 ---
 
 # Execution Plans
@@ -16,19 +16,21 @@ Use this skill when you:
 - implement work that should be driven by a living plan
 - revise, discuss, or execute an ExecPlan
 
-Follow the guidance below literally. The plan must stay self-contained and current enough that a novice can restart from only the ExecPlan and the working tree.
+Follow the guidance below literally. The plan must live in the GitHub pull request body and stay self-contained and current enough that a novice can restart from only the PR body and the working tree.
 
 ## Codex Execution Plans (ExecPlans)
 
-This document describes the requirements for an execution plan ("ExecPlan"), a design document that a coding agent can follow to deliver a working feature or system change. Treat the reader as a complete beginner to this repository: they have only the current working tree and the single ExecPlan file you provide. There is no memory of prior plans and no external context.
+This document describes the requirements for an execution plan ("ExecPlan"), a design document that a coding agent can follow to deliver a working feature or system change. Treat the reader as a complete beginner to this repository: they have only the current working tree and the ExecPlan in the GitHub pull request body. There is no memory of prior plans and no external context.
 
-## How to use ExecPlans and PLANS.md
+## How to use ExecPlans in PRs
 
-When authoring an executable specification (ExecPlan), follow PLANS.md to the letter. If it is not in your context, refresh your memory by reading the entire PLANS.md file. Be thorough in reading (and re-reading) source material to produce an accurate specification. When creating a spec, start from the skeleton and flesh it out as you do your research.
+Every ExecPlan must be written directly in the body of a GitHub pull request. Never create local Markdown plan files such as `PLANS.md`, `PLAN.md`, `.agent/PLANS.md`, `docs/plans/*.md`, or temporary local plan files. The PR body is the source of truth for the plan and progress.
 
-When implementing an executable specification (ExecPlan), do not prompt the user for "next steps"; simply proceed to the next milestone. Keep all sections up to date, add or split entries in the list at every stopping point to affirmatively state the progress made and next steps. Resolve ambiguities autonomously, and commit frequently.
+When authoring an executable specification (ExecPlan), open or update the GitHub PR and put the plan in the PR body. Be thorough in reading (and re-reading) source material to produce an accurate specification. When creating a spec, start from the skeleton and flesh it out as you do your research.
 
-When discussing an executable specification (ExecPlan), record decisions in a log in the spec for posterity; it should be unambiguously clear why any change to the specification was made. ExecPlans are living documents, and it should always be possible to restart from only the ExecPlan and no other work.
+When implementing an executable specification (ExecPlan), do not prompt the user for "next steps"; simply proceed to the next checklist item. Keep all sections up to date, add or split entries in the checklist at every stopping point to affirmatively state the progress made and next steps. Resolve ambiguities autonomously, and commit frequently.
+
+When discussing an executable specification (ExecPlan), record decisions in a log in the PR body for posterity; it should be unambiguously clear why any change to the specification was made. ExecPlans are living documents, and it should always be possible to restart from only the PR body and no other work.
 
 When researching a design with challenging requirements or significant unknowns, use milestones to implement proof of concepts, toy implementations, and similar validation steps that show whether the proposal is feasible. Read the source code of libraries by finding or acquiring them, research deeply, and include prototypes to guide a fuller implementation.
 
@@ -44,15 +46,13 @@ NON-NEGOTIABLE REQUIREMENTS:
 
 Purpose and intent come first. Begin by explaining, in a few sentences, why the work matters from a user's perspective: what someone can do after this change that they could not do before, and how to see it working. Then guide the reader through the exact steps to achieve that outcome, including what to edit, what to run, and what they should observe.
 
-The agent executing your plan can list files, read files, search, run the project, and run tests. It does not know any prior context and cannot infer what you meant from earlier milestones. Repeat any assumption you rely on. Do not point to external blogs or docs; if knowledge is required, embed it in the plan itself in your own words. If an ExecPlan builds upon a prior ExecPlan and that file is checked in, incorporate it by reference. If it is not, you must include all relevant context from that plan.
+The agent executing your plan can list files, read files, search, run the project, and run tests. It does not know any prior context and cannot infer what you meant from earlier milestones. Repeat any assumption you rely on. Do not point to external blogs or docs; if knowledge is required, embed it in the plan itself in your own words. If an ExecPlan builds upon a prior ExecPlan in another PR body, link that PR and summarize all relevant context directly in the current PR body.
 
 ## Formatting
 
-Format and envelope are simple and strict. Each ExecPlan must be one single fenced code block labeled as `md` that begins and ends with triple backticks. Do not nest additional triple-backtick code fences inside; when you need to show commands, transcripts, diffs, or code, present them as indented blocks within that single fence. Use indentation for clarity rather than code fences inside an ExecPlan to avoid prematurely closing the ExecPlan's code fence. Use two newlines after every heading, use # and ## and so on, and correct syntax for ordered and unordered lists.
+Format and envelope are simple and strict. Each ExecPlan must be normal GitHub Markdown written directly in the PR body. Do not wrap the entire ExecPlan in a fenced code block. Use headings, paragraphs, and checklists normally. Fenced code blocks are allowed only for commands, transcripts, diffs, payload examples, or code excerpts inside a section.
 
-When writing an ExecPlan to a Markdown (.md) file where the content of the file is only the single ExecPlan, you should omit the triple backticks.
-
-Write in plain prose. Prefer sentences over lists. Avoid checklists, tables, and long enumerations unless brevity would obscure meaning. Checklists are permitted only in the `Progress` section, where they are mandatory. Narrative sections must remain prose-first.
+Write in plain prose. Prefer sentences over lists. Avoid checklists, tables, and long enumerations unless brevity would obscure meaning. Checklists are permitted only in the `Progress` section, where they are mandatory and where the plan of work also lives. The finished `Progress` section should contain only checkbox items and, when useful, short subsection headings that group those items. Narrative sections must remain prose-first.
 
 ## Guidelines
 
@@ -64,25 +64,27 @@ Anchor the plan with observable outcomes. State what the user can do after imple
 
 Specify repository context explicitly. Name files with full repository-relative paths, name functions and modules precisely, and describe where new files should be created. If touching multiple areas, include a short orientation paragraph that explains how those parts fit together so a novice can navigate confidently. When running commands, show the working directory and exact command line. When outcomes depend on environment, state the assumptions and provide alternatives when reasonable.
 
-Be idempotent and safe. Write the steps so they can be run multiple times without causing damage or drift. If a step can fail halfway, include how to retry or adapt. If a migration or destructive operation is necessary, spell out backups or safe fallbacks. Prefer additive, testable changes that can be validated as you go.
-
 Validation is not optional. Include instructions to run tests, to start the system if applicable, and to observe it doing something useful. Describe comprehensive testing for any new features or capabilities. Include expected outputs and error messages so a novice can tell success from failure. Where possible, show how to prove that the change is effective beyond compilation (for example, through a small end-to-end scenario, a CLI invocation, or an HTTP request/response transcript). State the exact test commands appropriate to the project's toolchain and how to interpret their results.
 
-Capture evidence. When your steps produce terminal output, short diffs, or logs, include them inside the single fenced block as indented examples. Keep them concise and focused on what proves success. If you need to include a patch, prefer file-scoped diffs or small excerpts that a reader can recreate by following your instructions rather than pasting large blobs.
+Capture durable evidence in `Artifacts and Notes`. This section is for compact proof and handoff material that helps the next agent verify, resume, or understand the plan. Include only items that remain useful after the command has finished: short terminal transcripts, important test output, small diffs or file excerpts, generated file paths, sample payloads, screenshots or artifact paths, and brief notes explaining why those artifacts matter. Do not dump full logs, large patches, routine command output, or links to local-only files. Keep each entry concise and label what it proves.
 
 ## Milestones
 
-Milestones are narrative, not bureaucracy. If you break the work into milestones, introduce each with a brief paragraph that describes the scope, what will exist at the end of the milestone that did not exist before, the commands to run, and the acceptance you expect to observe. Keep it readable as a story: goal, work, result, proof. Progress and milestones are distinct: milestones tell the story, progress tracks granular work. Both must exist. Never abbreviate a milestone merely for the sake of brevity, do not leave out details that could be crucial to a future implementation.
+Milestones are narrative, not bureaucracy. If you break the work into milestones, introduce each with a brief paragraph that describes the scope, what will exist at the end of the milestone that did not exist before, the commands to run, and the acceptance you expect to observe. Keep it readable as a story: goal, work, result, proof. The `Progress` checklist is the authoritative plan of work and progress tracker; milestones tell the broader story when the plan is large enough to need them. Never abbreviate a milestone merely for the sake of brevity, do not leave out details that could be crucial to a future implementation.
 
 Each milestone must be independently verifiable and incrementally implement the overall goal of the execution plan.
 
 ## Living plans and design decisions
 
 * ExecPlans are living documents. As you make key design decisions, update the plan to record both the decision and the thinking behind it. Record all decisions in the `Decision Log` section.
-* ExecPlans must contain and maintain a `Progress` section, a `Surprises & Discoveries` section, a `Decision Log`, and an `Outcomes & Retrospective` section. These are not optional.
+* ExecPlans must contain and maintain a `Purpose / Big Picture` section, a `Progress` section, a `Surprises & Discoveries` section, and a `Decision Log`. These are not optional.
+* The `Purpose / Big Picture` section must combine the goal, user-visible outcome, repository context, orientation, and final retrospective. It should explain what someone gains, how to see it working, which files and concepts matter, and, once complete, what was achieved, what remains, and what was learned.
+* The `Progress` section is the combined plan of work and progress tracker. Break it into manageable chunks that can be implemented and verified independently. If multiple logical groups are required, add short subsection headings under `Progress` and put a checklist under each one.
+* Each `Progress` checklist item should name a concrete chunk of work, the relevant files or area when useful, and the verification signal for that chunk. Avoid vague items like "finish backend" or "fix tests"; prefer items like "Add the `InvoiceStatus` enum in `app/Definitions/InvoiceStatus.php` and verify the new enum test passes."
+* When an item is completed, keep it checked and add a timestamp plus a short outcome if the result is not obvious. When an item is partially completed, split it into a checked item for the completed work and an unchecked item for the remaining work.
 * When you discover optimizer behavior, performance tradeoffs, unexpected bugs, or inverse/unapply semantics that shaped your approach, capture those observations in the `Surprises & Discoveries` section with short evidence snippets (test output is ideal).
 * If you change course mid-implementation, document why in the `Decision Log` and reflect the implications in `Progress`. Plans are guides for the next contributor as much as checklists for you.
-* At completion of a major task or the full plan, write an `Outcomes & Retrospective` entry summarizing what was achieved, what remains, and lessons learned.
+* At completion of a major task or the full plan, update `Purpose / Big Picture` with the achieved outcome, remaining gaps, and lessons learned.
 
 ## Prototyping Milestones and Parallel Implementations
 
@@ -94,23 +96,32 @@ Prefer additive code changes followed by subtractions that keep tests passing. P
 
     # <Short, action-oriented description>
 
-    This ExecPlan is a living document. The sections `Progress`, `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work proceeds.
+    This ExecPlan is a living document. The sections `Purpose / Big Picture`, `Progress`, `Surprises & Discoveries`, and `Decision Log` must be kept up to date as work proceeds.
 
-    If PLANS.md file is checked into the repo, reference the path to that file here from the repository root and note that this document must be maintained in accordance with PLANS.md.
+    This ExecPlan lives in the GitHub PR body. Do not create a local `.md` plan file for this work.
 
     ## Purpose / Big Picture
 
-    Explain in a few sentences what someone gains after this change and how they can see it working. State the user-visible behavior you will enable.
+    Explain what someone gains after this change and how they can see it working. State the user-visible behavior you will enable. Describe the current state relevant to this task as if the reader knows nothing. Name the key files and modules by full path. Define any non-obvious term you will use. Do not refer to prior plans. At completion, summarize what was achieved, what remains, and any lessons learned.
 
     ## Progress
 
-    Use a list with checkboxes to summarize granular steps. Every stopping point must be documented here, even if it requires splitting a partially completed task into two ("done" vs. "remaining"). This section must always reflect the actual current state of the work.
+    ### Discovery
 
-    - [x] (2025-10-01 13:00Z) Example completed step.
-    - [ ] Example incomplete step.
-    - [ ] Example partially completed step (completed: X; remaining: Y).
+    - [x] (2025-10-01 13:00Z) Read `app/Filament/App/Resources/Customers/CustomerResource.php` and existing customer tests; confirmed current list and view page structure.
+    - [ ] Identify the exact user-visible behavior to add and record the expected verification in `Validation and Acceptance`.
 
-    Use timestamps to measure rates of progress.
+    ### Implementation
+
+    - [ ] Add the smallest behavior slice in `<path/to/file>` and verify it with `<targeted command or manual check>`.
+    - [ ] Add or update focused tests in `<path/to/test>` for the new behavior.
+    - [ ] Update related documentation, configuration, or interfaces touched by this change.
+
+    ### Validation
+
+    - [ ] Run the targeted test command: `<command>`.
+    - [ ] Run the broader relevant verification command or manual check: `<command or observation>`.
+    - [ ] Record useful output, generated files, screenshots, or diffs in `Artifacts and Notes`.
 
     ## Surprises & Discoveries
 
@@ -127,33 +138,21 @@ Prefer additive code changes followed by subtractions that keep tests passing. P
       Rationale: ...
       Date/Author: ...
 
-    ## Outcomes & Retrospective
-
-    Summarize outcomes, gaps, and lessons learned at major milestones or at completion. Compare the result against the original purpose.
-
-    ## Context and Orientation
-
-    Describe the current state relevant to this task as if the reader knows nothing. Name the key files and modules by full path. Define any non-obvious term you will use. Do not refer to prior plans.
-
-    ## Plan of Work
-
-    Describe, in prose, the sequence of edits and additions. For each edit, name the file and location (function, module) and what to insert or change. Keep it concrete and minimal.
-
-    ## Concrete Steps
-
-    State the exact commands to run and where to run them (working directory). When a command generates output, show a short expected transcript so the reader can compare. This section must be updated as work proceeds.
-
     ## Validation and Acceptance
 
     Describe how to start or exercise the system and what to observe. Phrase acceptance as behavior, with specific inputs and outputs. If tests are involved, say "run <project's test command> and expect <N> passed; the new test <name> fails before the change and passes after".
 
-    ## Idempotence and Recovery
-
-    If steps can be repeated safely, say so. If a step is risky, provide a safe retry or rollback path. Keep the environment clean after completion.
-
     ## Artifacts and Notes
 
-    Include the most important transcripts, diffs, or snippets as indented examples. Keep them concise and focused on what proves success.
+    Use this section for durable evidence and handoff notes, not for general progress tracking. Include only the artifacts that help someone verify, resume, or understand the work.
+
+    - Artifact: path/to/generated-or-important-file
+      Why it matters: ...
+
+    - Evidence: command output, short diff, payload sample, screenshot path, or log excerpt
+      What it proves: ...
+
+    Keep entries short. Do not paste full logs or large diffs. If there is nothing useful to record yet, write `No artifacts captured yet.`
 
     ## Interfaces and Dependencies
 
