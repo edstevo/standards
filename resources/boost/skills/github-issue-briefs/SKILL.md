@@ -19,8 +19,9 @@ Create or refine a concise, codebase-grounded brief inside GitHub.
 
 The final issue should:
 - be implementation-ready for pr-agent
-- use only the seven brief headings listed below
+- use only the eight brief headings listed below
 - explain current implementation and target behavior without repetition
+- include a Plan section with the single-stage or multi-stage implementation checklist
 - identify likely codebase impact as affected areas
 - separate confirmed impact from informed inference
 - ask only questions that materially affect implementation
@@ -74,6 +75,7 @@ Do not use this skill when:
     - Target behavior
     - Open questions
     - Scope
+    - Plan
     - Risks
     - Affected areas
     - Key tests
@@ -83,14 +85,26 @@ Do not use this skill when:
     - Target behavior: the desired behavior and acceptance criteria.
     - Open questions: only questions that affect scope, architecture, data shape, sequencing, or user-visible behavior.
     - Scope: included work, non-goals, dependencies, assumptions, and sequencing constraints.
+    - Plan: a concrete checklist of implementation work. Break the work into manageable chunks; use one checklist for single-stage work, or a staged checklist when the work should be split across multiple PRs.
     - Risks: edge cases, regressions, data concerns, operational risks, and uncertainty.
     - Affected areas: files, modules, models, routes, jobs, observers, integrations, database tables, and tests likely affected.
     - Key tests: the smallest confidence-building test set.
 
-7. Add the pr-agent stage block when needed.
+7. Write the Plan section.
 
-Use this exact format for staged work:
+The Plan section is always required.
 
+For single-stage work, use a normal checklist:
+
+```md
+- [ ] First concrete implementation step
+- [ ] Second concrete implementation step
+- [ ] Update or add the relevant tests
+```
+
+For multi-stage work, put the stage checklist in the Plan section and use this exact stage block format:
+
+```md
 <!-- pr-agent-stages:start -->
 - [ ] Stage 1: Short stage title
   Concrete implementation brief for stage 1.
@@ -98,9 +112,10 @@ Use this exact format for staged work:
 - [ ] Stage 2: Short stage title
   Concrete implementation brief for stage 2.
 <!-- pr-agent-stages:end -->
+```
 
 Rules for stages:
-- Put stages after the seven brief sections.
+- Put stages inside the Plan section.
 - Keep each stage brief scoped to one PR.
 - Do not include closing keywords that would close the parent issue from a stage PR.
 - Make dependencies explicit, for example "depends on Stage 1 being merged".
@@ -116,6 +131,7 @@ Only recommend that a human adds pr-agent-ready when:
 - scope and non-goals are explicit
 - affected areas are grounded in code inspection
 - key tests are listed
+- the Plan section breaks the implementation into clear checklist items
 - staged work, if present, has independently implementable stage briefs
 
 Before automation can begin:
@@ -135,5 +151,5 @@ If questions remain:
 - Do not invent detailed solutions where the code only supports a likely direction.
 - Keep wording tight enough to live directly in a GitHub issue.
 - Use short paragraphs or compact bullets.
-- Avoid duplicate sections beyond the seven required headings.
-- Do not add separate Problem statement, Desired outcome, Acceptance criteria, Edge cases, Codebase impact, Scope and non-goals, or Dependencies sections. Condense that content into the seven headings.
+- Avoid duplicate sections beyond the eight required headings.
+- Do not add separate Problem statement, Desired outcome, Acceptance criteria, Edge cases, Codebase impact, Implementation plan, Scope and non-goals, or Dependencies sections. Condense that content into the eight headings.

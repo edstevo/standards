@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.32 - 2026-05-03
+
+### Changed
+- Updated the `github-issue-briefs` skill so every brief includes a required `Plan` section with single-stage or multi-stage implementation checklists.
+
 ## 1.0.31 - 2026-05-03
 
 ### Changed
