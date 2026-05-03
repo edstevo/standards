@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.31 - 2026-05-03
+
+### Changed
+- Reduced the always-loaded Boost core guidelines so generated `AGENTS.md` files stay concise and delegate detailed guidance to skills.
+- Replaced the `github-issue-brief-refinement` skill with `github-issue-briefs` and updated core guidance to activate it only for creating or rewriting GitHub issue briefs.
+
 ## 1.0.30 - 2026-04-30
 
 ### Added
