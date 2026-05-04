@@ -2,21 +2,19 @@
 
 namespace EdStevo\Standards;
 
-use EdStevo\Standards\Commands\StandardsCommand;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class StandardsServiceProvider extends PackageServiceProvider
+class StandardsServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    public function register(): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('standards')
-            ->hasConfigFile();
+        $this->mergeConfigFrom(__DIR__.'/../config/protocol.php', 'protocol');
+    }
+
+    public function boot(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/protocol.php' => config_path('protocol.php'),
+        ], 'standards-config');
     }
 }

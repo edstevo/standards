@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.33 - 2026-05-04
+
+### Changed
+- Replaced the Spatie Laravel Package Tools service provider base class with a native Laravel service provider while preserving config merging and publishing.
+
 ## 1.0.32 - 2026-05-03
 
 ### Changed
