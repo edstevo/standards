@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.34 - 2026-05-05
+
+### Added
+- Added a `laravel-boost-app-knowledge` skill for creating and maintaining application-specific `.ai/skills` that preserve complex module, workflow, integration, LLM schema, and architecture knowledge for future agents.
+
 ## 1.0.33 - 2026-05-04
 
 ### Changed

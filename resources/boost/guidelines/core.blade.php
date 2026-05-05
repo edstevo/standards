@@ -99,6 +99,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Keep process doc "Key files" and "Key tests" sections aligned with code and coverage.
 - Add class-level documentation for non-obvious jobs, actions, observers, and workflow classes.
 - Add concise internal method documentation only where the behavior is not obvious from names and control flow.
+- When adding or refactoring complex modules, workflows, integrations, LLM interactions, or stable app conventions, activate `laravel-boost-app-knowledge` and update source app skills under `.ai/skills`, not compiled `.agents` output.
 - For full process documentation and flowchart conventions, activate `process-documentation-with-flowcharts`.
 
 ### Testing Baseline
