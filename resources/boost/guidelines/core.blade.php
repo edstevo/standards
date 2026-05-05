@@ -36,6 +36,14 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Resolve conflicts in this order: explicit user request, existing project conventions, relevant skill guidance, then these core defaults.
 - If no relevant skill is listed for the task, follow these core guidelines as the baseline.
 
+### Application Knowledge Skills
+
+- When adding or refactoring complex modules, workflows, integrations, LLM interactions, structured-output schemas, or stable app conventions, activate `laravel-boost-app-knowledge`.
+- Use it to preserve durable app knowledge future agents must not rediscover: responsibilities, boundaries, data flow, invariants, contracts, key files, key tests, gotchas, checklists, and validation loops.
+- Write source app skills under `.ai/skills/{skill-name}/SKILL.md`; never edit compiled `.agents` output.
+- Use `.ai/guidelines/*` only for short, cross-cutting rules every agent needs upfront.
+- If you discover something late that would have prevented mistakes, reduced rework, or sped up the task, add it to the relevant app skill in the same change.
+
 ### Project Structure
 
 - Organize controllers by domain or feature under `app/Http/Controllers/`.
@@ -99,7 +107,6 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Keep process doc "Key files" and "Key tests" sections aligned with code and coverage.
 - Add class-level documentation for non-obvious jobs, actions, observers, and workflow classes.
 - Add concise internal method documentation only where the behavior is not obvious from names and control flow.
-- When adding or refactoring complex modules, workflows, integrations, LLM interactions, or stable app conventions, activate `laravel-boost-app-knowledge` and update source app skills under `.ai/skills`, not compiled `.agents` output.
 - For full process documentation and flowchart conventions, activate `process-documentation-with-flowcharts`.
 
 ### Testing Baseline

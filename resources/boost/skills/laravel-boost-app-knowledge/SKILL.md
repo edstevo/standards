@@ -1,6 +1,6 @@
 ---
 name: laravel-boost-app-knowledge
-description: Create and maintain Laravel Boost application knowledge skills in `.ai/skills/*/SKILL.md` so future agents understand complex modules, workflows, integrations, LLM schemas, cross-file architecture, app conventions, key files, and key tests. Use when adding or refactoring stable application behavior that future agents must not rediscover.
+description: Create and maintain Laravel Boost application knowledge skills in `.ai/skills/*/SKILL.md` so future agents understand complex modules, workflows, integrations, LLM schemas, cross-file architecture, app conventions, key files, and key tests. Use when adding or refactoring stable application behavior that future agents must not rediscover, and when shaping app skill descriptions, progressive disclosure, scripts, workflow checklists, or validation loops.
 license: MIT
 metadata:
   domain: laravel
@@ -72,18 +72,80 @@ The files future agents should inspect first.
 
 How data enters, moves through, and leaves this module or workflow.
 
+## Workflow Checklist
+
+For multi-step workflows, a checklist of the required sequence and validation gates.
+
 ## Invariants And Contracts
 
 Rules that must stay true, including API contracts, event payloads, state transitions, LLM schemas, and guaranteed output shapes.
 
+## Gotchas
+
+Non-obvious facts that would prevent wrong assumptions, rework, or missed files.
+
 ## Testing And Verification
 
-The key tests, fakes, factories, scenario builders, commands, or manual checks that prove this area still works.
+The key tests, fakes, factories, scenario builders, commands, manual checks, and validation loop that prove this area still works.
 
 ## Update Triggers
 
 The code or behavior changes that require this skill to be updated.
 ```
+
+## Skill Quality Rules
+
+Spend context wisely:
+- Add what the agent would not know without the skill: app conventions, domain procedures, non-obvious edge cases, contracts, and exact tools.
+- Omit generic advice the agent already knows.
+- Keep each skill a coherent unit of work. Split unrelated modules into separate skills.
+- Aim for moderate detail: enough to avoid mistakes, not an exhaustive manual.
+
+Use progressive disclosure:
+- Keep `SKILL.md` focused on the instructions needed on every run.
+- Move long examples, schemas, API notes, or deep workflow detail into directly linked `references/` files.
+- Tell the agent exactly when to load each reference, for example: "Load `references/provider-webhooks.md` when changing webhook handling."
+
+Optimize descriptions:
+- Write the frontmatter `description` as "Use when..." guidance.
+- Focus on user intent and task triggers, not internal implementation.
+- Include adjacent trigger terms agents may see in real prompts.
+- Keep the description specific enough to avoid false activation and under 1024 characters.
+
+Use scripts when repeated logic should not be reinvented:
+- Add scripts under `scripts/` when agents repeatedly parse, validate, transform, inspect, or generate the same kind of artifact.
+- Document script usage in `SKILL.md` with relative paths from the skill root.
+- Scripts should be non-interactive, support `--help`, produce useful errors, prefer structured output, and be idempotent where possible.
+
+## Multi-step Workflow Checklists
+
+For multi-step workflows, include an explicit checklist. This is required when order, dependencies, or validation gates matter.
+
+```md
+## Workflow Checklist
+
+- [ ] Step 1: Inspect the source of truth.
+- [ ] Step 2: Update the implementation.
+- [ ] Step 3: Update related tests or fixtures.
+- [ ] Step 4: Run the validation command.
+- [ ] Step 5: Update this skill if new durable app knowledge was discovered.
+```
+
+Avoid vague checklist items such as "clean up" or "finish remaining work". Each item should be actionable and verifiable.
+
+## Validation Loops
+
+Every app skill for a fragile workflow should tell the agent how to validate and iterate:
+
+1. Make the change.
+2. Run the listed validation command, script, checklist, or targeted test.
+3. If validation fails, read the failure, fix the issue, and run validation again.
+4. Continue until validation passes or the blocker is explicit.
+
+For risky or batch operations, prefer plan-validate-execute:
+- create a plan or mapping
+- validate it against the source of truth
+- only then apply the change
 
 ## Writing Rules
 
@@ -115,5 +177,8 @@ If a schema or structured output contract exists, rely on that contract. Do not 
 - [ ] `.agents` is not edited directly.
 - [ ] The skill has trigger-rich frontmatter.
 - [ ] Purpose, usage, architecture, files, flow, contracts, tests, and update triggers are covered.
+- [ ] Multi-step workflows include an explicit checklist.
+- [ ] Fragile workflows include a validation loop.
+- [ ] Repeated parsing, validation, or generation logic is handled by a script when useful.
 - [ ] LLM schemas or integration contracts are documented when relevant.
 - [ ] The skill is updated in the same PR as the related code change.

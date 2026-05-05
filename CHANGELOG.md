@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.35 - 2026-05-05
+
+### Changed
+- Expanded `laravel-boost-app-knowledge` guidance for skill context budgets, progressive disclosure, descriptions, scripts, multi-step workflow checklists, validation loops, and core activation rules.
+
 ## 1.0.34 - 2026-05-05
 
 ### Added
