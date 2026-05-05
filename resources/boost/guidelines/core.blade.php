@@ -23,7 +23,7 @@ This file is compiled into `AGENTS.md`, so keep it as the always-loaded baseline
 - Keep that checklist updated in the PR body and check items off as the work develops so the PR remains the source of truth for progress.
 - When asked to create or rewrite a GitHub issue from a thin issue or rough brief, activate `github-issue-briefs` so the issue body is codebase-grounded before implementation begins.
 - When writing complex features or significant refactors, activate `execution-plans` and use an ExecPlan from design to implementation as described in that skill.
-- When workflow behavior changes, activate `process-documentation-with-flowcharts` and update both process docs and related class/method documentation in the same change.
+- When workflow behavior changes, activate `process-documentation` and update both process docs and related class/method documentation in the same change.
 
 ### Skills Activation
 
@@ -38,8 +38,10 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Application Knowledge Skills
 
-- When adding or refactoring complex modules, workflows, integrations, LLM interactions, structured-output schemas, or stable app conventions, activate `laravel-boost-app-knowledge`.
-- Use it to preserve durable app knowledge future agents must not rediscover: responsibilities, boundaries, data flow, invariants, contracts, key files, key tests, gotchas, checklists, and validation loops.
+- When adding or refactoring complex modules, workflows, integrations, LLM interactions, structured-output schemas, or stable app conventions, activate `app-knowledge-maintenance`.
+- Use it to decide which source docs, app skills, skill references, and implementation docblocks must change so future agents do not rediscover durable app knowledge.
+- Activate `process-documentation` for process docs, Mermaid flowcharts, key files/tests, and aligned class/method docblocks.
+- Activate `skill-maintenance` for focused `.ai/skills`, skill descriptions, triggers, references, scripts, checklists, and validation loops.
 - Write source app skills under `.ai/skills/{skill-name}/SKILL.md`; never edit compiled `.agents` output.
 - Prefer focused app skills per module, workflow, or integration. Avoid one monolithic app skill, and rename, rewrite, or split skills as the app evolves.
 - Use `.ai/guidelines/*` only for short, cross-cutting rules every agent needs upfront.
@@ -109,7 +111,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Keep process doc "Key files" and "Key tests" sections aligned with code and coverage.
 - Add class-level documentation for non-obvious jobs, actions, observers, and workflow classes.
 - Add concise internal method documentation only where the behavior is not obvious from names and control flow.
-- For full process documentation and flowchart conventions, activate `process-documentation-with-flowcharts`.
+- For full process documentation and flowchart conventions, activate `process-documentation`.
 
 ### Testing Baseline
 

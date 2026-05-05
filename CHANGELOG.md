@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.37 - 2026-05-05
+
+### Changed
+- Split the app knowledge documentation system into `app-knowledge-maintenance`, `process-documentation`, and `skill-maintenance` skills with focused responsibilities and progressive-disclosure references.
+- Replaced the old `laravel-boost-app-knowledge` and `process-documentation-with-flowcharts` entrypoints with leaner skills for post-change documentation review, process docs and flowcharts, and app skill maintenance.
+
 ## 1.0.36 - 2026-05-05
 
 ### Changed
