@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.36 - 2026-05-05
+
+### Changed
+- Clarified `laravel-boost-app-knowledge` guidance to avoid monolithic app skills, split skills by module/workflow/integration, evolve skill names and triggers over time, and review affected skills after complex work.
+
 ## 1.0.35 - 2026-05-05
 
 ### Changed

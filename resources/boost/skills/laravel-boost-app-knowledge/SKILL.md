@@ -1,6 +1,6 @@
 ---
 name: laravel-boost-app-knowledge
-description: Create and maintain Laravel Boost application knowledge skills in `.ai/skills/*/SKILL.md` so future agents understand complex modules, workflows, integrations, LLM schemas, cross-file architecture, app conventions, key files, and key tests. Use when adding or refactoring stable application behavior that future agents must not rediscover, and when shaping app skill descriptions, progressive disclosure, scripts, workflow checklists, or validation loops.
+description: Create and maintain Laravel Boost application knowledge skills in `.ai/skills/*/SKILL.md` so future agents understand complex modules, workflows, integrations, LLM schemas, cross-file architecture, app conventions, key files, and key tests. Use when adding or refactoring stable application behavior that future agents must not rediscover, and when shaping focused app skill descriptions, triggers, progressive disclosure, scripts, workflow checklists, validation loops, or splitting monolithic skills.
 license: MIT
 metadata:
   domain: laravel
@@ -23,6 +23,7 @@ Prefer app skills over always-loaded guidelines.
 
 - Use `.ai/skills/*/SKILL.md` for module, workflow, integration, LLM, and cross-file architecture knowledge that is needed only for matching work.
 - Use `.ai/guidelines/*` only for short, cross-cutting conventions every agent needs upfront.
+- Do not create one monolithic "app knowledge" skill. Break app knowledge down by module, workflow, integration, or other coherent responsibility.
 - Keep app knowledge close to the code change. Update the relevant skill in the same PR as the behavior change.
 
 ## When To Create Or Update
@@ -98,8 +99,15 @@ The code or behavior changes that require this skill to be updated.
 Spend context wisely:
 - Add what the agent would not know without the skill: app conventions, domain procedures, non-obvious edge cases, contracts, and exact tools.
 - Omit generic advice the agent already knows.
-- Keep each skill a coherent unit of work. Split unrelated modules into separate skills.
+- Keep each skill a coherent unit of work. Split unrelated modules, workflows, or integrations into separate skills.
 - Aim for moderate detail: enough to avoid mistakes, not an exhaustive manual.
+
+Evolve skill boundaries:
+- Treat skill names, descriptions, triggers, and sections as maintainable app knowledge, not permanent scaffolding.
+- Rename a skill when the old name no longer matches the module or workflow.
+- Rewrite the description and triggers when agents would miss the skill or activate it for the wrong work.
+- Split an old skill into multiple focused skills when it starts covering unrelated modules, workflows, integrations, or conventions.
+- Remove or redirect obsolete skills when the app no longer has the behavior they describe.
 
 Use progressive disclosure:
 - Keep `SKILL.md` focused on the instructions needed on every run.
@@ -156,6 +164,7 @@ For risky or batch operations, prefer plan-validate-execute:
 - Link concepts to key files and tests, but avoid long inventories that become stale.
 - Remove or revise obsolete guidance when behavior changes.
 - If you discover app knowledge late in a task that would have prevented problems or made the work faster, add it to the relevant app skill for the next agent.
+- After completing complex work, review the affected app skills while the implementation context is fresh. Update, rename, split, or prune skills so future agents see the current module and workflow shape.
 - If the skill grows large, split stable detail into directly linked `references/` files under the skill.
 
 ## LLM And Structured Output Rules
@@ -176,6 +185,9 @@ If a schema or structured output contract exists, rely on that contract. Do not 
 - [ ] App skill source lives under `.ai/skills/{skill-name}/SKILL.md`.
 - [ ] `.agents` is not edited directly.
 - [ ] The skill has trigger-rich frontmatter.
+- [ ] The skill is scoped to a coherent module, workflow, integration, or responsibility instead of becoming a monolith.
+- [ ] Skill names, descriptions, triggers, and boundaries still match the current app; old skills are renamed, rewritten, or split when needed.
+- [ ] Affected app skills were reviewed after complex work was completed.
 - [ ] Purpose, usage, architecture, files, flow, contracts, tests, and update triggers are covered.
 - [ ] Multi-step workflows include an explicit checklist.
 - [ ] Fragile workflows include a validation loop.

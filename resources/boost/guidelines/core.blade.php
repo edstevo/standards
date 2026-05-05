@@ -41,8 +41,10 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - When adding or refactoring complex modules, workflows, integrations, LLM interactions, structured-output schemas, or stable app conventions, activate `laravel-boost-app-knowledge`.
 - Use it to preserve durable app knowledge future agents must not rediscover: responsibilities, boundaries, data flow, invariants, contracts, key files, key tests, gotchas, checklists, and validation loops.
 - Write source app skills under `.ai/skills/{skill-name}/SKILL.md`; never edit compiled `.agents` output.
+- Prefer focused app skills per module, workflow, or integration. Avoid one monolithic app skill, and rename, rewrite, or split skills as the app evolves.
 - Use `.ai/guidelines/*` only for short, cross-cutting rules every agent needs upfront.
 - If you discover something late that would have prevented mistakes, reduced rework, or sped up the task, add it to the relevant app skill in the same change.
+- After completing complex work, review affected app skills and update, rename, split, or prune them while the context is fresh.
 
 ### Project Structure
 
