@@ -14,9 +14,11 @@ After loading this file, also load the focused reference that matches the page o
 
 ## Non-negotiable Test File Structure
 
-Every Filament page and relation manager must have its own Pest test file. The test path must mirror the application path under `tests/Filament`.
+Filament tests must live in the mirrored application path under `tests/Filament`, but coverage should be split into small scenario-focused files instead of one large page or resource suite.
 
 Do not combine page or relation manager coverage into a generic resource test file. Do not move Filament tests into another tree because it looks neater. Pest and IDE test-location guessing depend on the mirrored structure.
+
+Use a narrow page or relation-manager smoke file only when it proves the page/component itself renders or mounts. Put meaningful user behaviours, actions, authorization scenarios, table interactions, validation paths, and workflow outcomes in descriptive scenario files beside the page or relation manager.
 
 Example application files:
 
@@ -29,12 +31,13 @@ app/Filament/App/Resources/Customers/Tables/CustomersTable.php
 app/Filament/App/Resources/Customers/CustomerResource.php
 ```
 
-Required test files:
+Example scenario-focused test files:
 
 ```text
-tests/Filament/App/Resources/Customers/Pages/ListCustomersTest.php
-tests/Filament/App/Resources/Customers/Pages/ViewCustomerTest.php
-tests/Filament/App/Resources/Customers/RelationManagers/CustomerOrdersRelationManagerTest.php
+tests/Filament/App/Resources/Customers/Pages/ListCustomersPageRendersTest.php
+tests/Filament/App/Resources/Customers/Pages/CustomerListCanBeSearchedByEmailTest.php
+tests/Filament/App/Resources/Customers/Pages/AdminCanViewCustomerDetailsTest.php
+tests/Filament/App/Resources/Customers/RelationManagers/CustomerOrdersRelationManagerListsOnlyCustomerOrdersTest.php
 ```
 
 Namespace Pest files to match the test path:
@@ -45,32 +48,39 @@ Namespace Pest files to match the test path:
 namespace Tests\Filament\App\Resources\Customers\Pages;
 ```
 
-Use this mapping for every resource page:
+Use this mapping for resource page scenarios:
 
 ```text
 app/Filament/{Panel}/Resources/{ResourcePlural}/Pages/{Page}.php
-tests/Filament/{Panel}/Resources/{ResourcePlural}/Pages/{Page}Test.php
+tests/Filament/{Panel}/Resources/{ResourcePlural}/Pages/{Scenario}Test.php
 ```
 
-Use this mapping for standalone panel pages:
+Use this mapping for standalone panel page scenarios:
 
 ```text
 app/Filament/{Panel}/Pages/{Page}.php
-tests/Filament/{Panel}/Pages/{Page}Test.php
+tests/Filament/{Panel}/Pages/{Scenario}Test.php
 ```
 
-Use this mapping for relation managers:
+Use this mapping for relation manager scenarios:
 
 ```text
 app/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{RelationManager}.php
-tests/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{RelationManager}Test.php
+tests/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{Scenario}Test.php
 ```
 
 ## Default Pest Shape
 
-Use file-level `beforeEach()` for authentication and setup that every group in the file needs. Use nested `beforeEach()` inside `describe()` blocks for page-specific records, scenarios, actions, authorization states, or relation-manager owner records when the file is a relation manager test.
+Use file-level `beforeEach()` for authentication and setup that every assertion in the scenario file needs. Use nested `beforeEach()` inside `describe()` blocks for tightly related variants of the same scenario.
 
-Split different testing focuses into their own `describe()` blocks. Do this across all Filament tests, including pages and relation managers. Use clear group names such as:
+Split independent testing focuses into their own files. Use clear scenario names such as:
+- `AdminCanAccessCustomerListTest.php`
+- `GuestIsRedirectedFromCustomerListTest.php`
+- `CustomerListCanBeSearchedByEmailTest.php`
+- `CustomerCanBeCreatedFromFilamentTest.php`
+- `CustomerEmailValidationIsEnforcedTest.php`
+
+Inside one scenario file, `describe()` blocks may organize tightly related concerns such as:
 - `Authorization`
 - `Rendering`
 - `Table Interaction`
@@ -79,9 +89,9 @@ Split different testing focuses into their own `describe()` blocks. Do this acro
 - `Header Actions`
 - `Record Actions`
 
-Do not leave a mixed file as one broad page-level `describe()` block when it covers authorization, table behaviour, form behaviour, validation, and actions. Grouping by focus keeps failures readable and makes each file easier to scan.
+Do not leave a mixed file as one broad page-level `describe()` block when it covers authorization, table behaviour, form behaviour, validation, and actions. The page/resource folder is the grouping; the file should identify the scenario.
 
-Relation manager behaviour is never covered in a page test file. Each relation manager class has its own mirrored test file under `tests/Filament/.../RelationManagers`, and table interaction, search, filters, actions, validation, owner scoping, and page-context coverage all belong there.
+Relation manager behaviour is never covered in a page test file. Relation manager scenario files live under the mirrored `tests/Filament/.../RelationManagers` path, and table interaction, search, filters, actions, validation, owner scoping, and page-context coverage all belong there.
 
 Prefer Livewire tests against the Filament page class:
 

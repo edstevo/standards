@@ -2,16 +2,16 @@
 
 Load this reference after `testing.md` when a task involves a Filament `Create*` page, create form, record creation workflow, form validation, header action, or create-page authorization.
 
-Create page tests must live beside the page's mirrored test path. For example:
+Create page scenario tests must live beside the page's mirrored test path. For example:
 
 ```text
 app/Filament/App/Resources/Customers/Pages/CreateCustomer.php
-tests/Filament/App/Resources/Customers/Pages/CreateCustomerTest.php
+tests/Filament/App/Resources/Customers/Pages/CustomerCanBeCreatedFromFilamentTest.php
 ```
 
 ## Checklist
 
-Every create page test file should cover the applicable items below:
+Split create page coverage across scenario-focused files for the applicable behaviours below. Each file should normally cover one bullet or one coherent user scenario:
 
 - [ ] The page renders successfully. Create pages do not receive a record route key.
 - [ ] Authenticated users who should access the page can reach the resource URL.
@@ -24,6 +24,29 @@ Every create page test file should cover the applicable items below:
 Load `testing-authorization-panel-access.md` when implementing the authorization bullets.
 
 ## Default Structure
+
+Use separate files for separate behaviours. A render smoke test can be tiny:
+
+```php
+<?php
+
+namespace Tests\Filament\App\Resources\Customers\Pages;
+
+use App\Filament\App\Resources\Customers\Pages\CreateCustomer;
+use App\Models\User;
+use Livewire\Livewire;
+
+beforeEach(function () {
+    $this->actingAs(User::factory()->createQuietly());
+});
+
+it('can render the create customer page', function () {
+    Livewire::test(CreateCustomer::class)
+        ->assertSuccessful();
+});
+```
+
+Put record creation in a file named like `CustomerCanBeCreatedFromFilamentTest.php`:
 
 ```php
 <?php
@@ -39,47 +62,23 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('Rendering', function () {
-    it('can render the create page', function () {
-        Livewire::test(CreateCustomer::class)
-            ->assertSuccessful();
-    });
-});
+it('can create a customer', function () {
+    Livewire::test(CreateCustomer::class)
+        ->fillForm([
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'email' => 'ada@example.test',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-describe('Form Submission', function () {
-    it('can create a customer', function () {
-        Livewire::test(CreateCustomer::class)
-            ->fillForm([
-                'first_name' => 'Ada',
-                'last_name' => 'Lovelace',
-                'email' => 'ada@example.test',
-            ])
-            ->call('create')
-            ->assertHasNoFormErrors();
-
-        expect(Customer::query()
-            ->where('email', 'ada@example.test')
-            ->exists())->toBeTrue();
-    });
-});
-
-describe('Validation', function () {
-    it('validates required fields', function () {
-        Livewire::test(CreateCustomer::class)
-            ->fillForm([
-                'first_name' => null,
-                'email' => null,
-            ])
-            ->call('create')
-            ->assertHasFormErrors([
-                'first_name' => 'required',
-                'email' => 'required',
-            ]);
-    });
+    expect(Customer::query()
+        ->where('email', 'ada@example.test')
+        ->exists())->toBeTrue();
 });
 ```
 
-Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
+Add separate scenario files for authorization, validation paths, and header actions when those behaviours matter.
 
 ## Creating Records
 

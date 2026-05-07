@@ -6,7 +6,9 @@ Authorization deserves explicit tests. Do not assume that navigation visibility 
 
 ## Checklist
 
-For each protected Filament page, test the applicable behaviours:
+For each protected Filament page, split independent authorization journeys into descriptive scenario files. A small allowed/denied matrix may live in one file only when every case is the same route, action, or policy scenario.
+
+Test the applicable behaviours:
 
 - [ ] The allowed user can access the resource URL.
 - [ ] A guest gets the expected unauthenticated response.
@@ -26,7 +28,7 @@ Load `supplier-portals.md` as well when testing shared-login multi-panel supplie
 
 Use HTTP tests against resource URLs for page access, guest redirects, and panel redirects.
 
-Example:
+Example for a small same-route authorization matrix:
 
 ```php
 <?php

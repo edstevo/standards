@@ -53,7 +53,7 @@ Load detailed guidance based on the task:
 - Keep non-trivial persistence flows explicit enough that the graph and relationships are readable.
 - Keep observers as a reaction layer, not a place for domain decisions or integration IO.
 - Keep jobs/actions responsible for work that can be slow, retryable, or reused.
-- Keep tests aligned with the same boundaries: model transition tests prove one transition; observer or workflow tests prove follow-up orchestration separately.
+- Keep tests aligned with the same boundaries: scenario-focused model transition files prove one transition; observer or workflow files prove follow-up orchestration separately.
 
 ## Checklist
 
@@ -62,4 +62,4 @@ Load detailed guidance based on the task:
 - [ ] Models expose expressive methods instead of leaking state mutation across callers.
 - [ ] Observers dispatch work after commit and do not call external integrations directly.
 - [ ] Jobs/actions own heavy work and external IO.
-- [ ] Tests cover lifecycle behaviour in focused layers instead of one broad workflow assertion.
+- [ ] Tests cover lifecycle behaviour in focused scenario files and layers instead of one broad workflow assertion.

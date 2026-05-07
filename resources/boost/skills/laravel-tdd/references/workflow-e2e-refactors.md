@@ -2,7 +2,7 @@
 
 This is a focused reference for one topic: refactoring oversized workflow and E2E tests.
 
-Load it when the main `SKILL.md` points here or when one test is trying to prove several unrelated outcomes at once.
+Load it when the main `SKILL.md` points here, when one test is trying to prove several unrelated outcomes at once, or when one file is collecting independent workflow, integration, or E2E journeys.
 
 The examples in this file are illustrative patterns, not project-specific rules. Adapt the split to the workflow in front of you.
 
@@ -23,9 +23,9 @@ The examples in this file are illustrative patterns, not project-specific rules.
 
 ## Refactor objective
 
-A single test should validate one behavioural concern wherever possible.
+A single test should validate one behavioural concern wherever possible, and a test file should represent one meaningful scenario wherever reasonably feasible.
 
-Keep the scenario setup if it is genuinely shared, but split the assertions by responsibility so each failing test points at one broken behaviour.
+Keep the scenario setup if it is genuinely shared inside that scenario, but split independent behaviours and journeys into separate descriptive files. Within one scenario file, split assertions by responsibility so each failing test points at one broken behaviour.
 
 ## Smells that a workflow test is too large
 
@@ -34,6 +34,8 @@ Keep the scenario setup if it is genuinely shared, but split the assertions by r
 - Helper methods exist only to hide assertion bulk
 - A single failure forces the reader to inspect many unrelated assertions
 - The test name describes a whole saga instead of one outcome
+- The file name is broad, such as `CheckoutTest`, `OrderFlowTest`, `FulfillmentTest`, or `E2ETest`
+- New tests keep being added to the file because they share a module rather than a scenario
 - Small changes to one side effect break tests that are supposedly about something else
 
 ## How to choose split boundaries
@@ -53,28 +55,29 @@ If two assertions answer different questions, they usually belong in different t
 ## Refactor pattern
 
 1. Identify the single act that drives the workflow.
-2. Keep or extract shared setup for that workflow.
+2. Give the meaningful scenario its own descriptive test file.
 3. Execute the same act in separate tests.
 4. Assert one responsibility per test.
-5. Move truly different workflow branches into separate files or top-level `describe()` groups.
-6. Add defensive and idempotency cases separately.
+5. Move truly different workflow branches into separate scenario files.
+6. Use top-level `describe()` groups only for tightly related concerns inside that scenario.
+7. Add defensive and idempotency cases separately unless they are part of the same coherent scenario.
 
 ## Workflow group structure
 
-When a workflow file grows beyond a couple of tests, a good default structure is:
+When workflow coverage grows beyond a couple of tests, a good default structure is:
 
-- positive path tests
-- defensive or idempotent tests
-- a separate file, or at least a separate top-level `describe()`, for materially different workflow variants
+- a positive-path scenario file
+- defensive or idempotent scenario files
+- separate files for materially different workflow variants
 
-This keeps the file readable and makes failures easier to interpret.
+This keeps each file readable and makes failures easier to interpret.
 
 Do not mix:
 - the normal success path
 - retry, reopen, override, or admin-only variants
 - defensive no-op or duplicate-call rules
 
-unless the workflow is genuinely small enough that separation would add noise.
+unless they are genuinely part of one coherent scenario.
 
 ## Shared post-act setup
 
@@ -88,7 +91,7 @@ Use this when:
 Rules:
 - keep the act visible in the group's `beforeEach()`; do not hide it in a file-local helper
 - keep the assertions split by concern even when the act is shared
-- if some tests need a meaningfully different act, give them a separate nested group
+- if some tests need a meaningfully different act, give them a separate file unless the variant is tightly bound to the same scenario
 
 The point is to reduce repetition without hiding the workflow.
 
@@ -132,7 +135,7 @@ These tests should make the guard or idempotency rule explicit in the name.
 
 ## Alternate workflow scenarios
 
-If the code supports materially different workflow variants, separate them rather than mixing them into one broad file.
+If the code supports materially different workflow variants, separate them into scenario files rather than mixing them into one broad file.
 
 Examples:
 - standard flow vs retry flow
@@ -140,21 +143,24 @@ Examples:
 - automatic path vs manual-admin path
 - success path vs partial-resolution path
 
-If the setup, lifecycle, or expected outputs differ meaningfully, give that branch its own file or its own top-level `describe()` section.
+If the setup, lifecycle, or expected outputs differ meaningfully, give that branch its own file. Use top-level `describe()` sections only when the variants are tightly related parts of one scenario.
 
 ## Practical naming guidance
 
 Prefer names like:
+- `CustomerCanCheckoutWithCardTest.php`
+- `FailedWarehouseRouteCanBeReroutedTest.php`
+- `SupplierDropshipOrderCanBeRoutedTest.php`
 - `it('closes the record when the workflow completes successfully')`
 - `it('creates the expected credit artefact when the workflow completes')`
 - `it('records workflow timeline events')`
 - `it('does not create duplicate side effects when the action is called twice')`
 
-Avoid names that describe the whole saga in one sentence.
+Avoid broad file names like `CheckoutTest.php`, `FulfillmentTest.php`, `OrderFlowTest.php`, or `E2ETest.php`.
 
 ## Example split
 
-For a broad workflow test around a single action such as `completeWorkflow()`, split it into focused tests like these:
+For a broad workflow test around a single scenario such as a completed workflow, split it into a descriptive file with focused tests like these:
 
 ### 1. State transition
 
@@ -203,6 +209,8 @@ Cover only integration work:
 This test should assert only the external side effect boundary.
 
 ### 5. Defensive behaviour
+
+If this is an independent guard or idempotency scenario, put it in its own descriptive file.
 
 Cover only the no-duplicate / guard rule:
 - repeated calls do not duplicate side effects

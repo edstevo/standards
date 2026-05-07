@@ -136,12 +136,13 @@ Avoid:
 
 SOLID should be visible in the tests:
 - test names describe behaviour, not implementation calls
+- test file names describe one meaningful scenario, feature, behaviour, or user journey
 - each test has one reason to fail
 - tests use real domain flows where possible and fake only external boundaries
 - fakes obey the same contracts and response shapes as real implementations
 - setup stays visible when it explains the behaviour
 - repeated setup becomes factory states, scenario builders, `tests/TestCase.php`, or `tests/Support`, not file-local helper functions
-- broad tests are split by responsibility instead of adding assertion helpers that hide several behaviours
+- broad tests are split by responsibility, and broad test files are split by scenario, instead of adding assertion helpers that hide several behaviours
 
 When a test is awkward, check the design before adding test-only shortcuts:
 - too much setup may mean the production class owns too many responsibilities
@@ -154,6 +155,7 @@ When a test is awkward, check the design before adding test-only shortcuts:
 
 Treat these as prompts to refactor:
 - class has multiple unrelated reasons to change
+- test file has multiple unrelated user journeys or scenarios
 - new variants require editing the same central conditional
 - consumer branches based on concrete class after accepting an interface
 - implementation returns a different type or shape than the contract implies

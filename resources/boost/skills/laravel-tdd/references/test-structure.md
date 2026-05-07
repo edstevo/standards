@@ -1,12 +1,13 @@
-# Test Structure with Describe Blocks
+# Scenario Test File Structure
 
-This is a focused reference for one topic: organising Pest tests with `describe()` blocks and scoped `beforeEach()` setup.
+This is a focused reference for one topic: organising scenario-focused Pest test files with `describe()` blocks and scoped `beforeEach()` setup.
 
-Load it when the main `SKILL.md` points here or when a file contains several related tests for the same class, method, or workflow.
+Load it when the main `SKILL.md` points here, when a scenario file needs internal structure, or when a broad test file should be split into smaller files.
 
 ## Contents
 
 - Core rule
+- File naming
 - Benefits of nested describe blocks
 - How to use `beforeEach()`
 - When to use nested describes
@@ -15,11 +16,29 @@ Load it when the main `SKILL.md` points here or when a file contains several rel
 
 ## Core rule
 
-When blocks of tests exercise similar functionality or the same class, group them with `describe()` blocks.
+Prefer one test file per meaningful behaviour, feature, scenario, or user journey.
 
-Use nested `describe()` blocks to separate meaningful sub-behaviours, especially when each group needs its own setup or mental context.
+A test file should be understandable from its filename alone. The reader should be able to identify the behaviour being tested without opening a large mixed suite.
 
-Do not leave a long file as a flat sequence of tests if the tests naturally cluster by behaviour.
+Use `describe()` blocks to organize tightly related assertions or variants inside one coherent scenario. Do not use nested groups as a way to keep unrelated journeys in the same file.
+
+If a file starts covering independent behaviours, split it into separate scenario files.
+
+## File naming
+
+Prefer names like:
+- `CustomerCanCheckoutWithCardTest.php`
+- `CustomerCannotCheckoutWithOutOfStockItemTest.php`
+- `AdminCanApproveReturnRequestTest.php`
+- `SupplierDropshipOrderCanBeRoutedTest.php`
+- `FailedWarehouseRouteCanBeReroutedTest.php`
+
+Avoid broad names like:
+- `CheckoutTest.php`
+- `ReturnsTest.php`
+- `FulfillmentTest.php`
+- `OrderFlowTest.php`
+- `E2ETest.php`
 
 ## Benefits of nested describe blocks
 
@@ -28,6 +47,8 @@ Do not leave a long file as a flat sequence of tests if the tests naturally clus
 - Improved test reports: output is more readable because it reflects the behavioural hierarchy
 - Easier filtering: many runners can target a specific describe group
 - Clearer documentation: the test tree itself documents the expected behaviour of the code
+
+These benefits only hold when the file still represents one scenario. If the hierarchy starts reading like a module map, split the file.
 
 ## How to use `beforeEach()`
 
@@ -47,17 +68,17 @@ Avoid:
 ## When to use nested describes
 
 Use nested `describe()` blocks when:
-- testing multiple functions or methods in one file
-- testing different aspects or scenarios of a complex function
+- testing tightly related aspects of one scenario
 - different groups need different setup or teardown
-- a class has several related behaviours that should be separated in the test output
+- a scenario has a few meaningful variants that should be separated in the test output
+- a failed route scenario, for example, needs assertions for the failed route, replacement route, retry behaviour, and final status
 
 ## When a flat structure is acceptable
 
 Use a single `describe()` block, or keep the structure flatter, when:
 - testing a single simple function with straightforward behaviour
-- testing a small component or class with very limited functionality
-- the suite is small enough that extra nesting adds noise rather than clarity
+- testing one small scenario with very limited functionality
+- the scenario is small enough that extra nesting adds noise rather than clarity
 - team standards explicitly prefer a flatter shape and the file still reads cleanly
 
 Flat does not mean unstructured. Even in small files, related tests should still read as one coherent group.
@@ -67,40 +88,37 @@ Flat does not mean unstructured. Even in small files, related tests should still
 ```php
 <?php
 
-describe('CompleteWorkflow', function () {
+describe('failed warehouse route rerouting', function () {
     beforeEach(function () {
-        $this->result = WorkflowScenarioBuilder::new()->withCompleteOrder()->build();
-        $this->workflow = $this->result->workflow->refresh();
+        $this->result = FulfillmentRouteScenarioBuilder::new()
+            ->withFailedWarehouseRoute()
+            ->withReplacementRouteAvailable()
+            ->build();
+
+        $this->route = $this->result->route->refresh();
     });
 
-    describe('state resolution', function () {
-        it('marks the workflow as complete', function () {
-            CompleteWorkflow::dispatchSync($this->workflow);
-
-            expect($this->workflow->refresh()->status)->toBe(WorkflowStatus::COMPLETE);
-        });
-    });
-
-    describe('artefact creation', function () {
-        it('creates the expected workflow artefact', function () {
-            CompleteWorkflow::dispatchSync($this->workflow);
-
-            expect(WorkflowArtefact::count())->toBe(1);
-        });
-    });
-
-    describe('when called twice', function () {
+    describe('after rerouting', function () {
         beforeEach(function () {
-            CompleteWorkflow::dispatchSync($this->workflow);
+            RerouteFailedWarehouseRoute::dispatchSync($this->route);
+            $this->route->refresh();
         });
 
-        it('does not create duplicate artefacts', function () {
-            CompleteWorkflow::dispatchSync($this->workflow);
+        it('marks the original route as failed', function () {
+            expect($this->route->status)->toBe(RouteStatus::FAILED);
+        });
 
-            expect(WorkflowArtefact::count())->toBe(1);
+        it('creates the replacement route', function () {
+            expect($this->route->replacementRoute)->not->toBeNull();
+        });
+
+        it('marks the fulfillment as rerouted', function () {
+            expect($this->route->fulfillment->fresh()->status)->toBe(FulfillmentStatus::REROUTED);
         });
     });
 });
 ```
 
-The point of this structure is not extra ceremony. The point is to make the test file read like a map of behaviours.
+This belongs in a file named like `FailedWarehouseRouteCanBeReroutedTest.php`. Successful routing, partial routing, supplier fallback, and refund escalation should be separate files.
+
+The point of this structure is not extra ceremony. The point is to make one scenario easy to locate, understand, execute, review, debug, and safely modify.

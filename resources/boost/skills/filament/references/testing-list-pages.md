@@ -2,16 +2,16 @@
 
 Load this reference after `testing.md` when a task involves a Filament `List*` page, table, searchable columns, filters, visible columns, table actions, bulk actions, or header actions.
 
-List page tests must live beside the page's mirrored test path. For example:
+List page scenario tests must live beside the page's mirrored test path. For example:
 
 ```text
 app/Filament/App/Resources/Customers/Pages/ListCustomers.php
-tests/Filament/App/Resources/Customers/Pages/ListCustomersTest.php
+tests/Filament/App/Resources/Customers/Pages/CustomerListCanBeSearchedByEmailTest.php
 ```
 
 ## Checklist
 
-Every list page test file should cover the applicable items below:
+Split list page coverage across scenario-focused files for the applicable behaviours below. Each file should normally cover one bullet or one coherent user scenario:
 
 - [ ] The page renders successfully with `Livewire::test(PageClass::class)->assertSuccessful()`.
 - [ ] Authenticated users who should access the page can reach the resource URL.
@@ -28,6 +28,29 @@ Load `testing-authorization-panel-access.md` when implementing the authorization
 
 ## Default Structure
 
+Use separate files for separate behaviours. A render smoke test can be tiny:
+
+```php
+<?php
+
+namespace Tests\Filament\App\Resources\Customers\Pages;
+
+use App\Filament\App\Resources\Customers\Pages\ListCustomers;
+use App\Models\User;
+use Livewire\Livewire;
+
+beforeEach(function () {
+    $this->actingAs(User::factory()->createQuietly());
+});
+
+it('can render the customer list page', function () {
+    Livewire::test(ListCustomers::class)
+        ->assertSuccessful();
+});
+```
+
+Put search behaviour in a file named like `CustomerListCanBeSearchedByEmailTest.php`:
+
 ```php
 <?php
 
@@ -42,51 +65,18 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createQuietly());
 });
 
-describe('Rendering', function () {
-    it('can render the index page', function () {
-        Livewire::test(ListCustomers::class)
-            ->assertSuccessful();
-    });
-});
+it('can search customers by email', function () {
+    $matching = Customer::factory()->createQuietly(['email' => 'ada@example.test']);
+    $other = Customer::factory()->createQuietly(['email' => 'grace@example.test']);
 
-describe('Table Interaction', function () {
-    it('can list customers', function () {
-        $customers = Customer::factory()->count(3)->createQuietly();
-
-        Livewire::test(ListCustomers::class)
-            ->assertCanSeeTableRecords($customers);
-    });
-
-    it('can search customers by name', function () {
-        $customers = Customer::factory()->count(3)->createQuietly();
-
-        Livewire::test(ListCustomers::class)
-            ->searchTable($customers->first()->first_name)
-            ->assertCanSeeTableRecords([$customers->first()])
-            ->assertCanNotSeeTableRecords($customers->skip(1));
-    });
-
-    it('can search customers by email', function () {
-        $customers = Customer::factory()->count(3)->createQuietly();
-
-        Livewire::test(ListCustomers::class)
-            ->searchTable($customers->first()->email)
-            ->assertCanSeeTableRecords([$customers->first()])
-            ->assertCanNotSeeTableRecords($customers->skip(1));
-    });
-
-    it('displays correct columns', function () {
-        Customer::factory()->createQuietly();
-
-        Livewire::test(ListCustomers::class)
-            ->assertCanRenderTableColumn('fullName')
-            ->assertCanRenderTableColumn('email')
-            ->assertCanRenderTableColumn('phone');
-    });
+    Livewire::test(ListCustomers::class)
+        ->searchTable('ada@example.test')
+        ->assertCanSeeTableRecords([$matching])
+        ->assertCanNotSeeTableRecords([$other]);
 });
 ```
 
-Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
+Add separate scenario files for authorization, filters, columns, header actions, row actions, and bulk actions when those behaviours matter.
 
 ## Table Records
 

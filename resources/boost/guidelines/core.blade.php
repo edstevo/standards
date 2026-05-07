@@ -116,12 +116,14 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 ### Testing Baseline
 
 - Use Pest PHP with clear, descriptive behavior names.
-- Otherwise organize tests to mirror application structure unless a framework-specific convention applies.
+- Prefer small, scenario-focused test files over large mixed suites. A test file name should make the behaviour clear without opening the file.
+- Use one test file per meaningful behaviour, feature, scenario, or user journey as much as is reasonably feasible, especially for feature, integration, workflow, and E2E coverage.
+- Otherwise organize tests to mirror application structure unless a framework-specific convention applies, while still naming files for the scenario they prove.
 - Prefer Pest `expect()` assertions and chain them where that improves readability.
 - Do not use `PHPUnit\Framework\Assert` / `Assert::` in Pest tests unless Pest or Laravel has no suitable equivalent.
 - Laravel-native assertions such as response assertions and `assertDatabaseHas()` are appropriate when they are the correct API.
 - Keep each test focused on one behavioral concern.
-- Group related tests with `describe()` blocks when a file covers multiple behaviors or methods on the same class/workflow.
+- Use `describe()` blocks only to organize tightly related assertions or variants inside one coherent scenario. If a file starts collecting independent behaviours, split it into separate scenario files.
 - Use `beforeEach()` at the narrowest useful scope.
 - Prefer factories and named factory states for setup. If a factory exists but the scenario is awkward, improve the factory instead of hand-building repeated model graphs.
 - When builders construct a test graph, keep graph-shaping flags explicit in the same scope as the assertions or describe-group setup.

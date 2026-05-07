@@ -1,6 +1,6 @@
 ---
 name: laravel-tdd
-description: Apply Test-Driven Development to Laravel applications using Pest PHP. Use when implementing or refactoring Laravel features, bug fixes, model workflows, API endpoints, integration boundaries, Laravel-style integration fakes, and tests. Write the failing test first, keep each test focused on one behavioural concern, split large workflow/E2E tests by responsibility, fake external boundaries with first-class Laravel fakes, and prefer reusable test support in tests/TestCase.php or tests/Support over helper functions inside test classes.
+description: Apply Test-Driven Development to Laravel applications using Pest PHP. Use when implementing or refactoring Laravel features, bug fixes, model workflows, API endpoints, integration boundaries, Laravel-style integration fakes, and tests. Write the failing test first, prefer scenario-focused test files, keep each test focused on one behavioural concern, split large workflow/E2E suites by scenario, fake external boundaries with first-class Laravel fakes, and prefer reusable test support in tests/TestCase.php or tests/Support over helper functions inside test classes.
 license: MIT
 metadata:
   domain: testing
@@ -17,17 +17,17 @@ Use this skill whenever you:
 - add or change Laravel behaviour
 - fix a bug
 - refactor tests
-- split oversized feature or E2E tests
+- split oversized feature, integration, workflow, or E2E tests into scenario-focused files
 - need to decide whether something belongs in a unit, model, feature, or integration test
 - design or use Laravel-style integration fakes for external boundaries such as couriers, ERPs, payment gateways, or third-party APIs
 
 ## Core Workflow
 
 1. Analyse the behaviour and choose the narrowest honest test layer.
-2. Write the smallest failing test that proves that behaviour.
+2. Choose a descriptive scenario file name, then write the smallest failing test that proves that behaviour.
 3. Verify the failure is for the intended reason.
 4. Write the minimum production code needed to go green.
-5. Refactor both the code and the tests, splitting broad assertions and extracting shared support where justified.
+5. Refactor both the code and the tests, splitting independent scenarios into separate files and extracting shared support only where justified.
 
 ## Reference Guide
 
@@ -48,9 +48,9 @@ Load detailed guidance based on context:
 
 | Topic | Reference | Load When |
 |-------|-----------|-----------|
-| Large workflow / E2E refactors | `references/workflow-e2e-refactors.md` | A feature or E2E test has become too large, one test asserts several side effects, or a workflow needs splitting by responsibility |
+| Large workflow / E2E refactors | `references/workflow-e2e-refactors.md` | A feature, integration, workflow, or E2E test file has become too large, one test asserts several side effects, or independent journeys need splitting into scenario files |
 | Shared test support | `references/test-support.md` | Setup or assertions are repeating, you are tempted to add helper methods inside a test file, or reusable builders/assertions/fakes belong in `tests/TestCase.php` or `tests/Support` |
-| Test grouping and describe blocks | `references/test-structure.md` | A test file covers several related behaviours or methods on the same class, you need nested `describe()` blocks, or different groups need different `beforeEach()` setup |
+| Test grouping and describe blocks | `references/test-structure.md` | A scenario file needs tightly related assertions or variants, you need nested `describe()` blocks inside one scenario, or an existing broad file needs splitting |
 | Scenario builders and graph determinism | `references/scenario-builders.md` | A builder or fixture helper constructs a model graph, the test depends on a specific graph shape, or a builder result object should be promoted into group-level setup |
 | Factory-driven test data | `references/factories.md` | A test is manually constructing models, associating related records by hand, mutating many fields inline, or a factory should be extended with `state()` / `configure()` instead |
 | Time travel and clock control | `references/time-testing.md` | A test uses `now()`, `$this->travel()`, `$this->travelTo()`, `freezeTime()`, or simulates several time-based workflow steps |
@@ -62,7 +62,7 @@ Load detailed guidance based on context:
 
 ### RED
 
-Write one failing test that names the behaviour clearly.
+Write one failing test that names the behaviour clearly. If the behaviour is a meaningful scenario or user journey, create or choose a test file whose filename describes that scenario instead of adding it to a broad module suite.
 
 ```php
 <?php
@@ -166,6 +166,26 @@ Bad:
 
 If a failure would leave the reader asking "which part of the workflow broke?", the test is too broad.
 
+### One meaningful scenario per file
+
+Default to one test file per meaningful behaviour, feature, scenario, or user journey.
+
+Prefer names like:
+- `CustomerCanCheckoutWithCardTest.php`
+- `CustomerCannotCheckoutWithOutOfStockItemTest.php`
+- `AdminCanApproveReturnRequestTest.php`
+- `SupplierDropshipOrderCanBeRoutedTest.php`
+- `FailedWarehouseRouteCanBeReroutedTest.php`
+
+Avoid broad dumping-ground files like:
+- `CheckoutTest.php`
+- `ReturnsTest.php`
+- `FulfillmentTest.php`
+- `OrderFlowTest.php`
+- `E2ETest.php`
+
+Grouping a few tightly related assertions or variants in one file is acceptable when they all belong to the same scenario. Successful routing, failed routing, partial routing, supplier fallback, and refund escalation should normally be separate files.
+
 ### Prefer one act phase
 
 Keep the test shape simple:
@@ -183,12 +203,13 @@ Use names that describe what the system does:
 
 Avoid names that only describe method calls or internal mechanics.
 
-When a file covers several related behaviours, methods, or scenarios for the same class/workflow:
-- wrap each related group in a `describe()` block
-- use nested `describe()` blocks when a group has meaningful sub-behaviours
+If an existing file covers several related behaviours, methods, or scenarios for the same class/workflow:
+- first ask whether those behaviours are independent scenarios that deserve separate files
+- use `describe()` blocks only when the groups are tightly related parts of one scenario
+- use nested `describe()` blocks when a scenario has meaningful sub-behaviours or variants
 - use `beforeEach()` at the narrowest useful scope so each group only sets up what it needs
 
-This keeps test output readable and prevents one large file from becoming a flat list of loosely related tests.
+This keeps test output readable and prevents one large file from becoming a collection of loosely related journeys.
 
 If file structure and grouped setup are becoming important to the task, load `references/test-structure.md`.
 

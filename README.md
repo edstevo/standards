@@ -102,7 +102,7 @@ app/
 ### Testing Standards
 
 - **Pest PHP**: Modern testing syntax with descriptive names
-- **Test Organization**: Unit tests in `tests/Unit/`, features in `tests/Feature/`
+- **Test Organization**: Scenario-focused files with descriptive names, organized under the appropriate test tree
 - **Coverage Guidelines**: High coverage of critical business logic
 - **Database Testing**: In-memory SQLite, proper seeding, RefreshDatabase trait
 

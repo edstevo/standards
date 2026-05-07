@@ -67,9 +67,10 @@ Use them deliberately:
 For Filament work, prefer Pest tests that prove user-visible behaviour through the Filament page or Livewire component under test.
 
 Default to:
-- one test file per Filament page class, mirroring the app namespace under `tests/Filament`
+- scenario-focused test files for meaningful Filament behaviours, mirroring the app namespace under `tests/Filament`
+- narrow page or relation-manager smoke files only when they prove the page/component itself renders or mounts
 - one behavioural concern per test
-- `describe()` blocks when a file covers several page/resource behaviours
+- `describe()` blocks only for tightly related assertions or variants inside one coherent scenario
 - role- and permission-specific tests for authorization-sensitive UI
 - table, form, and action assertions that target the Filament surface instead of only asserting database side effects
 - factories and named scenario setup that make the domain state obvious

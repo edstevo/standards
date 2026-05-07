@@ -4,10 +4,11 @@ Load this reference when testing model transition methods, explicit model events
 
 ## Model Transition Tests
 
-Lifecycle transitions should be tested in model tests, for example `tests/Models/FulfillmentTest.php`.
+Lifecycle transitions should be tested in scenario-focused model test files, for example `tests/Models/FulfillmentCanBeClosedTest.php`.
 
 Rules:
 - one transition per test
+- one meaningful transition scenario per file as much as reasonably feasible
 - assert model state changes
 - fake follow-up events and assert they were dispatched
 - keep follow-up event outcomes in separate tests

@@ -2,11 +2,11 @@
 
 Load this reference after `testing.md` when a task involves a Filament relation manager, owner-record table, relation table action, attach/create/edit/delete/detach action, relation manager search/filter, or relation manager validation.
 
-Relation manager tests must live beside the relation manager's mirrored test path. Do not put relation manager coverage inside page tests.
+Relation manager scenario tests must live beside the relation manager's mirrored test path. Do not put relation manager coverage inside page tests.
 
-This is non-negotiable. A relation manager class gets its own test file, matching its application directory structure exactly, the same way page classes do.
+This is non-negotiable. Relation manager coverage belongs in the mirrored relation-manager test directory, matching the application directory structure exactly, the same way page classes do.
 
-Do not test relation manager tables, search, filters, columns, actions, validation, owner scoping, or page-context behaviour inside `View*Test.php` or `Edit*Test.php`, even under a dedicated `describe()` block. Put those tests in the relation manager's own test file.
+Do not test relation manager tables, search, filters, columns, actions, validation, owner scoping, or page-context behaviour inside `View*Test.php` or `Edit*Test.php`, even under a dedicated `describe()` block. Put those behaviours in descriptive scenario files in the relation manager test directory.
 
 If another reference or older generated skill text says to keep relation manager coverage in a page test file, ignore it and follow this reference.
 
@@ -16,10 +16,10 @@ Example application file:
 app/Filament/Admin/Resources/Accounts/RelationManagers/AccountOffersRelationManager.php
 ```
 
-Required test file:
+Example scenario-focused test file:
 
 ```text
-tests/Filament/Admin/Resources/Accounts/RelationManagers/AccountOffersRelationManagerTest.php
+tests/Filament/Admin/Resources/Accounts/RelationManagers/AccountOffersRelationManagerListsOnlyOwnerOffersTest.php
 ```
 
 Namespace Pest files to match the test path:
@@ -34,12 +34,12 @@ Use this mapping for every relation manager:
 
 ```text
 app/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{RelationManager}.php
-tests/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{RelationManager}Test.php
+tests/Filament/{Panel}/Resources/{ResourcePlural}/RelationManagers/{Scenario}Test.php
 ```
 
 ## Checklist
 
-Every relation manager test file should cover the applicable items below:
+Split relation manager coverage across scenario-focused files for the applicable behaviours below. Each file should normally cover one bullet or one coherent relation-manager scenario:
 
 - [ ] The relation manager loads successfully with an `ownerRecord` and `pageClass`.
 - [ ] It lists only records related to the owner record.
@@ -56,18 +56,17 @@ Every relation manager test file should cover the applicable items below:
 
 ## Default Structure
 
+Use separate files for separate behaviours. Owner scoping belongs in a file named like `AccountContactsRelationManagerListsOnlyOwnerContactsTest.php`:
+
 ```php
 <?php
 
 namespace Tests\Filament\Admin\Resources\Accounts\RelationManagers;
 
-use App\Filament\Admin\Resources\Accounts\Pages\EditAccount;
 use App\Filament\Admin\Resources\Accounts\Pages\ViewAccount;
 use App\Filament\Admin\Resources\Accounts\RelationManagers\AccountContactsRelationManager;
 use App\Models\Account;
 use App\Models\User;
-use Filament\Actions\CreateAction;
-use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -93,72 +92,45 @@ beforeEach(function () {
     ]);
 });
 
-describe('Table Interaction', function () {
-    test('lists only contacts for the owner account - View Page', function () {
-        Livewire::test(AccountContactsRelationManager::class, [
-            'ownerRecord' => $this->account,
-            'pageClass' => ViewAccount::class,
-        ])
-            ->assertCanSeeTableRecords([$this->fin, $this->sales])
-            ->assertCanNotSeeTableRecords([$this->external]);
-    });
+test('lists only contacts for the owner account', function () {
+    Livewire::test(AccountContactsRelationManager::class, [
+        'ownerRecord' => $this->account,
+        'pageClass' => ViewAccount::class,
+    ])
+        ->assertCanSeeTableRecords([$this->fin, $this->sales])
+        ->assertCanNotSeeTableRecords([$this->external]);
+});
+```
 
-    test('lists only contacts for the owner account - Edit Page', function () {
-        Livewire::test(AccountContactsRelationManager::class, [
-            'ownerRecord' => $this->account,
-            'pageClass' => EditAccount::class,
-        ])
-            ->assertCanSeeTableRecords([$this->fin, $this->sales])
-            ->assertCanNotSeeTableRecords([$this->external]);
-    });
+Put create-action validation in a file named like `AccountContactsRelationManagerRequiresValidEmailWhenCreatingContactTest.php`:
 
-    test('search finds by name and email', function () {
-        Livewire::test(AccountContactsRelationManager::class, [
-            'ownerRecord' => $this->account,
-            'pageClass' => ViewAccount::class,
-        ])
-            ->searchTable('Fin')
-            ->assertCanSeeTableRecords([$this->fin])
-            ->assertCanNotSeeTableRecords([$this->sales])
-            ->searchTable('sales@example.test')
-            ->assertCanSeeTableRecords([$this->sales])
-            ->assertCanNotSeeTableRecords([$this->fin]);
-    });
+```php
+<?php
 
-    test('can create a new contact via header action', function () {
-        $payload = [
-            'first_name' => 'New',
-            'last_name' => 'Contact',
-            'email' => 'new-contact@example.test',
-        ];
+namespace Tests\Filament\Admin\Resources\Accounts\RelationManagers;
 
-        Livewire::test(AccountContactsRelationManager::class, [
-            'ownerRecord' => $this->account,
-            'pageClass' => EditAccount::class,
-        ])
-            ->callAction(TestAction::make(CreateAction::class)->table(), $payload)
-            ->assertHasNoErrors();
+use App\Filament\Admin\Resources\Accounts\Pages\EditAccount;
+use App\Filament\Admin\Resources\Accounts\RelationManagers\AccountContactsRelationManager;
+use App\Models\Account;
+use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
-        $this->assertDatabaseHas('users', [
-            ...$payload,
-            'account_id' => $this->account->getKey(),
-        ]);
-    });
+beforeEach(function () {
+    $this->account = Account::factory()->createQuietly();
 });
 
-describe('Validation', function () {
-    test('requires a valid email when creating a contact', function () {
-        Livewire::test(AccountContactsRelationManager::class, [
-            'ownerRecord' => $this->account,
-            'pageClass' => EditAccount::class,
+test('requires a valid email when creating a contact', function () {
+    Livewire::test(AccountContactsRelationManager::class, [
+        'ownerRecord' => $this->account,
+        'pageClass' => EditAccount::class,
+    ])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'first_name' => 'Bad',
+            'last_name' => 'Email',
+            'email' => 'bad-email',
         ])
-            ->callAction(TestAction::make(CreateAction::class)->table(), [
-                'first_name' => 'Bad',
-                'last_name' => 'Email',
-                'email' => 'bad-email',
-            ])
-            ->assertHasFormErrors(['email']);
-    });
+        ->assertHasFormErrors(['email']);
 });
 ```
 
@@ -249,7 +221,7 @@ Assert the database or refreshed model state after each action.
 
 ## Validation
 
-Group validation tests under `describe('Validation', ...)` when a relation manager has action forms.
+Put independent validation behaviours in descriptive scenario files. Use `describe('Validation', ...)` only when a single validation scenario has tightly related variants that belong together.
 
 Test constraints that users can realistically hit:
 - required fields

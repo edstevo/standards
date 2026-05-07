@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.38 - 2026-05-07
+
+### Changed
+- Updated core, Laravel TDD, Filament, SOLID, and model lifecycle testing guidance to prefer small scenario-focused test files over large mixed suites, especially for workflow, integration, and E2E coverage.
+
 ## 1.0.37 - 2026-05-05
 
 ### Changed

@@ -2,16 +2,16 @@
 
 Load this reference after `testing.md` when a task involves a Filament `Edit*` page, edit form, save/update workflow, form validation, header action, or edit-page authorization.
 
-Edit page tests must live beside the page's mirrored test path. For example:
+Edit page scenario tests must live beside the page's mirrored test path. For example:
 
 ```text
 app/Filament/App/Resources/Customers/Pages/EditCustomer.php
-tests/Filament/App/Resources/Customers/Pages/EditCustomerTest.php
+tests/Filament/App/Resources/Customers/Pages/CustomerCanBeUpdatedFromFilamentTest.php
 ```
 
 ## Checklist
 
-Every edit page test file should cover the applicable items below:
+Split edit page coverage across scenario-focused files for the applicable behaviours below. Each file should normally cover one bullet or one coherent user scenario:
 
 - [ ] The page renders successfully with the record route key.
 - [ ] Authenticated users who should access the page can reach the resource URL.
@@ -25,6 +25,8 @@ Every edit page test file should cover the applicable items below:
 Load `testing-authorization-panel-access.md` when implementing the authorization bullets.
 
 ## Default Structure
+
+Use separate files for separate behaviours. A render smoke test can be tiny:
 
 ```php
 <?php
@@ -44,54 +46,47 @@ beforeEach(function () {
     $this->customer = Customer::factory()->createQuietly();
 });
 
-describe('Rendering', function () {
-    it('can render the edit page', function () {
-        Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
-            ->assertSuccessful();
-    });
-});
-
-describe('Form Submission', function () {
-    it('can save the form without changes', function () {
-        Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
-            ->call('save')
-            ->assertHasNoFormErrors();
-    });
-
-    it('can update selected customer data', function () {
-        Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
-            ->fillForm([
-                'first_name' => 'Ada',
-                'last_name' => 'Lovelace',
-                'email' => 'ada@example.test',
-            ])
-            ->call('save')
-            ->assertHasNoFormErrors();
-
-        expect($this->customer->fresh())
-            ->first_name->toBe('Ada')
-            ->last_name->toBe('Lovelace')
-            ->email->toBe('ada@example.test');
-    });
-});
-
-describe('Validation', function () {
-    it('validates required fields', function () {
-        Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
-            ->fillForm([
-                'first_name' => null,
-                'email' => null,
-            ])
-            ->call('save')
-            ->assertHasFormErrors([
-                'first_name' => 'required',
-                'email' => 'required',
-            ]);
-    });
+it('can render the edit customer page', function () {
+    Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
+        ->assertSuccessful();
 });
 ```
 
-Add separate `describe('Authorization', ...)` and `describe('Header Actions', ...)` blocks when the page has authorization requirements or actions.
+Put update behaviour in a file named like `CustomerCanBeUpdatedFromFilamentTest.php`:
+
+```php
+<?php
+
+namespace Tests\Filament\App\Resources\Customers\Pages;
+
+use App\Filament\App\Resources\Customers\Pages\EditCustomer;
+use App\Models\Customer;
+use App\Models\User;
+use Livewire\Livewire;
+
+beforeEach(function () {
+    $this->actingAs(User::factory()->createQuietly());
+    $this->customer = Customer::factory()->createQuietly();
+});
+
+it('can update selected customer data', function () {
+    Livewire::test(EditCustomer::class, ['record' => $this->customer->getRouteKey()])
+        ->fillForm([
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'email' => 'ada@example.test',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($this->customer->fresh())
+        ->first_name->toBe('Ada')
+        ->last_name->toBe('Lovelace')
+        ->email->toBe('ada@example.test');
+});
+```
+
+Add separate scenario files for saving without changes, authorization, validation paths, and header actions when those behaviours matter.
 
 ## Saving Without Changes
 
@@ -145,4 +140,4 @@ Do not test relation manager coverage in an edit page test file under a dedicate
 
 Do not write or follow this old rule: "When a view or edit page exposes relation managers, keep relation manager coverage in the page's test file under a dedicated `describe()` block." That rule is wrong for this codebase.
 
-Relation manager table records, search, filters, columns, create/edit/delete/attach/detach actions, validation, owner scoping, and view/edit page context coverage belong in the relation manager's own mirrored test file under `tests/Filament/.../RelationManagers`. Load `testing-relation-managers.md` for that structure.
+Relation manager table records, search, filters, columns, create/edit/delete/attach/detach actions, validation, owner scoping, and view/edit page context coverage belong in scenario files under the relation manager's mirrored `tests/Filament/.../RelationManagers` path. Load `testing-relation-managers.md` for that structure.
