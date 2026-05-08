@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.39 - 2026-05-08
+
+### Changed
+- Tightened app knowledge maintenance guidance to keep always-loaded docs small, avoid duplicated skill/doc content, and route deeper documentation layout rules through a focused reference.
+
 ## 1.0.38 - 2026-05-07
 
 ### Changed

@@ -25,6 +25,7 @@ Never edit compiled `.agents` output directly. Update `.ai/skills/{skill-name}/S
 
 - Do not create one monolithic app knowledge skill.
 - Prefer focused skills by module, workflow, integration, or coherent responsibility.
+- Do not create one arbitrary domain skill while similar domains have no app knowledge coverage unless that domain is genuinely exceptional.
 - Rename a skill when the old name no longer matches the module or workflow.
 - Rewrite descriptions and triggers when agents would miss the skill or activate it for the wrong work.
 - Split old skills when they start covering unrelated modules, workflows, integrations, or conventions.
@@ -37,6 +38,8 @@ Spend context wisely:
 - Add what the agent would not know without the skill.
 - Omit generic Laravel, PHP, or framework advice.
 - Keep `SKILL.md` concise and execution-focused.
+- Link exact docs as source of truth; avoid `docs/README.md` unless the task is docs navigation.
+- Do not repeat a docs page inside the skill.
 - Move long examples, schemas, API details, and deep workflow notes into `references/`.
 - Tell the agent exactly when to load each reference.
 
@@ -49,8 +52,10 @@ Before finishing a skill change:
 - [ ] Source lives under `.ai/skills/{skill-name}/SKILL.md`.
 - [ ] `.agents` output was not edited directly.
 - [ ] The skill is focused, not a monolith.
+- [ ] Comparable domains/workflows are not left unevenly covered without a reason.
 - [ ] The description is trigger-rich and under 1024 characters.
 - [ ] `SKILL.md` is concise and points to references only when needed.
+- [ ] Read-first docs are exact source docs, not broad README indexes.
 - [ ] Gotchas, invariants, contracts, and update triggers are captured.
 - [ ] Multi-step workflows include a checklist.
 - [ ] Fragile workflows include a validation loop.

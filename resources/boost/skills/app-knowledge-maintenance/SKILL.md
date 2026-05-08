@@ -13,12 +13,17 @@ metadata:
 
 Use this skill to decide which source-of-truth docs, app skills, references, and docblocks must change after meaningful Laravel app work.
 
+## Load References
+
+- Load `references/knowledge-layout.md` when adding, splitting, pruning, or reorganizing app docs or app skills.
+- Load it when you see duplicated docs/skills, a broad `docs/README.md`, or one domain skill without comparable coverage elsewhere.
+
 ## Knowledge Layers
 
 - `AGENTS.md` / `.ai/guidelines`: short always-loaded rules every agent needs.
-- `docs`: concise source of truth for architecture, workflows, state transitions, integrations, key rules, and important edge cases.
-- `.ai/skills/*/SKILL.md`: focused execution playbooks for modules, workflows, integrations, or conventions.
-- `.ai/skills/*/references`: deeper supporting material loaded only when the skill says it is needed.
+- `docs`: source of truth for stable app behavior, organized into focused directories.
+- `.ai/skills/*/SKILL.md`: short execution playbooks for modules, workflows, integrations, or conventions.
+- `.ai/skills/*/references`: conditional detail loaded only when needed.
 - Key class and method docblocks: implementation intent for non-obvious jobs, actions, observers, transitions, and workflow internals.
 
 Do not edit compiled `.agents` files directly. Update source files in `.ai`, `docs`, and code.
@@ -30,24 +35,13 @@ Do not edit compiled `.agents` files directly. Update source files in `.ai`, `do
 
 Use both when the code change affects a workflow and the agent-facing playbook for that workflow.
 
-## Documentation Standard
+## Token Budget
 
-Keep docs and skills complete enough to prevent wrong assumptions, but short enough for agents to load safely.
-
-Prefer:
-- short sections and clear headings
-- bullet points over long prose
-- flowcharts where they reduce explanation
-- key rules, invariants, state transitions, and edge cases
-- links to deeper references when needed
-
-Avoid:
-- long manuals
-- duplicated explanations across docs and skills
-- historical commentary
-- generic Laravel or PHP advice
-- documenting obvious code
-- one huge process doc or one monolithic app skill
+- Keep always-loaded guidance tiny.
+- Keep `SKILL.md` action-oriented; move deep detail into references.
+- Keep `docs/README.md` as a map, not a second source of truth.
+- Link to exact docs or references; do not duplicate their explanations.
+- Split large docs by directory: domains, processes, integrations, contracts, or LLM behavior.
 
 For every section, ask: would a future agent likely get this wrong without this information? If no, cut or shorten it.
 
@@ -59,20 +53,13 @@ After meaningful code changes, run this checklist before finishing:
 - [ ] Did a workflow, state transition, queue job, observer, integration, API contract, LLM schema, or domain invariant change?
 - [ ] Is there an existing docs page that should be updated?
 - [ ] Is there an existing app skill that should be updated?
-- [ ] Should a new focused skill be created, or should an existing one be renamed, split, or pruned?
+- [ ] Should a focused skill be created, renamed, split, or pruned?
+- [ ] Would creating one domain skill leave similar domains undocumented for no good reason?
 - [ ] Should deeper material move into a skill `references/` file?
+- [ ] Did any skill duplicate a docs page or ask agents to load a broad README unnecessarily?
 - [ ] Did key files or key tests change?
 - [ ] Does a Mermaid flowchart need updating?
 - [ ] Do class or method docblocks now misrepresent the implementation?
 - [ ] Did you discover durable knowledge future agents should not need to rediscover?
 
 If yes to any item, update the relevant docs, skills, references, and docblocks in the same change.
-
-## Keep Boundaries Clean
-
-- Docs are the digestible source of truth.
-- Skills are execution playbooks that tell the agent how to work.
-- References hold deeper supporting material.
-- Docblocks explain non-obvious implementation intent.
-
-Do not copy the same explanation into every layer. Link from skills to docs or references instead.

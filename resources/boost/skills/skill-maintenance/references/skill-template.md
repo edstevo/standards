@@ -20,7 +20,9 @@ Specific tasks, files, routes, models, events, jobs, UI areas, integrations, or 
 
 ## Read First
 
-- `docs/processes/[workflow].md`
+- `docs/domains/[domain]/[topic].md` when [specific condition]
+- `docs/processes/[workflow].md` when [specific condition]
+- `docs/integrations/[provider].md` when [specific condition]
 - `references/[deeper-detail].md` when [specific condition]
 
 ## Workflow Checklist
@@ -47,6 +49,8 @@ Changes that require this skill to be updated, renamed, split, or pruned.
 ## Template Rules
 
 - Keep `SKILL.md` short and action-oriented.
-- Link to docs as source of truth.
+- Link to exact docs as source of truth.
+- Do not use `docs/README.md` as read-first material unless the task is docs navigation.
+- Do not duplicate docs content in the skill.
 - Move deep detail into references.
 - Keep the skill focused on one coherent module, workflow, integration, or responsibility.

@@ -38,15 +38,15 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Application Knowledge Skills
 
-- When adding or refactoring complex modules, workflows, integrations, LLM interactions, structured-output schemas, or stable app conventions, activate `app-knowledge-maintenance`.
-- Use it to decide which source docs, app skills, skill references, and implementation docblocks must change so future agents do not rediscover durable app knowledge.
+- When stable modules, workflows, integrations, LLM contracts, or app conventions change, activate `app-knowledge-maintenance`.
 - Activate `process-documentation` for process docs, Mermaid flowcharts, key files/tests, and aligned class/method docblocks.
 - Activate `skill-maintenance` for focused `.ai/skills`, skill descriptions, triggers, references, scripts, checklists, and validation loops.
-- Write source app skills under `.ai/skills/{skill-name}/SKILL.md`; never edit compiled `.agents` output.
-- Prefer focused app skills per module, workflow, or integration. Avoid one monolithic app skill, and rename, rewrite, or split skills as the app evolves.
-- Use `.ai/guidelines/*` only for short, cross-cutting rules every agent needs upfront.
-- If you discover something late that would have prevented mistakes, reduced rework, or sped up the task, add it to the relevant app skill in the same change.
-- After completing complex work, review affected app skills and update, rename, split, or prune them while the context is fresh.
+- Keep `.ai/guidelines/*` tiny and cross-cutting.
+- Put source docs in focused `docs` directories; keep `docs/README.md` as an index only.
+- Put source app skills under `.ai/skills/{skill-name}/SKILL.md`; never edit compiled `.agents` output.
+- Skills are execution playbooks. Link exact docs or references instead of repeating them.
+- Avoid one-off domain skills when similar domains have no coverage unless the domain is genuinely exceptional.
+- After complex work, update affected docs, skills, references, or docblocks while context is fresh.
 
 ### Project Structure
 
