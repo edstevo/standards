@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.41 - 2026-05-09
+
+### Changed
+- Added a `Scope` section to `pr-agent-prompts` for explicitly listing work that is not in scope.
+
 ## 1.0.40 - 2026-05-09
 
 ### Changed
