@@ -21,7 +21,7 @@ This file is compiled into `AGENTS.md`, so keep it as the always-loaded baseline
 - Open the PR against the project's `dev` branch unless the project has an explicit different integration-branch convention.
 - Add the plan and detailed checklist to the PR body at the start of the work. Do not create local `.md` plan files.
 - Keep that checklist updated in the PR body and check items off as the work develops so the PR remains the source of truth for progress.
-- When asked to create or rewrite a GitHub issue from a thin issue or rough brief, activate `github-issue-briefs` so the issue body is codebase-grounded before implementation begins.
+- When asked to prepare a rough request for PR Agent, activate `pr-agent-prompts` and return a concise local prompt. Do not create or update GitHub issues.
 - When writing complex features or significant refactors, activate `execution-plans` and use an ExecPlan from design to implementation as described in that skill.
 - When workflow behavior changes, activate `process-documentation` and update both process docs and related class/method documentation in the same change.
 

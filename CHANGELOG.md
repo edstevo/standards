@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.40 - 2026-05-09
+
+### Changed
+- Renamed `github-issue-briefs` to `pr-agent-prompts` and simplified the workflow to produce local three-section PR Agent prompts instead of updating GitHub issues.
+
 ## 1.0.39 - 2026-05-08
 
 ### Changed
