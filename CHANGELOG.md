@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.42 - 2026-05-11
+
+### Added
+- Added a `buglist-triage` skill for maintaining concise buglist entries, linked investigation files, and PR Agent handoff references.
+
 ## 1.0.41 - 2026-05-09
 
 ### Changed
