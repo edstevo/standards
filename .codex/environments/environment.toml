@@ -1,0 +1,4 @@
+[[actions]]
+name = "New Release"
+icon = "tool"
+command = "bash .codex/scripts/new-release.sh"
