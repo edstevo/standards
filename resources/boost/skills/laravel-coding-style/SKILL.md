@@ -20,7 +20,7 @@ The default shape is:
 - Lifecycle changes happen through named model transition methods.
 - Transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
 - Observers run after commit and orchestrate follow-up work by dispatching jobs/events or calling methods that trigger further explicit events.
-- Jobs/actions perform heavy work, retries, integration IO, and long-running workflow steps.
+- Jobs/actions perform heavy work, retries, integration IO, and long-running workflow steps. Jobs that always need committed data should implement `ShouldQueueAfterCommit` instead of relying on `->afterCommit()` dispatch chains.
 
 Use this skill whenever you:
 - add or refactor Eloquent models or relationships
@@ -61,5 +61,6 @@ Load detailed guidance based on the task:
 - [ ] Persistence, lifecycle, observer, jobs/actions, and lifecycle-test references are loaded only when those topics are involved.
 - [ ] Models expose expressive methods instead of leaking state mutation across callers.
 - [ ] Observers dispatch work after commit and do not call external integrations directly.
+- [ ] Jobs that need committed data use `ShouldQueueAfterCommit` when the job can own that guarantee.
 - [ ] Jobs/actions own heavy work and external IO.
 - [ ] Tests cover lifecycle behaviour in focused scenario files and layers instead of one broad workflow assertion.

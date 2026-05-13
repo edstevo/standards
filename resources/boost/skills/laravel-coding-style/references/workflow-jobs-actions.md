@@ -20,6 +20,26 @@ In observer-driven workflows:
 
 Do not constructor-inject services into queued jobs. A dispatched job constructor runs in the dispatching process; treat it as data-only payload assignment.
 
+When a queued job should never run until surrounding database transactions commit, implement `Illuminate\Contracts\Queue\ShouldQueueAfterCommit` on the job class. Prefer that class-level contract over repeating dispatch-site chains like `SomeJob::dispatch($id)->afterCommit();`.
+
+Use dispatch-level `->afterCommit()` only when the after-commit requirement is genuinely local to one dispatch path, or when the job cannot implement the interface in the current Laravel version.
+
+```php
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
+
+class DetachUserFromAccountRoleContacts implements ShouldQueueAfterCommit
+{
+    public function __construct(
+        public readonly int $userId,
+    ) {}
+
+    public function handle(): void
+    {
+        // Resolve collaborators and perform the work here.
+    }
+}
+```
+
 ## Actions
 
 Use actions for reusable application behaviour and domain workflow steps.

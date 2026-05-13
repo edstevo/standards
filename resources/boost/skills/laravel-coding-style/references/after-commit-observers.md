@@ -76,7 +76,8 @@ If update logic grows beyond narrow field-change handling, prefer an explicit ev
 For atomic workflows:
 - wrap related writes in `DB::transaction(...)`
 - keep observers on `ShouldHandleEventsAfterCommit`
-- dispatch side-effect jobs with after-commit semantics where needed
+- make side-effect jobs implement `ShouldQueueAfterCommit` when they always need committed data
+- reserve dispatch-level `->afterCommit()` for one-off or conditional dispatch sites where the job itself cannot own that guarantee
 
 Expected result:
 - committed transaction -> observer side effects run

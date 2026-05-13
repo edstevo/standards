@@ -44,8 +44,8 @@ Keep entries short enough to scan, group, prioritise, de-duplicate, and hand ove
 
 - `docs/buglist.md`: canonical short entry, priority, ownership/control state, and outward links.
 - Domain docs, when present: normal expected behaviour and stable invariants.
-- Investigation docs: evidence, reproduction, suspected or confirmed cause, uncertainty, affected files, and related bugs.
-- PR Agent prompts: proposed implementation scope and acceptance context for one coherent PR.
+- Investigation docs: evidence, reproduction, suspected or confirmed cause, investigation and likely fix scope boundaries, uncertainty, affected files, and related bugs.
+- PR Agent prompts: implementation plan and acceptance context for one coherent PR.
 - Incidents or postmortems: production event timelines, impact, response, and follow-up.
 
 Before adding a long explanation to `docs/buglist.md`, decide whether it should instead become a linked investigation doc, domain documentation update, PR Agent prompt, test case, incident note, or postmortem.

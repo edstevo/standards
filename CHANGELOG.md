@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## Unreleased
+
+### Changed
+- Updated buglist investigation guidance to include a `Scope` section for investigation and likely fix boundaries.
+- Updated Laravel queue guidance to prefer `ShouldQueueAfterCommit` over repeated `->afterCommit()` dispatch chains when the job can own after-commit semantics.
+
 ## 1.0.43 - 2026-05-13
 
 ### Added

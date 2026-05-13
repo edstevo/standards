@@ -82,6 +82,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Observers should run after commit and coordinate follow-up work by dispatching jobs/events or calling methods that trigger further explicit events.
 - External IO belongs in jobs/actions, not observers.
 - Use native Laravel jobs for queued, delayed, retryable, or long-running work. Treat queued job constructors as data-only payload assignment and put executable work in `handle(...)`.
+- When a queued job must wait for a committed transaction, prefer implementing `Illuminate\Contracts\Queue\ShouldQueueAfterCommit` on the job over chaining `->afterCommit()` at each dispatch site.
 - Use `lorisleiva/laravel-actions` for application actions when the project includes it; keep action classes focused and container-resolvable.
 
 ### Integrations
