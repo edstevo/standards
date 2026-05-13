@@ -22,7 +22,7 @@ if [[ "$current_branch" != "$branch" ]]; then
     exit 1
 fi
 
-git fetch "$remote" --tags
+git fetch --no-tags "$remote" "$branch:refs/remotes/$remote/$branch"
 
 if ! git merge-base --is-ancestor "$remote/$branch" HEAD; then
     echo "Local $branch is behind or has diverged from $remote/$branch. Pull or rebase before releasing."
@@ -86,6 +86,11 @@ tag="v${release_version}"
 
 if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
     echo "Release tag already exists: $tag"
+    exit 1
+fi
+
+if git ls-remote --exit-code --tags "$remote" "refs/tags/$tag" >/dev/null; then
+    echo "Release tag already exists on $remote: $tag"
     exit 1
 fi
 
