@@ -37,6 +37,7 @@ Keep entries short enough to scan, group, prioritise, de-duplicate, and hand ove
 - [ ] Group by status, then domain when the app has domains; otherwise group by module, workflow, feature, or affected area.
 - [ ] Keep each entry to one concise bullet.
 - [ ] Create or link a deeper document when the bug needs more context than fits cleanly in one short bullet.
+- [ ] Delete linked `docs/investigations/{BUG-ID}.md` files when removing fixed buglist entries.
 - [ ] Move PR Agent-owned entries under `## Under PR Agent Control` only after the user says they have been handed off.
 
 ## Where Detail Belongs

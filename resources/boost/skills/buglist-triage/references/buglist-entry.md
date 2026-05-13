@@ -49,5 +49,6 @@ Group by status, then domain when the app has domains. Otherwise group by module
 - Never renumber existing IDs.
 - Before adding a new bug, search for an existing same or overlapping bug; update the existing entry when it is the same issue.
 - Do not always create a new entry.
+- When removing a fixed bug from `docs/buglist.md`, delete its linked `docs/investigations/{BUG-ID}.md` file when one exists.
 - Split mixed issues instead of hiding multiple risks in one bullet.
 - Do not copy investigation detail, PR prompts, or incident timelines into the buglist.

@@ -22,7 +22,7 @@ Buglist refs:
 Add this cleanup rule to the prompt:
 
 ```md
-When this PR fully fixes a buglist entry, remove it from `docs/buglist.md`. If it only partially fixes it, keep the same bug ID and update the wording.
+When this PR fully fixes a buglist entry, remove it from `docs/buglist.md` and delete its linked `docs/investigations/{BUG-ID}.md` file when one exists. If it only partially fixes it, keep the same bug ID and update the wording.
 ```
 
 ## Control State
@@ -34,4 +34,4 @@ When the user says the prompt has been handed to PR Agent:
 - Group by domain when the app has domains; otherwise by module, workflow, feature, or affected area.
 - Add the owning issue or PR reference when known.
 
-When the PR closes, remove fixed entries. Move remaining risk back to `## Active Issues` with the same ID and updated wording.
+When the PR closes, remove fixed entries and their linked investigation files. Move remaining risk back to `## Active Issues` with the same ID and updated wording.
