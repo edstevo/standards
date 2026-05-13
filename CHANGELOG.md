@@ -2,7 +2,7 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
-## Unreleased
+## 1.0.45 - 2026-05-13
 
 ### Changed
 - Updated buglist investigation guidance to include a `Scope` section for investigation and likely fix boundaries.
