@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.43 - 2026-05-13
+
+### Added
+- Added a Codex `New Release` environment action backed by a project-local release script.
+
+### Changed
+- Updated buglist triage cleanup guidance so fixed bug removals also delete linked investigation files.
+
 ## 1.0.42 - 2026-05-11
 
 ### Added
