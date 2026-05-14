@@ -2,7 +2,7 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
-## Unreleased
+## 1.0.46 - 2026-05-14
 
 ### Changed
 - Clarified that "reconcile the buglist" means a narrow audit-and-alignment pass over active entries, duplicates, grouping, priorities, and linked investigations without fixed-entry cleanup, PR Agent movement, bug splitting, or implementation verification.
