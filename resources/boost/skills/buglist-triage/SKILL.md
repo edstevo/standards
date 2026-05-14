@@ -1,12 +1,12 @@
 ---
 name: buglist-triage
-description: Use when adding, editing, reviewing, grouping, de-duplicating, prioritising, or moving known bugs, risks, and watch-list entries in `docs/buglist.md`, including linked investigation docs and PR Agent bug refs.
+description: Use when adding, editing, reviewing, reconciling, grouping, de-duplicating, prioritising, or moving known bugs, risks, and watch-list entries in `docs/buglist.md`, including linked investigation docs and PR Agent bug refs.
 license: MIT
 metadata:
   domain: workflow
   role: specialist
   scope: documentation
-  triggers: buglist, bug list, docs/buglist.md, known bugs, risks, watch-list, investigation docs, PR Agent bug refs, Under PR Agent Control
+  triggers: buglist, bug list, reconcile the buglist, reconcile buglist, docs/buglist.md, known bugs, risks, watch-list, investigation docs, PR Agent bug refs, Under PR Agent Control
 ---
 
 # Buglist Triage
@@ -39,6 +39,24 @@ Keep entries short enough to scan, group, prioritise, de-duplicate, and hand ove
 - [ ] Create or link a deeper document when the bug needs more context than fits cleanly in one short bullet.
 - [ ] Delete linked `docs/investigations/{BUG-ID}.md` files when removing fixed buglist entries.
 - [ ] Move PR Agent-owned entries under `## Under PR Agent Control` only after the user says they have been handed off.
+
+## Reconcile Mode
+
+When the user asks to "reconcile the buglist", treat it as an audit-and-alignment pass only. Load `references/buglist-entry.md` and `references/investigation-file.md`; do not load PR Agent handoff guidance unless the user separately asks for PR Agent work.
+
+Do:
+- Review every active bug, risk, and watch entry for duplicates, overlaps, stale wording, wrong priority, and wrong grouping.
+- Check linked `docs/investigations/{BUG-ID}.md` files exist, match the buglist entry, and include the right evidence, cause, scope, and open questions.
+- Create or update missing/incomplete linked investigation files only enough to make the existing entry coherent; mark unknown facts as unknown or suspected.
+- Merge duplicate entries when they describe the same root issue. Keep the oldest stable bug ID unless another ID is already the clearer canonical reference.
+
+Do not:
+- Remove entries just because they appear fixed.
+- Delete linked investigation files.
+- Move entries into or out of `## Under PR Agent Control`.
+- Split mixed entries into new bug IDs.
+- Update partially fixed issues unless the user asks for fixed/partial-fix cleanup.
+- Inspect implementation code, tests, logs, or runtime behaviour unless the user explicitly asks for verification.
 
 ## Where Detail Belongs
 

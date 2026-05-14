@@ -52,3 +52,5 @@ Group by status, then domain when the app has domains. Otherwise group by module
 - When removing a fixed bug from `docs/buglist.md`, delete its linked `docs/investigations/{BUG-ID}.md` file when one exists.
 - Split mixed issues instead of hiding multiple risks in one bullet.
 - Do not copy investigation detail, PR prompts, or incident timelines into the buglist.
+
+For reconcile-only requests, stay inside the reconcile scope from `SKILL.md`: fix duplicates, overlaps, stale wording, priorities, grouping, and linked investigation alignment. Do not remove fixed entries, delete investigation files, move PR Agent entries, split mixed entries into new IDs, or inspect implementation code unless the user separately asks for that work.
