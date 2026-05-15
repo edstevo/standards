@@ -1,6 +1,6 @@
 ---
 name: laravel-coding-style
-description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, after-commit observers, and jobs/actions for follow-up work."
+description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, after-commit observers, native jobs for queued work, and synchronous Laravel Actions."
 license: MIT
 metadata:
   domain: laravel
@@ -19,8 +19,9 @@ The default shape is:
 - Non-trivial persistence flows use explicit property assignment and `associate()` instead of large opaque arrays.
 - Lifecycle changes happen through named model transition methods.
 - Transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
-- Observers run after commit and orchestrate follow-up work by dispatching jobs/events or calling methods that trigger further explicit events.
-- Jobs/actions perform heavy work, retries, integration IO, and long-running workflow steps. Jobs that always need committed data should implement `ShouldQueueAfterCommit` instead of relying on `->afterCommit()` dispatch chains.
+- Observers run after commit and orchestrate follow-up work by dispatching native Laravel jobs/events or calling methods that trigger further explicit events.
+- Native Laravel jobs perform queued, delayed, retryable, asynchronous, integration-heavy, and long-running workflow steps. Jobs that always need committed data should implement `ShouldQueueAfterCommit` instead of relying on `->afterCommit()` dispatch chains.
+- Laravel Actions perform synchronous, reusable application behaviour. Do not use `lorisleiva/laravel-actions` action classes as queued jobs; create a native job and have the job call the action when shared logic is needed.
 
 Use this skill whenever you:
 - add or refactor Eloquent models or relationships
@@ -28,7 +29,7 @@ Use this skill whenever you:
 - split bulky models into composable concerns
 - introduce model lifecycle events or state transitions
 - orchestrate multi-step workflows such as created -> route -> dispatch
-- trigger timeline/audit, integration sync, or next-step workflow side effects from model changes
+- trigger timeline/audit, integration sync, queued work, or next-step workflow side effects from model changes
 - test model lifecycle events, observers, or event-driven workflows
 
 ## Reference Guide
@@ -52,15 +53,17 @@ Load detailed guidance based on the task:
 - Keep relationship structure consistent. If a relationship can be reused, prefer a dedicated trait under `App\Models\Relationships`.
 - Keep non-trivial persistence flows explicit enough that the graph and relationships are readable.
 - Keep observers as a reaction layer, not a place for domain decisions or integration IO.
-- Keep jobs/actions responsible for work that can be slow, retryable, or reused.
+- Keep queued, delayed, retryable, asynchronous, slow, and integration-heavy work in native Laravel jobs.
+- Keep Laravel Actions for synchronous reusable business steps; jobs may call actions, but actions are not the queue boundary.
 - Keep tests aligned with the same boundaries: scenario-focused model transition files prove one transition; observer or workflow files prove follow-up orchestration separately.
 
 ## Checklist
 
 - [ ] Relationship conventions are handled through `references/eloquent-relationship-traits.md` when relationships are involved.
-- [ ] Persistence, lifecycle, observer, jobs/actions, and lifecycle-test references are loaded only when those topics are involved.
+- [ ] Persistence, lifecycle, observer, job/action boundary, and lifecycle-test references are loaded only when those topics are involved.
 - [ ] Models expose expressive methods instead of leaking state mutation across callers.
 - [ ] Observers dispatch work after commit and do not call external integrations directly.
 - [ ] Jobs that need committed data use `ShouldQueueAfterCommit` when the job can own that guarantee.
-- [ ] Jobs/actions own heavy work and external IO.
+- [ ] Queued or asynchronous work uses native Laravel jobs, not `lorisleiva/laravel-actions` dispatch helpers.
+- [ ] Jobs call actions only to reuse synchronous business logic.
 - [ ] Tests cover lifecycle behaviour in focused scenario files and layers instead of one broad workflow assertion.

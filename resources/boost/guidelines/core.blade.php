@@ -73,17 +73,18 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Laravel Coding Style
 
-- For preferred Laravel model, relationship, observer, lifecycle, persistence, jobs/actions, and model-event testing conventions, activate `laravel-coding-style`.
+- For preferred Laravel model, relationship, observer, lifecycle, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
 - Keep Eloquent models lean and expose expressive domain methods.
 - Use reusable relationship traits for shared Eloquent relationships.
 - Prefer explicit model construction and `associate()` for non-trivial domain persistence flows.
 - Use explicit model transition methods for lifecycle changes.
 - In model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
-- Observers should run after commit and coordinate follow-up work by dispatching jobs/events or calling methods that trigger further explicit events.
-- External IO belongs in jobs/actions, not observers.
-- Use native Laravel jobs for queued, delayed, retryable, or long-running work. Treat queued job constructors as data-only payload assignment and put executable work in `handle(...)`.
+- Observers should run after commit and coordinate follow-up work by dispatching native jobs/events or calling methods that trigger further explicit events.
+- External IO belongs behind explicit application boundaries, not observers.
+- Use native Laravel jobs for anything queued, delayed, retryable, asynchronous, or long-running. Treat queued job constructors as data-only payload assignment and put executable work in `handle(...)`.
+- Do not use `lorisleiva/laravel-actions` action classes as queued jobs, even though the package exposes job-style dispatch helpers. If action logic must run asynchronously, create a native job in `app/Jobs` and call the action from the job's `handle(...)`.
 - When a queued job must wait for a committed transaction, prefer implementing `Illuminate\Contracts\Queue\ShouldQueueAfterCommit` on the job over chaining `->afterCommit()` at each dispatch site.
-- Use `lorisleiva/laravel-actions` for application actions when the project includes it; keep action classes focused and container-resolvable.
+- Use `lorisleiva/laravel-actions` for synchronous, reusable application actions when the project includes it; keep action classes focused and container-resolvable.
 
 ### Integrations
 

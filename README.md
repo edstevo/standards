@@ -70,7 +70,7 @@ EdStevo Standards provides comprehensive guidelines covering:
 
 ### Project Structure Conventions
 
-- **Directory Organization**: Actions, DTOs, Enums, Services, ValueObjects
+- **Directory Organization**: Actions, Jobs, DTOs, Enums, Services, ValueObjects
 - **Naming Conventions**: Controllers, Models, Actions, Services, Traits
 - **Domain-Based Structure**: Organize by feature/domain, not by layer
 
@@ -80,6 +80,8 @@ app/
 ├── Actions/User/
 │   ├── CreateUser.php
 │   └── UpdateUserProfile.php
+├── Jobs/User/
+│   └── SendWelcomeEmailJob.php
 ├── DataTransferObjects/User/
 │   └── CreateUserData.php
 ├── Services/
@@ -90,10 +92,10 @@ app/
 
 ### Code Style & Best Practices
 
-- **Action Classes**: Use `lorisleiva/laravel-actions` for one-class-one-task business actions, typically called via `::run()`
+- **Action Classes**: Use `lorisleiva/laravel-actions` for synchronous one-class-one-task business actions, typically called via `::run()`; do not queue action classes via action dispatch helpers
 - **DTOs**: Immutable data transfer objects with validation
 - **Service Classes**: Coordinate multiple actions and domain logic
-- **Jobs and Queues**: Use native Laravel jobs and queues for queued or asynchronous work, with data-only job constructors and all work in `handle()`
+- **Jobs and Queues**: Use native Laravel jobs and queues for queued or asynchronous work, with data-only job constructors and all work in `handle()`; if queued work needs action logic, dispatch a job that calls the action
 - **Native Enums**: Type-safe backed enums for fixed values
 - **Thin Controllers**: Delegate to actions and services
 - **Query Optimization**: Eager loading, indexes, select only needed columns

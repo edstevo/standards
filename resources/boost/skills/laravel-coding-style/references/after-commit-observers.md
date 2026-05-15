@@ -8,17 +8,20 @@ Observers are the reaction layer. They coordinate follow-up work after model eve
 
 Observers should:
 - implement `ShouldHandleEventsAfterCommit`
-- dispatch timeline/audit jobs or events
-- dispatch next-step workflow jobs or events
-- dispatch integration sync jobs or events
+- dispatch timeline/audit native jobs or events
+- dispatch next-step workflow native jobs or events
+- dispatch integration sync native jobs or events
 - call model methods that trigger further explicit model events when chaining transitions
 - guard heavily before dispatching follow-up work
 
 Observers must not:
 - call external integrations directly
 - execute synchronous external follow-up actions inline
+- dispatch `lorisleiva/laravel-actions` action classes as queued jobs
 - absorb domain state-transition logic that belongs on the model
 - use broad `updated` handlers when an explicit domain event would be clearer
+
+Any `::dispatch(...)` class used from an observer should be a native Laravel job/event. If the reusable workflow logic lives in an action, dispatch a native job and have that job call the action from `handle(...)`.
 
 ```php
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;

@@ -5,8 +5,33 @@ Load this reference when deciding where follow-up workflow work belongs.
 ## Layering
 
 - Models/traits own state transitions, invariants, and explicit event firing.
-- Observers coordinate reactions by dispatching jobs/events or calling methods that trigger further explicit events.
-- Jobs/actions perform heavy work, retries, integration IO, and long-running workflow steps.
+- Observers coordinate reactions by dispatching native jobs/events or calling methods that trigger further explicit events.
+- Native Laravel jobs perform queued, delayed, retryable, asynchronous, integration-heavy, and long-running workflow steps.
+- Laravel Actions perform synchronous, reusable application behaviour and may be called from jobs.
+
+## Queue Boundary
+
+Use native Laravel job classes for follow-up work that will be queued, delayed, retried, or run asynchronously. When an observer starts that work, it should dispatch a native job/event, never an action class.
+
+Do not use `lorisleiva/laravel-actions` action classes as queued jobs, even though the package exposes job-style dispatch helpers such as `::dispatch(...)`. Actions are the synchronous business-logic boundary in this codebase; jobs are the queue boundary.
+
+If asynchronous work needs shared action logic:
+- create a native job under `app/Jobs` or the project's domain-local jobs directory
+- pass only serializable payload data to the job constructor
+- resolve collaborators and call the action inside `handle(...)`
+- make the job own queue contracts, retries, middleware, backoff, uniqueness, and after-commit semantics
+
+Bad:
+
+```php
+ReconcileImplementedSalesOrderAdjustment::dispatch($adjustment);
+```
+
+Good:
+
+```php
+ReconcileImplementedSalesOrderAdjustmentJob::dispatch($adjustment->id);
+```
 
 ## Jobs
 
@@ -40,11 +65,34 @@ class DetachUserFromAccountRoleContacts implements ShouldQueueAfterCommit
 }
 ```
 
+When the reusable business logic belongs in an action, keep the queue concerns on the job:
+
+```php
+use App\Actions\SalesOrderAdjustment\ReconcileImplementedSalesOrderAdjustment;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
+
+class ReconcileImplementedSalesOrderAdjustmentJob implements ShouldQueueAfterCommit
+{
+    public function __construct(
+        public readonly int $adjustmentId,
+    ) {}
+
+    public function handle(): void
+    {
+        ReconcileImplementedSalesOrderAdjustment::run($this->adjustmentId);
+    }
+}
+```
+
 ## Actions
 
-Use actions for reusable application behaviour and domain workflow steps.
+Use actions for reusable, synchronous application behaviour and domain workflow steps.
+
+Call actions directly via `::run(...)`, or from controllers, services, commands, jobs, and tests when the work should happen in the current process.
 
 If a job needs shared application logic, the job should call an action rather than absorb that logic itself.
+
+Do not add queue contracts, job middleware, retry/backoff configuration, or queue-specific behaviour to action classes in this codebase. Put that behaviour on the native job that calls the action.
 
 Prefer action names that describe the task:
 - `RaiseWarehouseOrderForFulfillmentOrder`

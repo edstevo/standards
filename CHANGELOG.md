@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.47 - 2026-05-15
+
+### Changed
+- Tightened Laravel Actions versus Jobs guidance so `lorisleiva/laravel-actions` classes are reserved for synchronous reusable behavior, while queued, delayed, retryable, or asynchronous work must use native Laravel jobs that may call actions from `handle(...)`.
+
 ## 1.0.46 - 2026-05-14
 
 ### Changed
