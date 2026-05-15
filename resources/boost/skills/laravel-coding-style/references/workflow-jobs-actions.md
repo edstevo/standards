@@ -5,7 +5,7 @@ Load this reference when deciding where follow-up workflow work belongs.
 ## Layering
 
 - Models/traits own state transitions, invariants, and explicit event firing.
-- Observers coordinate reactions by dispatching native jobs/events or calling methods that trigger further explicit events.
+- Observers detect lifecycle events and delegate reactions by dispatching native jobs/events or calling methods that trigger further explicit events.
 - Native Laravel jobs perform queued, delayed, retryable, asynchronous, integration-heavy, and long-running workflow steps.
 - Laravel Actions perform synchronous, reusable application behaviour and may be called from jobs.
 
@@ -38,7 +38,7 @@ ReconcileImplementedSalesOrderAdjustmentJob::dispatch($adjustment->id);
 Use native Laravel jobs for work that is queued, delayed, retryable, slow, or integration-heavy.
 
 In observer-driven workflows:
-- observers dispatch the job boundary
+- observers dispatch the job boundary without absorbing workflow logic
 - jobs do the work
 - jobs resolve collaborators inside `handle(...)`
 - external integration IO happens in jobs, not observers

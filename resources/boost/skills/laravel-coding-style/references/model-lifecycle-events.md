@@ -72,4 +72,4 @@ They should not own:
 - long-running workflow orchestration
 - queued retryable work
 
-Those reactions belong in after-commit observers and native jobs. If a reusable synchronous action already contains the business logic, the job may call that action from `handle(...)`.
+Those reactions belong in observers and native jobs. Observers should generally implement `ShouldHandleEventsAfterCommit`. If a reusable synchronous action already contains the business logic, the job may call that action from `handle(...)`.

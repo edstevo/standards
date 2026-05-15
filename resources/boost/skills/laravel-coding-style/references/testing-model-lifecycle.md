@@ -39,7 +39,7 @@ Observer tests should prove orchestration, not the full downstream workflow.
 
 Prefer:
 - fake jobs/events dispatched by the observer
-- assert guard behaviour for cancelled or incomplete models
+- assert the observer delegates, and test business eligibility rules on the model or domain object that owns them
 - assert field-change guards for narrow `updated` handlers
 - test downstream job/action behaviour separately
 
