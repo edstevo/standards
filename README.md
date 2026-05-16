@@ -94,6 +94,7 @@ app/
 
 - **Action Classes**: Use `lorisleiva/laravel-actions` for synchronous one-class-one-task business actions, typically called via `::run()`; do not queue action classes via action dispatch helpers
 - **DTOs**: Immutable data transfer objects with validation
+- **Builder APIs**: Fluent, domain-language builders as the default for complex object, report, import, command, filter, and workflow construction
 - **Service Classes**: Coordinate multiple actions and domain logic
 - **Jobs and Queues**: Use native Laravel jobs and queues for queued or asynchronous work, with data-only job constructors and all work in `handle()`; if queued work needs action logic, dispatch a job that calls the action
 - **Native Enums**: Type-safe backed enums for fixed values

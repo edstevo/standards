@@ -13,6 +13,8 @@ Prefer explicit model construction when the flow is meaningful business logic:
 
 Avoid large mass-assignment arrays when they hide the domain graph or important relationship wiring.
 
+When this explicit construction becomes option-heavy, multi-step, or hard to scan, promote the assembly into a focused builder with domain-language methods even if the construction only appears once or twice. Complexity, not repetition, is the trigger. The caller should still be able to see the meaningful graph shape and persistence boundary.
+
 ```php
 $reverseFulfillmentOrder = new ReverseFulfillmentOrder;
 $reverseFulfillmentOrder->status = OrderStatus::RAISED;

@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.49 - 2026-05-16
+
+### Added
+- Added PHP/Laravel builder pattern guidance covering builders as the default for complex construction, when to avoid them, terminal method semantics, validation, mutability, and testing expectations.
+
+### Changed
+- Updated core and Laravel coding-style guidance to introduce focused builders as soon as object, DTO, model graph, report, import, command, filter, or workflow construction becomes complex, option-heavy, multi-step, or hard to read, without waiting for repeated usage.
+
 ## 1.0.47 - 2026-05-15
 
 ### Changed

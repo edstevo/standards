@@ -64,6 +64,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Follow SOLID in production code and tests. Do not create monolithic classes, catch-all services, bloated actions, or unreadable manager objects. For detailed guidance, activate `solid-design`.
 - Use domain-first, intention-revealing names.
 - Prefer explicit orchestration with small private methods for local steps and separate classes for distinct responsibilities.
+- Default to builder-style APIs as soon as PHP object, DTO, report, import, command, filter, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site; do not wait for repeated usage before introducing a builder, but keep genuinely simple construction simple when a constructor, named constructor, DTO, factory, action, or Laravel model factory is clearer.
 - Favor defensive code paths: fail fast on invalid configuration and protect multi-write operations with transactions.
 - Use strict parameter and return types where possible.
 - Use enums for finite domain states and routing outcomes instead of loose strings.
@@ -77,6 +78,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Keep Eloquent models lean and expose expressive domain methods.
 - Use reusable relationship traits for shared Eloquent relationships.
 - Prefer explicit model construction and `associate()` for non-trivial domain persistence flows.
+- Use focused builders for complex model/workflow assembly as soon as the construction is difficult to scan, even at the first call site; builders should make construction more readable than long constructors, large option arrays, setup scripts, or scattered factory calls.
 - Use explicit model transition methods for lifecycle changes.
 - In model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
 - Observers should run after commit and coordinate follow-up work by dispatching native jobs/events or calling methods that trigger further explicit events.
