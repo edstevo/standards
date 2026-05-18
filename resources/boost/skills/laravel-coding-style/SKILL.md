@@ -1,12 +1,12 @@
 ---
 name: laravel-coding-style
-description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, state pattern workflows, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, state transitions, the observer pattern, native jobs for queued work, and synchronous Laravel Actions."
+description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, state pattern workflows, strategy pattern implementations, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, state transitions, interchangeable strategy classes, the observer pattern, native jobs for queued work, and synchronous Laravel Actions."
 license: MIT
 metadata:
   domain: laravel
   role: specialist
   scope: implementation
-  triggers: Laravel, Eloquent, models, relationships, relationship traits, observers, model events, lifecycle events, workflows, state transitions, saveQuietly, fireModelEvent, after commit
+  triggers: Laravel, Eloquent, models, relationships, relationship traits, observers, model events, lifecycle events, workflows, state transitions, strategy pattern, strategies, resolvers, interchangeable algorithms, saveQuietly, fireModelEvent, after commit
 ---
 
 # Laravel Coding Style
@@ -18,6 +18,7 @@ The default shape is:
 - Reusable Eloquent relationships live in small relationship traits.
 - Non-trivial persistence flows use explicit property assignment and `associate()` instead of large opaque arrays.
 - Builder-style APIs are the default when object, DTO, model graph, command, report, import, filtering, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site. Do not wait for repeated usage before introducing a builder.
+- Strategy classes are used when multiple interchangeable business rules or algorithms perform the same task; selection lives in resolvers, managers, factories, config maps, or container bindings, not in the strategy implementation.
 - Simple lifecycle changes happen through named model transition methods.
 - Simple transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
 - Complex lifecycle workflows use `spatie/laravel-model-states` with expressive model methods, explicit transition config, custom transition classes for context, and before/after model events.
@@ -31,6 +32,7 @@ Use this skill whenever you:
 - split bulky models into composable concerns
 - introduce model lifecycle events or state transitions
 - introduce state classes for complex lifecycle workflows
+- introduce interchangeable algorithms or strategy resolvers
 - orchestrate multi-step workflows such as created -> route -> dispatch
 - trigger timeline/audit, integration sync, queued work, or next-step workflow side effects from model changes
 - test model lifecycle events, observers, or event-driven workflows
@@ -48,6 +50,7 @@ Load detailed guidance based on the task:
 | Model construction and persistence | `references/model-construction-persistence.md` | Creating non-trivial model graphs, deciding between explicit assignment and mass assignment, using `associate()`, or wrapping related writes in transactions |
 | Model lifecycle events | `references/model-lifecycle-events.md` | Adding model transition methods, custom observable events, `saveQuietly()`, `fireModelEvent(...)`, or behaviour traits for state changes |
 | State pattern workflows | `references/state-pattern.md` | Replacing scattered lifecycle checks, designing Spatie model states, wrapping transitions in expressive model methods, handling multiple state dimensions, passing transition context, or testing workflow state transitions |
+| Strategy pattern | `references/strategy-pattern.md` | Replacing conditionals for interchangeable algorithms, adding strategy contracts, concrete strategy classes, resolvers, managers, factories, config maps, runtime strategy selection, or tests for strategy selection |
 | Observer pattern | `references/observer-pattern.md` | Writing observers, keeping observer methods thin, delegating follow-up work, using after-commit handling, or avoiding hidden workflow/domain logic in observers |
 | Workflow jobs and actions | `references/workflow-jobs-actions.md` | Deciding whether follow-up work belongs in observers, jobs, actions, or model methods |
 | Testing model lifecycle workflows | `references/testing-model-lifecycle.md` | Testing model transitions, explicit model events, observer follow-up behaviour, or after-commit workflow boundaries |
@@ -59,6 +62,7 @@ Load detailed guidance based on the task:
 - Keep relationship structure consistent. If a relationship can be reused, prefer a dedicated trait under `App\Models\Relationships`.
 - Keep non-trivial persistence flows explicit enough that the graph and relationships are readable.
 - Default to focused builders when construction is difficult to read, even before repetition appears; keep builder methods intention-revealing and domain-specific, with explicit terminal methods such as `build()`, `make()`, `create()`, `toDto()`, `toArray()`, or `save()` that accurately communicate side effects.
+- Use strategies for interchangeable algorithms such as pricing, VAT, shipping rates, supplier selection, routing modes, and integration-specific flows; keep the shared contract small and keep selection logic outside concrete strategies.
 - Keep observers as a predictable reaction layer, not a place for domain decisions, private helper methods, workflow orchestration, or integration IO.
 - Use observers only for global lifecycle consequences; call actions directly when behaviour belongs to one specific workflow, command, import, checkout, or admin path.
 - Keep queued, delayed, retryable, asynchronous, slow, and integration-heavy work in native Laravel jobs.
@@ -69,6 +73,7 @@ Load detailed guidance based on the task:
 
 - [ ] Relationship conventions are handled through `references/eloquent-relationship-traits.md` when relationships are involved.
 - [ ] Builder guidance is loaded as soon as construction is complex, option-heavy, multi-step, difficult to read, or currently expressed through large constructors/arrays.
+- [ ] Strategy Pattern guidance is loaded when multiple interchangeable algorithms or runtime-selected business rules are involved.
 - [ ] Persistence, lifecycle, observer, job/action boundary, and lifecycle-test references are loaded only when those topics are involved.
 - [ ] State Pattern guidance is loaded when workflow states need Spatie state classes, transition context, multiple state dimensions, or valid-transition enforcement.
 - [ ] Models expose expressive methods instead of leaking state mutation across callers.

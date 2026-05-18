@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.51 - 2026-05-18
+
+### Added
+- Added Laravel Strategy Pattern guidance covering contract-backed interchangeable algorithms, concrete strategies, resolver/config-map/container selection, Laravel naming boundaries, state-pattern distinction, and focused testing expectations.
+
 ## 1.0.50 - 2026-05-18
 
 ### Added

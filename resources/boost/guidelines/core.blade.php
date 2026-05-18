@@ -65,6 +65,7 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Use domain-first, intention-revealing names.
 - Prefer explicit orchestration with small private methods for local steps and separate classes for distinct responsibilities.
 - Default to builder-style APIs as soon as PHP object, DTO, report, import, command, filter, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site; do not wait for repeated usage before introducing a builder, but keep genuinely simple construction simple when a constructor, named constructor, DTO, factory, action, or Laravel model factory is clearer.
+- Use the strategy pattern when multiple interchangeable business rules or algorithms perform the same task; keep strategy contracts small, put runtime selection in resolvers/factories/config maps/container bindings, and do not use strategies for simple one-off logic or lifecycle state.
 - Favor defensive code paths: fail fast on invalid configuration and protect multi-write operations with transactions.
 - Use strict parameter and return types where possible.
 - Use enums for finite domain states and routing outcomes instead of loose strings.
@@ -74,11 +75,12 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Laravel Coding Style
 
-- For preferred Laravel model, relationship, observer, lifecycle, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
+- For preferred Laravel model, relationship, observer, lifecycle, strategy, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
 - Keep Eloquent models lean and expose expressive domain methods.
 - Use reusable relationship traits for shared Eloquent relationships.
 - Prefer explicit model construction and `associate()` for non-trivial domain persistence flows.
 - Use focused builders for complex model/workflow assembly as soon as the construction is difficult to scan, even at the first call site; builders should make construction more readable than long constructors, large option arrays, setup scripts, or scattered factory calls.
+- Use strategy classes for interchangeable algorithms such as pricing, VAT, shipping-rate calculation, supplier selection, routing modes, and integration-specific flows; consuming code should depend on the strategy contract while resolvers, managers, factories, config maps, or container bindings choose the implementation.
 - Use explicit model transition methods for simple lifecycle changes.
 - In simple model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
 - For complex lifecycle workflows, use Spatie model states through `laravel-coding-style` so expressive model methods, valid transitions, transition context, multiple state dimensions, and before/after model events stay centralized.
