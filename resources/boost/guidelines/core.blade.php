@@ -52,7 +52,9 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 - Organize controllers by domain or feature under `app/Http/Controllers/`.
 - Keep application actions in `app/Actions/` or domain-local `Actions/` folders.
-- Use `app/Dtos/`, `app/Enums/`, `app/ValueObjects/`, and `app/Exceptions/` for those concepts unless the project already has a different convention.
+- Use `app/Data/` for Spatie data objects, or `app/Dtos/` when the project already has that convention. Use `app/Enums/`, `app/ValueObjects/`, and `app/Exceptions/` for those concepts unless the project already has a different convention.
+- Use `app/Factories/` for centralized object construction and `app/Managers/` for Laravel-style driver, provider, connection, or implementation selection unless the project already has domain-local folders.
+- Use `app/Specifications/` or domain-local `Specifications/` for reusable side-effect-free business rule checks.
 - Use singular model names.
 - Name controllers as `{Resource}Controller`.
 - Name action classes as explicit verb-led tasks, for example `CreateUser` or `SendWelcomeEmail`.
@@ -64,7 +66,10 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Follow SOLID in production code and tests. Do not create monolithic classes, catch-all services, bloated actions, or unreadable manager objects. For detailed guidance, activate `solid-design`.
 - Use domain-first, intention-revealing names.
 - Prefer explicit orchestration with small private methods for local steps and separate classes for distinct responsibilities.
+- Prefer DTOs over associative arrays when structured data crosses application boundaries. In Laravel projects, use `spatie/laravel-data` data objects with explicit typed properties unless the project already has an established DTO convention.
 - Default to builder-style APIs as soon as PHP object, DTO, report, import, command, filter, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site; do not wait for repeated usage before introducing a builder, but keep genuinely simple construction simple when a constructor, named constructor, DTO, factory, action, or Laravel model factory is clearer.
+- Use factories when object construction is complex, provider-specific, or repeated. Use managers when named drivers, providers, connections, tenants, or implementations must be selected and configured. Do not use managers as vague workflow services.
+- Use specifications for reusable boolean domain rules and eligibility checks. Specifications should be side-effect free and must not write to the database, dispatch jobs/events, make HTTP calls, or orchestrate workflows.
 - Use the strategy pattern when multiple interchangeable business rules or algorithms perform the same task; keep strategy contracts small, put runtime selection in resolvers/factories/config maps/container bindings, and do not use strategies for simple one-off logic or lifecycle state.
 - Favor defensive code paths: fail fast on invalid configuration and protect multi-write operations with transactions.
 - Use strict parameter and return types where possible.
@@ -75,21 +80,26 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Laravel Coding Style
 
-- For preferred Laravel model, relationship, observer, lifecycle, strategy, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
+- For preferred Laravel model, relationship, DTO, factory/manager, specification, observer, lifecycle, strategy, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
 - Keep Eloquent models lean and expose expressive domain methods.
 - Use reusable relationship traits for shared Eloquent relationships.
+- Use `spatie/laravel-data` DTOs for structured request, action, job, integration, import, export, and AI-readable payloads; pass a named data object such as `SalesOrderData::from($request->validated())` rather than raw request arrays.
 - Prefer explicit model construction and `associate()` for non-trivial domain persistence flows.
 - Use focused builders for complex model/workflow assembly as soon as the construction is difficult to scan, even at the first call site; builders should make construction more readable than long constructors, large option arrays, setup scripts, or scattered factory calls.
+- Use factories for centralized construction and managers for Laravel-style provider, driver, connection, adapter, or strategy selection.
+- Use specifications for reusable side-effect-free business rule checks such as eligibility, qualification, and "can this happen" decisions; actions perform workflows, policies authorize actors, strategies choose algorithms, and states own lifecycle behaviour.
 - Use strategy classes for interchangeable algorithms such as pricing, VAT, shipping-rate calculation, supplier selection, routing modes, and integration-specific flows; consuming code should depend on the strategy contract while resolvers, managers, factories, config maps, or container bindings choose the implementation.
 - Use explicit model transition methods for simple lifecycle changes.
 - In simple model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
 - For complex lifecycle workflows, use Spatie model states through `laravel-coding-style` so expressive model methods, valid transitions, transition context, multiple state dimensions, and before/after model events stay centralized.
-- Observers should run after commit and coordinate follow-up work by dispatching native jobs/events or calling methods that trigger further explicit events.
+- Observers should run after commit and stay extremely shallow: apply only technical guards, then dispatch native jobs/events, call actions, record simple factual audit entries, or call clearly named model methods.
+- Observers must not contain second-order functions, private workflow helpers, core domain invariants, complex state decisions, or hidden orchestration logic.
 - External IO belongs behind explicit application boundaries, not observers.
-- Use native Laravel jobs for anything queued, delayed, retryable, asynchronous, or long-running. Treat queued job constructors as data-only payload assignment and put executable work in `handle(...)`.
-- Do not use `lorisleiva/laravel-actions` action classes as queued jobs, even though the package exposes job-style dispatch helpers. If action logic must run asynchronously, create a native job in `app/Jobs` and call the action from the job's `handle(...)`.
+- Use native Laravel jobs for anything queued, delayed, retryable, asynchronous, or long-running. Jobs are asynchronous queued work units pushed onto the Laravel queue and operated by Laravel Horizon. Treat queued job constructors as payload assignment only, pass Eloquent models directly when the model is the payload, and put executable work in `handle(...)`.
+- Do not suffix native job class names with `Job`; the namespace and queue contract already identify them as jobs.
+- Use the `lorisleiva/laravel-actions` package only for synchronous action classes called with `::run(...)`. Do not use action classes as queued jobs, even though the package exposes job-style dispatch helpers. `::dispatch(...)` should be Laravel framework dispatch from native jobs/events, for example `SubmitQuote::dispatch($quote)`. If action logic must run asynchronously, create a native job in `app/Jobs` and call the action from the job's `handle(...)`.
 - When a queued job must wait for a committed transaction, prefer implementing `Illuminate\Contracts\Queue\ShouldQueueAfterCommit` on the job over chaining `->afterCommit()` at each dispatch site.
-- Use `lorisleiva/laravel-actions` for synchronous, reusable application actions when the project includes it; keep action classes focused and container-resolvable.
+- Use `lorisleiva/laravel-actions` for synchronous, reusable application actions when the project includes it; keep action classes focused and container-resolvable, and call them with `::run(...)`.
 
 ### Integrations
 

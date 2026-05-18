@@ -10,7 +10,7 @@ When working with AI coding agents like GPT-5.5, Codex, Claude Code, or Cursor, 
 
 - 🤖 **Laravel Boost Integration** - Automatically discovered by Laravel Boost
 - 📐 **Project Structure Guidelines** - Domain-based organization and naming conventions
-- ✨ **Code Quality Standards** - Actions, DTOs, Services, and best practices
+- ✨ **Code Quality Standards** - Actions, DTOs, factories, managers, specifications, services, and best practices
 - 🧪 **Testing Standards** - Pest PHP patterns and coverage guidelines
 - 📦 **Zero Configuration** - Install and forget
 - 🔄 **Auto-updating** - Stay in sync with your coding standards
@@ -70,8 +70,8 @@ EdStevo Standards provides comprehensive guidelines covering:
 
 ### Project Structure Conventions
 
-- **Directory Organization**: Actions, Jobs, DTOs, Enums, Services, ValueObjects
-- **Naming Conventions**: Controllers, Models, Actions, Services, Traits
+- **Directory Organization**: Actions, Jobs, Data/DTOs, Factories, Managers, Specifications, Enums, Services, ValueObjects
+- **Naming Conventions**: Controllers, Models, Actions, Factories, Managers, Specifications, Services, Traits
 - **Domain-Based Structure**: Organize by feature/domain, not by layer
 
 Example structure the AI will understand:
@@ -81,9 +81,15 @@ app/
 │   ├── CreateUser.php
 │   └── UpdateUserProfile.php
 ├── Jobs/User/
-│   └── SendWelcomeEmailJob.php
-├── DataTransferObjects/User/
+│   └── SendWelcomeEmail.php
+├── Data/User/
 │   └── CreateUserData.php
+├── Factories/Integrations/
+│   └── AccountingClientFactory.php
+├── Managers/
+│   └── AccountingManager.php
+├── Specifications/Sales/
+│   └── CanDispatchSpecification.php
 ├── Services/
 │   └── UserService.php
 └── Http/Controllers/User/
@@ -92,15 +98,17 @@ app/
 
 ### Code Style & Best Practices
 
-- **Action Classes**: Use `lorisleiva/laravel-actions` for synchronous one-class-one-task business actions, typically called via `::run()`; do not queue action classes via action dispatch helpers
-- **DTOs**: Immutable data transfer objects with validation
+- **Action Classes**: Use `lorisleiva/laravel-actions` only for synchronous one-class-one-task business actions, called via `::run()`; never use action-package dispatch helpers for queued work
+- **DTOs**: Use `spatie/laravel-data` data objects with explicit typed properties for structured request, action, job, integration, import/export, and AI-readable payloads instead of raw associative arrays
 - **Builder APIs**: Fluent, domain-language builders as the default for complex object, report, import, command, filter, and workflow construction
+- **Factories and Managers**: Use factories for centralized object construction and managers for Laravel-style driver, provider, connection, adapter, or strategy selection
+- **Specification Pattern**: Reusable side-effect-free boolean business rule and eligibility checks such as `CanDispatchSpecification`, `EligibleForRefundSpecification`, and `CanAllocateStockSpecification`
 - **Strategy Pattern**: Contract-backed interchangeable algorithms selected through resolvers, factories, config maps, or container bindings for pricing, VAT, shipping, supplier selection, routing, and integration-specific flows
 - **State Pattern**: Use expressive model methods backed by `spatie/laravel-model-states` for complex lifecycle workflows where valid transitions, state-specific behaviour, context, and multiple state dimensions matter
-- **Service Classes**: Coordinate multiple actions and domain logic
-- **Jobs and Queues**: Use native Laravel jobs and queues for queued or asynchronous work, with data-only job constructors and all work in `handle()`; if queued work needs action logic, dispatch a job that calls the action
+- **Service Classes**: Use only for cohesive collaborators, integration boundaries, or domain concepts; prefer explicit verb-led actions for single business operations
+- **Jobs and Queues**: Use native Laravel jobs and queues for asynchronous work pushed to the Laravel queue and operated by Horizon; pass Eloquent models directly when they are the payload, avoid `Job` suffixes, and put executable work in `handle()`; if queued work needs action logic, dispatch a job that calls the action
 - **Native Enums**: Type-safe backed enums for fixed values
-- **Thin Controllers**: Delegate to actions and services
+- **Thin Controllers**: Delegate business operations to actions and use services only for cohesive collaborators
 - **Query Optimization**: Eager loading, indexes, select only needed columns
 - **Security**: Input validation, mass assignment protection, XSS prevention
 

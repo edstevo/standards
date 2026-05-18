@@ -1,85 +1,68 @@
 ---
 name: laravel-coding-style
-description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, state pattern workflows, strategy pattern implementations, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, state transitions, interchangeable strategy classes, the observer pattern, native jobs for queued work, and synchronous Laravel Actions."
+description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, DTOs, factories, managers, specifications, observers, lifecycle workflows, state pattern workflows, strategy pattern implementations, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, typed data contracts, centralized construction and implementation selection, reusable business rule checks, state transitions, interchangeable strategy classes, thin observers, native Laravel jobs for queued/Horizon work, and synchronous Laravel Actions."
 license: MIT
 metadata:
   domain: laravel
   role: specialist
   scope: implementation
-  triggers: Laravel, Eloquent, models, relationships, relationship traits, observers, model events, lifecycle events, workflows, state transitions, strategy pattern, strategies, resolvers, interchangeable algorithms, saveQuietly, fireModelEvent, after commit
+  triggers: Laravel, Eloquent, models, relationships, relationship traits, DTO, Data objects, spatie/laravel-data, typed payloads, factory pattern, factories, manager pattern, managers, specification pattern, specifications, eligibility rules, business rule checks, drivers, providers, connections, adapters, observers, model events, lifecycle events, workflows, action pattern, Laravel Actions, AsAction, state transitions, strategy pattern, strategies, resolvers, interchangeable algorithms, saveQuietly, fireModelEvent, after commit
 ---
 
 # Laravel Coding Style
 
 This skill describes my preferred Laravel framework coding style. Use it alongside `solid-design` for general design boundaries and `laravel-tdd` for test-writing workflow.
 
-The default shape is:
-- Eloquent models stay lean and expose expressive domain methods.
-- Reusable Eloquent relationships live in small relationship traits.
-- Non-trivial persistence flows use explicit property assignment and `associate()` instead of large opaque arrays.
-- Builder-style APIs are the default when object, DTO, model graph, command, report, import, filtering, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site. Do not wait for repeated usage before introducing a builder.
-- Strategy classes are used when multiple interchangeable business rules or algorithms perform the same task; selection lives in resolvers, managers, factories, config maps, or container bindings, not in the strategy implementation.
-- Simple lifecycle changes happen through named model transition methods.
-- Simple transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
-- Complex lifecycle workflows use `spatie/laravel-model-states` with expressive model methods, explicit transition config, custom transition classes for context, and before/after model events.
-- Observers run after commit and stay thin: identify the lifecycle event, then delegate follow-up work to native Laravel jobs/events, actions, services, or model methods that trigger further explicit events.
-- Native Laravel jobs perform queued, delayed, retryable, asynchronous, integration-heavy, and long-running workflow steps. Jobs that always need committed data should implement `ShouldQueueAfterCommit` instead of relying on `->afterCommit()` dispatch chains.
-- Laravel Actions perform synchronous, reusable application behaviour. Do not use `lorisleiva/laravel-actions` action classes as queued jobs; create a native job and have the job call the action when shared logic is needed.
+Treat this file as a routing map. Keep only the relevant reference files in context for the work being done.
 
-Use this skill whenever you:
-- add or refactor Eloquent models or relationships
-- create models that share common relationships
-- split bulky models into composable concerns
-- introduce model lifecycle events or state transitions
-- introduce state classes for complex lifecycle workflows
-- introduce interchangeable algorithms or strategy resolvers
-- orchestrate multi-step workflows such as created -> route -> dispatch
-- trigger timeline/audit, integration sync, queued work, or next-step workflow side effects from model changes
-- test model lifecycle events, observers, or event-driven workflows
-
-## Reference Guide
-
-References are load-on-demand support files in this skill's `references/` directory.
-
-Load detailed guidance based on the task:
+## Decision Map
 
 | Topic | Reference | Load When |
 |-------|-----------|-----------|
-| Eloquent relationship traits | `references/eloquent-relationship-traits.md` | Adding/modifying Eloquent relationships, creating shared relationship traits, refactoring bulky models into relationship concerns, or needing relationship docblocks/return types |
-| Builder pattern | `references/builder-pattern.md` | Construction has many optional values or steps, large constructors, arrays used as informal configuration objects, unclear action payloads, command/report/import/filter setup, repeated setup logic, or complex test setup that is not just model factory data |
-| Model construction and persistence | `references/model-construction-persistence.md` | Creating non-trivial model graphs, deciding between explicit assignment and mass assignment, using `associate()`, or wrapping related writes in transactions |
-| Model lifecycle events | `references/model-lifecycle-events.md` | Adding model transition methods, custom observable events, `saveQuietly()`, `fireModelEvent(...)`, or behaviour traits for state changes |
-| State pattern workflows | `references/state-pattern.md` | Replacing scattered lifecycle checks, designing Spatie model states, wrapping transitions in expressive model methods, handling multiple state dimensions, passing transition context, or testing workflow state transitions |
-| Strategy pattern | `references/strategy-pattern.md` | Replacing conditionals for interchangeable algorithms, adding strategy contracts, concrete strategy classes, resolvers, managers, factories, config maps, runtime strategy selection, or tests for strategy selection |
-| Observer pattern | `references/observer-pattern.md` | Writing observers, keeping observer methods thin, delegating follow-up work, using after-commit handling, or avoiding hidden workflow/domain logic in observers |
-| Workflow jobs and actions | `references/workflow-jobs-actions.md` | Deciding whether follow-up work belongs in observers, jobs, actions, or model methods |
-| Testing model lifecycle workflows | `references/testing-model-lifecycle.md` | Testing model transitions, explicit model events, observer follow-up behaviour, or after-commit workflow boundaries |
+| Eloquent model API | `references/model-lifecycle-events.md` | Adding named lifecycle methods, custom observable events, `saveQuietly()`, or `fireModelEvent(...)` |
+| Relationships | `references/eloquent-relationship-traits.md` | Adding Eloquent relationships, shared relationship traits, relationship docblocks, or relationship return types |
+| Persistence | `references/model-construction-persistence.md` | Creating non-trivial model graphs, choosing explicit assignment vs mass assignment, using `associate()`, or wrapping related writes in transactions |
+| DTO | `references/dto-pattern.md` | Replacing raw arrays or designing typed request, action, job, integration, import/export, or AI-readable payloads |
+| Builder | `references/builder-pattern.md` | Construction is option-heavy, multi-step, hard to scan, or currently expressed through large constructors or arrays |
+| Action | `references/action-pattern.md` | Creating or refactoring one synchronous business operation using `AsAction` and `::run(...)` |
+| Job/action boundary | `references/workflow-jobs-actions.md` | Deciding whether work is synchronous action logic or asynchronous Laravel queue/Horizon work |
+| Observer | `references/observer-pattern.md` | Reacting to Eloquent lifecycle events, delegating after commit, or removing hidden observer workflow logic |
+| State | `references/state-pattern.md` | Replacing scattered lifecycle checks with expressive model methods and Spatie model states |
+| Strategy | `references/strategy-pattern.md` | Selecting between interchangeable algorithms such as pricing, VAT, shipping, routing, or provider-specific flows |
+| Specification | `references/specification-pattern.md` | Extracting reusable side-effect-free boolean business rules or eligibility checks |
+| Policy vs state/specification | `references/state-pattern-events-and-policies.md` | Separating actor authorization from lifecycle validity and reusable domain eligibility rules |
+| Factory/manager | `references/factory-manager-pattern.md` | Centralizing construction or selecting drivers, providers, connections, adapters, strategies, or specification implementations |
+| Lifecycle tests | `references/testing-model-lifecycle.md` | Testing model transitions, observer follow-up behaviour, explicit model events, or after-commit boundaries |
 
-## General Rules
+## Pattern Boundaries
 
-- Keep model APIs domain-readable. Prefer `$order->markAsSubmitted()` over scattered state mutation.
-- Keep simple lifecycle changes as named model methods, but move complex lifecycle workflows into Spatie model states loaded through `references/state-pattern.md`.
-- Keep relationship structure consistent. If a relationship can be reused, prefer a dedicated trait under `App\Models\Relationships`.
-- Keep non-trivial persistence flows explicit enough that the graph and relationships are readable.
-- Default to focused builders when construction is difficult to read, even before repetition appears; keep builder methods intention-revealing and domain-specific, with explicit terminal methods such as `build()`, `make()`, `create()`, `toDto()`, `toArray()`, or `save()` that accurately communicate side effects.
-- Use strategies for interchangeable algorithms such as pricing, VAT, shipping rates, supplier selection, routing modes, and integration-specific flows; keep the shared contract small and keep selection logic outside concrete strategies.
-- Keep observers as a predictable reaction layer, not a place for domain decisions, private helper methods, workflow orchestration, or integration IO.
-- Use observers only for global lifecycle consequences; call actions directly when behaviour belongs to one specific workflow, command, import, checkout, or admin path.
-- Keep queued, delayed, retryable, asynchronous, slow, and integration-heavy work in native Laravel jobs.
-- Keep Laravel Actions for synchronous reusable business steps; jobs may call actions, but actions are not the queue boundary.
-- Keep tests aligned with the same boundaries: scenario-focused model transition files prove one transition; observer or workflow files prove follow-up orchestration separately.
+- Models expose domain-readable APIs. Simple lifecycle changes can stay as named model methods; complex workflows use `spatie/laravel-model-states`.
+- DTOs carry typed data. They do not perform business workflows.
+- Actions perform synchronous business operations through `lorisleiva/laravel-actions`, `AsAction`, and `::run(...)`.
+- Jobs are native Laravel asynchronous queue units for Horizon. Jobs use `::dispatch(...)`, pass Eloquent models when the model is the payload, and avoid a `Job` suffix.
+- Observers are shallow global lifecycle reactions. They apply technical guards and delegate; detailed observer rules live in `observer-pattern.md`.
+- Specifications answer reusable boolean domain-rule questions. Policies authorize actors. Strategies execute interchangeable algorithms. States own lifecycle behaviour.
+- Factories construct implementations. Managers select named drivers, providers, connections, tenants, or implementations. Builders assemble complex objects or payloads.
+
+## Workflow Shape
+
+Prefer this flow when the pieces are relevant:
+
+```text
+Controller / command / listener / UI handler
+-> Request validation
+-> DTO
+-> Action
+-> Specification, state, strategy, manager, or factory as needed
+-> Model persistence and explicit events
+-> Observer, event listener, or native job for global follow-up work
+```
 
 ## Checklist
 
-- [ ] Relationship conventions are handled through `references/eloquent-relationship-traits.md` when relationships are involved.
-- [ ] Builder guidance is loaded as soon as construction is complex, option-heavy, multi-step, difficult to read, or currently expressed through large constructors/arrays.
-- [ ] Strategy Pattern guidance is loaded when multiple interchangeable algorithms or runtime-selected business rules are involved.
-- [ ] Persistence, lifecycle, observer, job/action boundary, and lifecycle-test references are loaded only when those topics are involved.
-- [ ] State Pattern guidance is loaded when workflow states need Spatie state classes, transition context, multiple state dimensions, or valid-transition enforcement.
-- [ ] Models expose expressive methods instead of leaking state mutation across callers.
-- [ ] Observers dispatch or delegate work after commit and do not call external integrations directly.
-- [ ] Observer methods are thin, flat, and free of private helper methods or hidden business rules.
-- [ ] Jobs that need committed data use `ShouldQueueAfterCommit` when the job can own that guarantee.
-- [ ] Queued or asynchronous work uses native Laravel jobs, not `lorisleiva/laravel-actions` dispatch helpers.
-- [ ] Jobs call actions only to reuse synchronous business logic.
-- [ ] Tests cover lifecycle behaviour in focused scenario files and layers instead of one broad workflow assertion.
+- [ ] Load the smallest reference set that matches the work.
+- [ ] Keep the chosen pattern's responsibility narrow and named in domain language.
+- [ ] Do not duplicate business rules across controllers, observers, jobs, actions, models, or tests.
+- [ ] Keep synchronous work in actions and asynchronous work in native Laravel jobs.
+- [ ] Keep observer methods shallow and move workflow logic to the owning pattern.
+- [ ] Add focused tests at the same boundary as the behaviour being changed.

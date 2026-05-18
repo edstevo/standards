@@ -141,16 +141,16 @@ $fulfillmentOrder->markAsSubmittedToSupplier(
 );
 ```
 
-Use a small DTO instead of many scalar arguments when the transition context becomes large or reused:
+Use a small `spatie/laravel-data` DTO instead of many scalar arguments when the transition context becomes large or reused. Load `dto-pattern.md` when the transition context becomes a stable data contract.
 
 ```php
-class SupplierSubmissionData
+use Spatie\LaravelData\Data;
+
+final class SupplierSubmissionData extends Data
 {
-    public function __construct(
-        public readonly string $supplierReference,
-        public readonly CarbonInterface $submittedAt,
-    ) {
-    }
+    public string $supplierReference;
+
+    public CarbonInterface $submittedAt;
 }
 ```
 

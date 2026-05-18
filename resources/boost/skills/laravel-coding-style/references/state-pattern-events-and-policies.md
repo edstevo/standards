@@ -1,6 +1,6 @@
 # State Pattern Events And Policies
 
-Load this reference when deciding between before/after model events, Spatie `StateChanged`, domain events, observers, and Laravel Policies.
+Load this reference when deciding between before/after model events, Spatie `StateChanged`, domain events, observers, Laravel Policies, and reusable specification checks around model state transitions.
 
 ## Before And After Model Events
 
@@ -35,31 +35,11 @@ class Invoice extends Model implements HasStatesContract
 
 Use before events for synchronous pre-transition checks. Use after events for model lifecycle reactions.
 
-## Observer Rules
+## Observer Boundary
 
-Before-event observers should:
-- validate local prerequisites
-- throw domain exceptions for invalid conditions
-- return `false` only when the transition should be halted without throwing
-- avoid external side effects
-- run synchronously, not after commit
+Before-event observers run synchronously and may halt the transition. Use them only for small pre-transition checks that cannot live cleanly in the model method, transition class, state config, policy, or specification.
 
-After-event observers should:
-- implement `ShouldHandleEventsAfterCommit` when they dispatch jobs or need committed data
-- stay thin and delegate to native jobs, Laravel events, actions, services, or model methods
-- avoid external integration IO inline
-
-```php
-use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
-
-class InvoiceObserver implements ShouldHandleEventsAfterCommit
-{
-    public function paid(Invoice $invoice): void
-    {
-        RecordInvoiceTimelineEntry::dispatch($invoice->id);
-    }
-}
-```
+After-event observers react after persistence. They should stay shallow and delegate to actions, native jobs/events, or simple audit entries. Load `observer-pattern.md` for full observer rules.
 
 ## Spatie StateChanged
 
@@ -178,3 +158,20 @@ public function cancel(User $user, SalesOrder $salesOrder): bool
 ```
 
 Policies control who may attempt the action. State transitions control whether the entity may transition.
+
+## Specifications Versus Policies And State
+
+Use a specification when a domain eligibility rule is reusable outside one lifecycle transition.
+
+```php
+if (! app(CanReleasePaymentSpecification::class)->isSatisfiedBy($salesOrder)) {
+    throw new CannotReleasePaymentException();
+}
+```
+
+Responsibility split:
+- Policy: can this user attempt the operation?
+- State pattern: is this transition valid from the current lifecycle state?
+- Specification: does this entity satisfy a reusable business eligibility rule?
+
+Do not put authorization into specifications. Do not replace Spatie transition configuration with specifications. Specifications should remain side-effect-free rule objects.

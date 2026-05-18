@@ -57,9 +57,17 @@ The model method may call Spatie's `transitionTo(...)` internally.
 
 ## Boundary
 
+- Action: receives the instruction to perform a business operation and calls the expressive model lifecycle API.
 - Expressive model methods such as `approve()`, `markAsPaid()`, or `markAsDespatched()` are the public API.
 - Spatie state config answers which transitions are valid.
 - Spatie transition classes perform contextual state changes.
+- Specifications answer reusable side-effect-free eligibility rules that are broader than one transition.
 - Before model events validate or halt before the transition is attempted.
 - After model events and Spatie `StateChanged` listeners react after persistence.
 - Laravel Policies answer whether the user is allowed to attempt the action.
+
+Actions should not duplicate lifecycle rules with large state conditionals. Load `action-pattern.md` when the caller is a Laravel action or when action boundaries are being designed around a lifecycle workflow.
+
+Load `specification-pattern.md` when transition eligibility is a reusable business rule that also appears in actions, policies, observers, jobs, or tests.
+
+Do not introduce custom state factories for new complex model workflows. Spatie's state cast and transition configuration own state resolution for this coding style. Load `factory-manager-pattern.md` only when resolving legacy/custom non-Spatie state objects or mapping external lifecycle codes into internal data.

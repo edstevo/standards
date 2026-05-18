@@ -2,6 +2,20 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.52 - 2026-05-18
+
+### Added
+- Added first-class Laravel Action Pattern guidance covering synchronous `lorisleiva/laravel-actions` action classes, `AsAction`/`::run(...)` usage, action naming and boundaries, transactions, testing, and relationships with state, strategy, events, observers, and jobs.
+- Added Laravel DTO Pattern guidance standardizing structured application data on `spatie/laravel-data`, explicit typed `Data` classes, request-to-DTO-to-action flow, AI/static-analysis benefits, DTO naming, and array-avoidance boundaries.
+- Added Factory and Manager Pattern guidance covering centralized object creation, Laravel-style driver/provider/connection selection, strategy and adapter selection, DTO/client boundaries, and relationships with actions, builders, state, policies, and integrations.
+- Added Specification Pattern guidance covering reusable side-effect-free boolean business rule checks, eligibility logic, composition, testing, and relationships with actions, states, strategies, policies, observers, DTOs, factories, and managers.
+
+### Changed
+- Reorganized the Laravel coding-style skill into a concise decision map with pattern boundaries, keeping detailed guidance in focused references for easier AI-agent navigation.
+- Clarified the action/job split: actions are synchronous and are the only classes that use the Laravel Actions package, while jobs are asynchronous native Laravel queued work units dispatched through Laravel framework conventions for Horizon processing.
+- Clarified queued job conventions to pass Eloquent models directly when they are the payload and to name native job classes without a `Job` suffix.
+- Refined Observer Pattern guidance to require extremely shallow observers, prohibit private workflow helpers and second-order functions, and route business rules to models, actions, specifications, strategies, policies, or state classes.
+
 ## 1.0.51 - 2026-05-18
 
 ### Added

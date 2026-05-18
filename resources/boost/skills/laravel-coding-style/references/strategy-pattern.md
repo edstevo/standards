@@ -24,6 +24,7 @@ Avoid strategies when:
 - no runtime interchangeability is needed
 - the class would only wrap a one-line getter
 - the behaviour is actually a model lifecycle transition
+- the class only answers a boolean eligibility question
 - a policy, enum method, value object, action, or model method is clearer
 
 ## Standard Shape
@@ -248,6 +249,44 @@ State examples:
 
 If the work involves lifecycle transitions, valid state changes, before/after transition events, or state-specific permissions, load `state-pattern.md` instead.
 
+## Strategy Versus Action
+
+Use an action when the class represents one business operation or use case.
+
+Use a strategy when the class represents one interchangeable algorithm selected by context.
+
+An action may select and call a strategy through a resolver, but the action should not contain every concrete algorithm inline. Load `action-pattern.md` when designing the use-case boundary.
+
+## Strategy Versus Specification
+
+Use a strategy when the class performs one interchangeable algorithm.
+
+Use a specification when the class answers one reusable boolean business rule or eligibility question.
+
+Example:
+
+```php
+if (! app(EligibleForRefundSpecification::class)->isSatisfiedBy($invoice)) {
+    throw new RefundNotAllowedException();
+}
+
+$strategy = app(RefundStrategyResolver::class)->resolve($invoice);
+
+$strategy->refund($invoice);
+```
+
+The specification decides whether refunding is allowed. The strategy decides how the refund is performed. Load `specification-pattern.md` when the work is a reusable "can this happen?" rule.
+
+## Strategy Factories And Managers
+
+Factories and managers often select strategies, but they should not perform the strategy's algorithm.
+
+Use a factory when strategy construction depends on runtime context or needs centralized setup.
+
+Use a manager when strategies are selected by named drivers, providers, tenants, connections, or configuration and may be cached.
+
+Load `factory-manager-pattern.md` when strategy selection starts spreading across actions, controllers, jobs, observers, or other strategies.
+
 ## Testing
 
 Test each concrete strategy independently when it contains real business rules.
@@ -276,5 +315,6 @@ Do not over-test strategies that only return simple fixed values unless they pro
 - Resolve concrete strategies through Laravel's container when dependencies are involved.
 - Keep strategy contracts small and domain-specific.
 - Do not introduce a strategy for one trivial implementation just because the pattern exists.
+- Use a specification, not a strategy, for reusable boolean eligibility checks.
 - Use the state pattern, not strategy, for lifecycle progression and valid transition enforcement.
 - Add focused tests for concrete strategy rules and resolver selection logic when those rules affect behaviour.

@@ -90,10 +90,14 @@ Avoid builders when:
 Use:
 - a constructor for simple objects with obvious required values
 - a named constructor for a few clear creation variants
+- a DTO when the main concern is carrying a structured typed data contract through an application boundary
 - a factory when deciding which concrete implementation to create
+- a manager when selecting a named driver, provider, connection, tenant, or configured implementation
 - a builder by default when one object or workflow is assembled over several readable steps, even at the first call site
 - a Laravel model factory mainly for test data and seed data
 - an action or service when the main concern is executing a workflow rather than assembling an object
+
+Load `factory-manager-pattern.md` when the construction question is really implementation, provider, driver, or connection selection.
 
 ## Implementation Guidelines
 
@@ -154,11 +158,11 @@ public function build(): SalesOrderData
         throw new LogicException('At least one order line is required.');
     }
 
-    return new SalesOrderData(
-        customer: $this->customer,
-        lines: $this->lines,
-        paymentTerms: $this->paymentTerms,
-    );
+    return SalesOrderData::from([
+        'customer' => $this->customer,
+        'lines' => $this->lines,
+        'paymentTerms' => $this->paymentTerms,
+    ]);
 }
 ```
 
@@ -191,6 +195,7 @@ Useful builder tests prove:
 - Before skipping a builder, check that a constructor, named constructor, DTO, factory, action, service, value object, or Laravel model factory is clearly simpler at the call site.
 - Use domain language in builder method names.
 - Keep builders focused on construction, not unrelated workflow execution.
+- Do not make builders select providers, drivers, or integration clients; use a factory or manager for that.
 - Make terminal methods explicit about whether they only build data or also persist data.
 - Preserve existing project conventions unless there is a clear reason to improve them.
 - Include focused tests for any construction rules, defaults, validation, branching behaviour, persistence, or side effects.
