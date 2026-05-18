@@ -79,8 +79,9 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 - Use reusable relationship traits for shared Eloquent relationships.
 - Prefer explicit model construction and `associate()` for non-trivial domain persistence flows.
 - Use focused builders for complex model/workflow assembly as soon as the construction is difficult to scan, even at the first call site; builders should make construction more readable than long constructors, large option arrays, setup scripts, or scattered factory calls.
-- Use explicit model transition methods for lifecycle changes.
-- In model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
+- Use explicit model transition methods for simple lifecycle changes.
+- In simple model transition methods, guard first, mutate state, `saveQuietly()`, then fire one explicit model event.
+- For complex lifecycle workflows, use Spatie model states through `laravel-coding-style` so expressive model methods, valid transitions, transition context, multiple state dimensions, and before/after model events stay centralized.
 - Observers should run after commit and coordinate follow-up work by dispatching native jobs/events or calling methods that trigger further explicit events.
 - External IO belongs behind explicit application boundaries, not observers.
 - Use native Laravel jobs for anything queued, delayed, retryable, asynchronous, or long-running. Treat queued job constructors as data-only payload assignment and put executable work in `handle(...)`.

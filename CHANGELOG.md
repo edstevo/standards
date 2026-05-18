@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.50 - 2026-05-18
+
+### Added
+- Added Laravel State Pattern guidance standardizing complex workflows on `spatie/laravel-model-states`, with focused references for state classes, transition classes, multiple state dimensions, transition context, before/after model events, policies, and testing.
+
 ## 1.0.49 - 2026-05-16
 
 ### Added

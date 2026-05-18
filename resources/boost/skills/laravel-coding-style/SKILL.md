@@ -1,6 +1,6 @@
 ---
 name: laravel-coding-style
-description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, the observer pattern, native jobs for queued work, and synchronous Laravel Actions."
+description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, observers, lifecycle workflows, state pattern workflows, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, state transitions, the observer pattern, native jobs for queued work, and synchronous Laravel Actions."
 license: MIT
 metadata:
   domain: laravel
@@ -18,8 +18,9 @@ The default shape is:
 - Reusable Eloquent relationships live in small relationship traits.
 - Non-trivial persistence flows use explicit property assignment and `associate()` instead of large opaque arrays.
 - Builder-style APIs are the default when object, DTO, model graph, command, report, import, filtering, or workflow construction becomes complex, option-heavy, multi-step, or hard to read at the call site. Do not wait for repeated usage before introducing a builder.
-- Lifecycle changes happen through named model transition methods.
-- Transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
+- Simple lifecycle changes happen through named model transition methods.
+- Simple transition methods guard, mutate, `saveQuietly()`, then fire one explicit model event.
+- Complex lifecycle workflows use `spatie/laravel-model-states` with expressive model methods, explicit transition config, custom transition classes for context, and before/after model events.
 - Observers run after commit and stay thin: identify the lifecycle event, then delegate follow-up work to native Laravel jobs/events, actions, services, or model methods that trigger further explicit events.
 - Native Laravel jobs perform queued, delayed, retryable, asynchronous, integration-heavy, and long-running workflow steps. Jobs that always need committed data should implement `ShouldQueueAfterCommit` instead of relying on `->afterCommit()` dispatch chains.
 - Laravel Actions perform synchronous, reusable application behaviour. Do not use `lorisleiva/laravel-actions` action classes as queued jobs; create a native job and have the job call the action when shared logic is needed.
@@ -29,6 +30,7 @@ Use this skill whenever you:
 - create models that share common relationships
 - split bulky models into composable concerns
 - introduce model lifecycle events or state transitions
+- introduce state classes for complex lifecycle workflows
 - orchestrate multi-step workflows such as created -> route -> dispatch
 - trigger timeline/audit, integration sync, queued work, or next-step workflow side effects from model changes
 - test model lifecycle events, observers, or event-driven workflows
@@ -45,6 +47,7 @@ Load detailed guidance based on the task:
 | Builder pattern | `references/builder-pattern.md` | Construction has many optional values or steps, large constructors, arrays used as informal configuration objects, unclear action payloads, command/report/import/filter setup, repeated setup logic, or complex test setup that is not just model factory data |
 | Model construction and persistence | `references/model-construction-persistence.md` | Creating non-trivial model graphs, deciding between explicit assignment and mass assignment, using `associate()`, or wrapping related writes in transactions |
 | Model lifecycle events | `references/model-lifecycle-events.md` | Adding model transition methods, custom observable events, `saveQuietly()`, `fireModelEvent(...)`, or behaviour traits for state changes |
+| State pattern workflows | `references/state-pattern.md` | Replacing scattered lifecycle checks, designing Spatie model states, wrapping transitions in expressive model methods, handling multiple state dimensions, passing transition context, or testing workflow state transitions |
 | Observer pattern | `references/observer-pattern.md` | Writing observers, keeping observer methods thin, delegating follow-up work, using after-commit handling, or avoiding hidden workflow/domain logic in observers |
 | Workflow jobs and actions | `references/workflow-jobs-actions.md` | Deciding whether follow-up work belongs in observers, jobs, actions, or model methods |
 | Testing model lifecycle workflows | `references/testing-model-lifecycle.md` | Testing model transitions, explicit model events, observer follow-up behaviour, or after-commit workflow boundaries |
@@ -52,6 +55,7 @@ Load detailed guidance based on the task:
 ## General Rules
 
 - Keep model APIs domain-readable. Prefer `$order->markAsSubmitted()` over scattered state mutation.
+- Keep simple lifecycle changes as named model methods, but move complex lifecycle workflows into Spatie model states loaded through `references/state-pattern.md`.
 - Keep relationship structure consistent. If a relationship can be reused, prefer a dedicated trait under `App\Models\Relationships`.
 - Keep non-trivial persistence flows explicit enough that the graph and relationships are readable.
 - Default to focused builders when construction is difficult to read, even before repetition appears; keep builder methods intention-revealing and domain-specific, with explicit terminal methods such as `build()`, `make()`, `create()`, `toDto()`, `toArray()`, or `save()` that accurately communicate side effects.
@@ -66,6 +70,7 @@ Load detailed guidance based on the task:
 - [ ] Relationship conventions are handled through `references/eloquent-relationship-traits.md` when relationships are involved.
 - [ ] Builder guidance is loaded as soon as construction is complex, option-heavy, multi-step, difficult to read, or currently expressed through large constructors/arrays.
 - [ ] Persistence, lifecycle, observer, job/action boundary, and lifecycle-test references are loaded only when those topics are involved.
+- [ ] State Pattern guidance is loaded when workflow states need Spatie state classes, transition context, multiple state dimensions, or valid-transition enforcement.
 - [ ] Models expose expressive methods instead of leaking state mutation across callers.
 - [ ] Observers dispatch or delegate work after commit and do not call external integrations directly.
 - [ ] Observer methods are thin, flat, and free of private helper methods or hidden business rules.
