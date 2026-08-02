@@ -80,7 +80,8 @@ Laravel Boost may inject a `## Skills Activation` section with project-specific 
 
 ### Laravel Coding Style
 
-- For preferred Laravel model, relationship, DTO, factory/manager, specification, observer, lifecycle, strategy, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
+- For preferred Laravel migration, model, relationship, DTO, factory/manager, specification, observer, lifecycle, strategy, persistence, job/action boundary, and model-event testing conventions, activate `laravel-coding-style`.
+- In database migrations, give composite indexes and any potentially long index or constraint an explicit, concise name. Keep schema identifiers within the deployed database's limit (64 characters for MySQL) and use the same explicit name when dropping them in `down()`.
 - Keep Eloquent models lean and expose expressive domain methods.
 - Use reusable relationship traits for shared Eloquent relationships.
 - Use `spatie/laravel-data` DTOs for structured request, action, job, integration, import, export, and AI-readable payloads; pass a named data object such as `SalesOrderData::from($request->validated())` rather than raw request arrays.

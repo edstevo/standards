@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.53 - 2026-08-02
+
+### Added
+- Added Laravel migration guidance requiring concise explicit names for composite indexes and potentially long constraints so generated identifiers remain within database limits such as MySQL's 64-character maximum.
+
 ## 1.0.52 - 2026-05-18
 
 ### Added
