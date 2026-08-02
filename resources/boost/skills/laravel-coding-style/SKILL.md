@@ -1,12 +1,12 @@
 ---
 name: laravel-coding-style
-description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel models, relationships, DTOs, factories, managers, specifications, observers, lifecycle workflows, state pattern workflows, strategy pattern implementations, jobs, actions, persistence flows, and model-event tests. Guides lean Eloquent models, explicit domain methods, reusable relationship traits, typed data contracts, centralized construction and implementation selection, reusable business rule checks, state transitions, interchangeable strategy classes, thin observers, native Laravel jobs for queued/Horizon work, and synchronous Laravel Actions."
+description: "Apply the preferred Laravel coding style for this codebase. Use when writing or refactoring Laravel migrations, models, relationships, DTOs, factories, managers, specifications, observers, lifecycle workflows, state pattern workflows, strategy pattern implementations, jobs, actions, persistence flows, and model-event tests. Guides safe schema identifiers, lean Eloquent models, explicit domain methods, reusable relationship traits, typed data contracts, centralized construction and implementation selection, reusable business rule checks, state transitions, interchangeable strategy classes, thin observers, native Laravel jobs for queued/Horizon work, and synchronous Laravel Actions."
 license: MIT
 metadata:
   domain: laravel
   role: specialist
   scope: implementation
-  triggers: Laravel, Eloquent, models, relationships, relationship traits, DTO, Data objects, spatie/laravel-data, typed payloads, factory pattern, factories, manager pattern, managers, specification pattern, specifications, eligibility rules, business rule checks, drivers, providers, connections, adapters, observers, model events, lifecycle events, workflows, action pattern, Laravel Actions, AsAction, state transitions, strategy pattern, strategies, resolvers, interchangeable algorithms, saveQuietly, fireModelEvent, after commit
+  triggers: Laravel, migrations, schema, indexes, constraints, Eloquent, models, relationships, relationship traits, DTO, Data objects, spatie/laravel-data, typed payloads, factory pattern, factories, manager pattern, managers, specification pattern, specifications, eligibility rules, business rule checks, drivers, providers, connections, adapters, observers, model events, lifecycle events, workflows, action pattern, Laravel Actions, AsAction, state transitions, strategy pattern, strategies, resolvers, interchangeable algorithms, saveQuietly, fireModelEvent, after commit
 ---
 
 # Laravel Coding Style
@@ -19,6 +19,7 @@ Treat this file as a routing map. Keep only the relevant reference files in cont
 
 | Topic | Reference | Load When |
 |-------|-----------|-----------|
+| Database migrations | `references/database-migrations.md` | Adding or changing indexes, unique constraints, or foreign keys, especially composite or long identifiers |
 | Eloquent model API | `references/model-lifecycle-events.md` | Adding named lifecycle methods, custom observable events, `saveQuietly()`, or `fireModelEvent(...)` |
 | Relationships | `references/eloquent-relationship-traits.md` | Adding Eloquent relationships, shared relationship traits, relationship docblocks, or relationship return types |
 | Persistence | `references/model-construction-persistence.md` | Creating non-trivial model graphs, choosing explicit assignment vs mass assignment, using `associate()`, or wrapping related writes in transactions |
@@ -61,6 +62,7 @@ Controller / command / listener / UI handler
 ## Checklist
 
 - [ ] Load the smallest reference set that matches the work.
+- [ ] Give composite and potentially long schema identifiers explicit names within the deployed database's limit.
 - [ ] Keep the chosen pattern's responsibility narrow and named in domain language.
 - [ ] Do not duplicate business rules across controllers, observers, jobs, actions, models, or tests.
 - [ ] Keep synchronous work in actions and asynchronous work in native Laravel jobs.

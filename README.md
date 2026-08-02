@@ -98,6 +98,7 @@ app/
 
 ### Code Style & Best Practices
 
+- **Database Migrations**: Explicit, concise names for composite indexes and potentially long constraints so generated identifiers stay within database limits such as MySQL's 64-character maximum
 - **Action Classes**: Use `lorisleiva/laravel-actions` only for synchronous one-class-one-task business actions, called via `::run()`; never use action-package dispatch helpers for queued work
 - **DTOs**: Use `spatie/laravel-data` data objects with explicit typed properties for structured request, action, job, integration, import/export, and AI-readable payloads instead of raw associative arrays
 - **Builder APIs**: Fluent, domain-language builders as the default for complex object, report, import, command, filter, and workflow construction
