@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.55 - 2026-08-11
+
+### Changed
+- Made the main buglist task the long-lived controller, moved each bug's plain-English review and user decision into a read-only side task, and required that decision to be handed back before a separate implementation subagent may start.
+
 ## 1.0.54 - 2026-08-11
 
 ### Changed

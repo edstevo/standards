@@ -1,6 +1,6 @@
 ---
 name: buglist-triage
-description: Exclusive workflow skill for the entire tracked-bug lifecycle. Always use this skill, and no other workflow skill, when creating or recording bugs; reviewing, reconciling, investigating, grouping, de-duplicating, prioritising, or deciding them; implementing or independently reviewing fixes; merging fixes; or removing resolved bugs from `docs/buglist.md`. Also use for linked investigations, user-led bug decisions, subagent implementation and review, cleanup, risks, watch-list entries, and PR Agent bug refs.
+description: Exclusive workflow skill for the entire tracked-bug lifecycle. Always use this skill, and no other workflow skill, when creating or recording bugs; reviewing, reconciling, investigating, grouping, de-duplicating, prioritising, or deciding them; implementing or independently reviewing fixes; merging fixes; or removing resolved bugs from `docs/buglist.md`. Also use for linked investigations, controller-led side-task decisions, separate subagent implementation and review, cleanup, risks, watch-list entries, and PR Agent bug refs.
 license: MIT
 metadata:
   domain: workflow
@@ -19,13 +19,13 @@ Use this skill, and only this skill, as the workflow authority whenever the prim
 
 Do not activate or substitute another bug, issue-triage, debugging, planning, PR-prompt, code-review, merge, or resolution workflow skill. In particular, do not activate `pr-agent-prompts` for bug work; draft any PR Agent handoff through this skill's own reference.
 
-Allow implementation and review subagents to load project-required language, framework, architecture, domain, coding-style, testing, documentation, or security guidance only as technical support. Do not let supporting guidance replace this skill or change its bug IDs, user decision gate, control state, independent-review gate, merge gate, or cleanup rules.
+Allow decision, implementation, and review side tasks or subagents to load project-required language, framework, architecture, domain, coding-style, testing, documentation, or security guidance only as technical support. Do not let supporting guidance replace this skill or change its bug IDs, user decision gate, control state, independent-review gate, merge gate, or cleanup rules.
 
 ## Load References
 
 - Load `references/buglist-entry.md` when adding, editing, reviewing, grouping, or moving entries in `docs/buglist.md`.
 - Load `references/investigation-file.md` only when creating or editing a linked `docs/investigations/{BUG-ID}.md` file.
-- Load `references/bug-resolution.md` when reviewing bugs with the user one by one, deciding whether an entry is a bug, implementing an approved fix through a subagent, independently reviewing it, merging it, or completing post-merge cleanup.
+- Load `references/bug-resolution.md` when orchestrating a side task that reviews a bug and decides it with the user, receiving its decision handoff, implementing an approved fix through a separate subagent, independently reviewing it, merging it, or completing post-merge cleanup.
 - Load `references/pr-agent-handoff.md` only when selecting bug refs for PR Agent, drafting handoff refs, or moving entries under `## Under PR Agent Control`.
 
 Load the narrowest reference that fits the task. Do not load investigation or PR Agent handoff guidance for a simple buglist entry edit.
@@ -68,7 +68,9 @@ Do not:
 
 ## Resolution Mode
 
-When the user asks to work through bugs, resolve a bug, implement an agreed fix, or review and merge that fix, load `references/bug-resolution.md` and follow its decision, implementation, independent review, merge, and cleanup gates. Work on one bug at a time unless the user explicitly requests safe parallel work.
+When the user asks to work through bugs, resolve a bug, implement an agreed fix, or review and merge that fix, load `references/bug-resolution.md` and follow its controller, decision, implementation, independent review, merge, and cleanup gates. Work on one bug at a time unless the user explicitly requests safe parallel work.
+
+The main task is the controller and orchestrator. Keep it open while any side task or subagent it started is still running or waiting for the user. Review and formulate the decision for each bug with the user in a dedicated user-facing side task, then pass the explicit decision back to the controller. Do not use an internal-only subagent that cannot converse with the user for this decision stage. The decision side task is read-only and must not implement the fix. Only the controller may start a separate implementation subagent after it receives the decision handoff and the user has asked for implementation.
 
 Do not treat resolution mode as reconcile mode. Resolution mode may inspect implementation behaviour and may remove or transfer an entry, but only after the user decides its disposition or an independently reviewed fix has been merged.
 
