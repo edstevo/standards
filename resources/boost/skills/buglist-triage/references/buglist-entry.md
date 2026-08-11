@@ -12,7 +12,13 @@ Keep `docs/buglist.md` as the canonical short index. One issue equals one bullet
 
 Entry type is usually `Bug`, `Risk`, or `Watch`.
 
-ID format is `BUG-{YYMMDD}-{NNN}`. Use the creation date and the next three-digit number for that date. Before using an ID, search `docs/buglist.md` and `docs/investigations` for existing IDs with the same date prefix. Use the next number after the highest existing one, or `001` when none exist. Do not encode domain/module names in IDs.
+## ID Convention
+
+Follow the project's documented bug ID convention when one exists. Check project guidance and existing bug IDs before assigning a new ID. Keep existing IDs stable even when the project later changes its convention.
+
+Use `BUG-{YYMMDD}-{NNN}` as the default when the project does not define an override. Use the creation date and the next three-digit number for that date. Before using an ID, search `docs/buglist.md` and `docs/investigations` for existing IDs with the same date prefix. Use the next number after the highest existing one, or `001` when none exist.
+
+A project may add a stable scope segment when it helps distinguish independently managed areas. For example, a modular project may define `BUG-{MODULE}-{YYMMDD}-{NNN}`, such as `BUG-SAL-260811-001` for its Sales module. Follow the project's documented module codes and sequencing rules; do not invent or introduce scoped IDs solely because the project has modules.
 
 ## Sections
 
@@ -30,7 +36,7 @@ Group by status, then domain when the app has domains. Otherwise group by module
 
 ## Entry Checklist
 
-- Stable date-sequence ID and entry type.
+- Stable ID following the project convention, or the default date-sequence convention, and entry type.
 - Priority: `P0`, `P1`, `P2`, or `P3`.
 - Short title and concise description.
 - Affected area from the heading or description.
@@ -47,6 +53,7 @@ Group by status, then domain when the app has domains. Otherwise group by module
 ## Rules
 
 - Never renumber existing IDs.
+- Do not rewrite existing IDs when adopting or discovering a different project convention.
 - Before adding a new bug, search for an existing same or overlapping bug; update the existing entry when it is the same issue.
 - Do not always create a new entry.
 - When removing a fixed bug from `docs/buglist.md`, delete its linked `docs/investigations/{BUG-ID}.md` file when one exists.

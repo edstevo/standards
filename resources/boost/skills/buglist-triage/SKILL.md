@@ -1,24 +1,32 @@
 ---
 name: buglist-triage
-description: Use when adding, editing, reviewing, reconciling, grouping, de-duplicating, prioritising, or moving known bugs, risks, and watch-list entries in `docs/buglist.md`, including linked investigation docs and PR Agent bug refs.
+description: Exclusive workflow skill for the entire tracked-bug lifecycle. Always use this skill, and no other workflow skill, when creating or recording bugs; reviewing, reconciling, investigating, grouping, de-duplicating, prioritising, or deciding them; implementing or independently reviewing fixes; merging fixes; or removing resolved bugs from `docs/buglist.md`. Also use for linked investigations, user-led bug decisions, subagent implementation and review, cleanup, risks, watch-list entries, and PR Agent bug refs.
 license: MIT
 metadata:
   domain: workflow
   role: specialist
   scope: documentation
-  triggers: buglist, bug list, reconcile the buglist, reconcile buglist, docs/buglist.md, known bugs, risks, watch-list, investigation docs, PR Agent bug refs, Under PR Agent Control
+  triggers: buglist, bug list, reconcile the buglist, reconcile buglist, resolve bug, work through bugs, review bug fix, docs/buglist.md, known bugs, risks, watch-list, investigation docs, PR Agent bug refs, Under PR Agent Control
 ---
 
 # Buglist Triage
 
 Use this skill to keep `docs/buglist.md` useful as the canonical index and control surface for known bugs, risks, watch items, and PR Agent handoffs.
 
+## Exclusive Workflow Ownership
+
+Use this skill, and only this skill, as the workflow authority whenever the primary task is to create, record, review, reconcile, investigate, decide, fix, review a fix for, merge, hand off, close, or remove a tracked bug.
+
+Do not activate or substitute another bug, issue-triage, debugging, planning, PR-prompt, code-review, merge, or resolution workflow skill. In particular, do not activate `pr-agent-prompts` for bug work; draft any PR Agent handoff through this skill's own reference.
+
+Allow implementation and review subagents to load project-required language, framework, architecture, domain, coding-style, testing, documentation, or security guidance only as technical support. Do not let supporting guidance replace this skill or change its bug IDs, user decision gate, control state, independent-review gate, merge gate, or cleanup rules.
+
 ## Load References
 
 - Load `references/buglist-entry.md` when adding, editing, reviewing, grouping, or moving entries in `docs/buglist.md`.
 - Load `references/investigation-file.md` only when creating or editing a linked `docs/investigations/{BUG-ID}.md` file.
+- Load `references/bug-resolution.md` when reviewing bugs with the user one by one, deciding whether an entry is a bug, implementing an approved fix through a subagent, independently reviewing it, merging it, or completing post-merge cleanup.
 - Load `references/pr-agent-handoff.md` only when selecting bug refs for PR Agent, drafting handoff refs, or moving entries under `## Under PR Agent Control`.
-- Activate `pr-agent-prompts` when turning a bug group into a local PR Agent prompt.
 
 Load the narrowest reference that fits the task. Do not load investigation or PR Agent handoff guidance for a simple buglist entry edit.
 
@@ -57,6 +65,12 @@ Do not:
 - Split mixed entries into new bug IDs.
 - Update partially fixed issues unless the user asks for fixed/partial-fix cleanup.
 - Inspect implementation code, tests, logs, or runtime behaviour unless the user explicitly asks for verification.
+
+## Resolution Mode
+
+When the user asks to work through bugs, resolve a bug, implement an agreed fix, or review and merge that fix, load `references/bug-resolution.md` and follow its decision, implementation, independent review, merge, and cleanup gates. Work on one bug at a time unless the user explicitly requests safe parallel work.
+
+Do not treat resolution mode as reconcile mode. Resolution mode may inspect implementation behaviour and may remove or transfer an entry, but only after the user decides its disposition or an independently reviewed fix has been merged.
 
 ## Where Detail Belongs
 

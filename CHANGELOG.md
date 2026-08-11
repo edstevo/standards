@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.54 - 2026-08-11
+
+### Changed
+- Made `buglist-triage` the exclusive workflow skill for creating, reviewing, deciding, fixing, independently reviewing, merging, and closing tracked bugs, with explicit disposition, test, documentation, and post-merge cleanup gates.
+- Allowed projects to override the default date-sequence bug ID convention, including documented module-scoped IDs, without renumbering existing bugs.
+
 ## 1.0.53 - 2026-08-02
 
 ### Added

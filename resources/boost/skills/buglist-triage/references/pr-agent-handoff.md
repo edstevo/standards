@@ -2,6 +2,8 @@
 
 Use only when grouping buglist entries for PR Agent or moving handed-off entries under `## Under PR Agent Control`.
 
+Keep the handoff inside `buglist-triage`; do not activate a separate PR-prompt or issue-planning skill. Draft the prompt directly with concise `Current implementation`, `Target behavior`, `Scope`, and `Open questions` sections unless the project or user requires another format.
+
 ## Pick A Cluster
 
 - Choose bugs sharing a domain when the app has domains; otherwise choose by module, workflow, invariant, lifecycle transition, integration payload, or failing test area.
