@@ -19,7 +19,7 @@ Add direct prerequisites at the end when needed:
 Mark a bug that must be resolved before a release or milestone with `Release blocker:`:
 
 ```md
-- [Bug: `BUG-260511-003`] **P2 - Downstream recalculation uses stale totals:** Concise description. See `docs/investigations/BUG-260511-003.md`. Release blocker: `v2.0 go-live`. Depends on: `BUG-260511-002`.
+- [Bug: `BUG-260511-003`] **P2 - Downstream recalculation uses stale totals:** Concise description. See `docs/investigations/BUG-260511-003.md`. Implementation: Ready. Release blocker: `v2.0 go-live`. Depends on: `BUG-260511-002`.
 ```
 
 Entry type is usually `Bug`, `Risk`, or `Watch`.
@@ -62,6 +62,23 @@ Depends on: `BUG-260511-001`, `BUG-260511-002`.
 - Use dependencies only for required ordering. Put related bugs without an ordering constraint in the investigation's `## Related` section.
 - Treat priority and visual ordering as separate from dependency order. The resolution controller follows prerequisites before dependants regardless of their headings or priorities.
 
+## Implementation Readiness
+
+Use one of these exact markers after review:
+
+```md
+Implementation: Ready.
+Implementation: In progress.
+Implementation: In review.
+```
+
+- `Ready` means the user has approved the expected behaviour and scope and has requested implementation. It does not mean dependencies are clear.
+- Leave a ready bug queued when any direct or transitive prerequisite remains unresolved. The dependency graph explains the wait; do not add a separate `Blocked` implementation state.
+- Replace `Ready` with `In progress` when the controller starts the implementation subagent, then with `In review` when independent review starts.
+- If no implementation was requested or the decision remains open, omit the marker. Never infer readiness from `Status: Confirmed`, priority, release-blocker status, or the absence of open technical questions.
+- Mirror the marker in the linked investigation. Only the controller may add or change it after receiving the decision, implementation, or review handoff.
+- If later evidence invalidates the approved behaviour or scope, remove the marker and return the bug to a decision side task.
+
 ## Release Blockers
 
 Use `Release blocker:` to mark a bug that must be resolved before a specific release, launch, or go-live milestone. Prefer the project's exact release identifier. When none exists, use the user's exact milestone name such as `go-live`; use a moving label such as `next release` only until a stable name or version is known.
@@ -83,6 +100,7 @@ Release blocker: `v2.0 go-live`.
 - Priority: `P0`, `P1`, `P2`, or `P3`.
 - Short title and concise description.
 - Affected area from the heading or description.
+- `Implementation:` marker when the bug is ready, in progress, or in independent review.
 - `Release blocker:` target when the bug is explicitly required before a release or milestone.
 - Direct `Depends on:` IDs when prerequisites exist, with every target present and the graph acyclic.
 - Owner or PR Agent reference when relevant.
@@ -101,10 +119,12 @@ Release blocker: `v2.0 go-live`.
 - Do not rewrite existing IDs when adopting or discovering a different project convention.
 - Before adding a new bug, search for an existing same or overlapping bug; update the existing entry when it is the same issue.
 - Do not always create a new entry.
-- When removing any fixed bug from `docs/buglist.md`, delete its linked `docs/investigations/{BUG-ID}.md` file when one exists. If other entries depend on it, remove its ID from every buglist and investigation `Depends on:` field and update each affected `## Dependencies` section in the same cleanup.
+- When closing any fixed bug, first find every dependant. Delete the fixed bug's linked investigation, clear its ID from every dependant's buglist and investigation `Depends on:` field, update each affected `## Dependencies` section, then start every newly unblocked ready dependant according to `bug-resolution.md`. Treat that scan and dispatch as part of closing the fixed bug.
 - When merging duplicate entries, redirect dependencies from the removed ID to the retained canonical ID in both the buglist and investigations, then remove duplicates and any self-dependency created by the redirect.
 - Do not silently remove a dependency because its prerequisite was classified as not a bug or moved to future roadmap work; follow the disposition rules in `bug-resolution.md`.
 - Do not silently remove or retarget a release blocker during reconciliation, reprioritisation, or cleanup; require an explicit release-scope decision unless the bug was fully resolved and removed.
+- Keep `Implementation:` markers aligned between the buglist and investigation. Do not mark a bug ready merely because a prerequisite completed.
+- Treat `In progress` or `In review` without matching active controller work as stale control state. Report it instead of guessing whether to resume, reset, or remove it.
 - Split mixed issues instead of hiding multiple risks in one bullet.
 - Do not copy investigation detail, PR prompts, or incident timelines into the buglist.
 

@@ -11,6 +11,7 @@ Investigation files explain the issue. They are not PR prompts or architecture d
 - [ ] Confirm the buglist entry exists or create/update it first.
 - [ ] Use the same bug ID in the filename, title, and `Buglist ref`.
 - [ ] State the investigation status: `Suspected`, `Confirmed`, `Resolved`, or `Needs reproduction`.
+- [ ] Mirror `Implementation: Ready`, `Implementation: In progress`, or `Implementation: In review` from the buglist when present; omit it when implementation is not approved.
 - [ ] Add `Depends on: None` or the exact direct prerequisite IDs from the buglist entry.
 - [ ] When dependencies exist, include a `## Dependencies` section explaining the ordering constraint and what must be true before this bug can proceed.
 - [ ] Include only headings that help explain this issue.
@@ -29,6 +30,7 @@ Investigation files explain the issue. They are not PR prompts or architecture d
 Buglist ref: `BUG-260511-001`
 Status: Suspected
 Priority: P1
+Implementation: Ready
 Depends on: `BUG-260510-001`
 
 ## Dependencies
@@ -92,10 +94,18 @@ Use fewer headings when the investigation is simple.
 - Keep related-but-independent bugs under `## Related`; a shared area or root cause is not automatically a dependency.
 - When investigation evidence suggests a new, removed, or reversed dependency, update `docs/buglist.md` first after applying its cycle and target validation, then mirror the approved graph here.
 
+## Implementation Readiness
+
+- Mirror the buglist's exact `Implementation:` value when present. The buglist remains canonical.
+- Treat `Ready` as an approved implementation queued by the controller. It may still be waiting for the dependencies described below.
+- Do not use investigation status as a substitute: `Status: Confirmed` describes confidence in the bug, while `Implementation: Ready` records the user's implementation decision.
+- Do not add or change readiness from investigation evidence alone. If evidence changes approved behaviour or scope, return the bug to user decision.
+
 ## Final Check
 
 - [ ] The file explains evidence, reproduction, cause, or uncertainty that would not fit cleanly in `docs/buglist.md`.
 - [ ] `Depends on:` exactly matches the buglist entry, and every listed prerequisite has a clear rationale and completion condition under `## Dependencies`.
+- [ ] `Implementation:` matches the buglist when present and is not used to hide unresolved dependencies.
 - [ ] The `## Scope` section makes the boundary of the investigation and likely fix explicit without becoming a PR plan.
 - [ ] The buglist entry stays short and links to this file.
 - [ ] The investigation does not duplicate the buglist as a second index.

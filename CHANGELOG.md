@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.57 - 2026-08-12
+
+### Added
+- Added an ordered review and implementation pipeline: approved bugs are marked `Implementation: Ready` while earlier fixes run, closing a prerequisite must discover and dispatch newly unblocked ready dependants, and implementation/review state remains visible in the buglist and investigation.
+
 ## 1.0.56 - 2026-08-12
 
 ### Added
