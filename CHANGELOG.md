@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.56 - 2026-08-12
+
+### Added
+- Added explicit bug dependencies with direct `Depends on` references, dependency-first controller ordering, cycle and missing-target checks, and dependency-aware disposition and cleanup rules.
+- Added explicit `Release blocker:` targets so go-live bugs and their dependency chains are resolved before unrelated backlog bugs, without conflating release scope with severity.
+- Required linked bug investigations to mirror direct dependencies and explain each prerequisite's rationale and completion condition in plain English.
+
 ## 1.0.55 - 2026-08-11
 
 ### Changed

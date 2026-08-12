@@ -4,11 +4,15 @@ Use only for linked files like `docs/investigations/BUG-260511-001.md`.
 
 Investigation files explain the issue. They are not PR prompts or architecture docs.
 
+`docs/buglist.md` remains canonical for dependency edges. Mirror its direct `Depends on:` IDs here so the case file is understandable on its own, then explain why each prerequisite must finish first.
+
 ## Writing Checklist
 
 - [ ] Confirm the buglist entry exists or create/update it first.
 - [ ] Use the same bug ID in the filename, title, and `Buglist ref`.
 - [ ] State the investigation status: `Suspected`, `Confirmed`, `Resolved`, or `Needs reproduction`.
+- [ ] Add `Depends on: None` or the exact direct prerequisite IDs from the buglist entry.
+- [ ] When dependencies exist, include a `## Dependencies` section explaining the ordering constraint and what must be true before this bug can proceed.
 - [ ] Include only headings that help explain this issue.
 - [ ] Separate observed behaviour from expected behaviour.
 - [ ] Add reproduction steps when known; write `Unknown` only when reproduction is not yet known.
@@ -25,6 +29,11 @@ Investigation files explain the issue. They are not PR prompts or architecture d
 Buglist ref: `BUG-260511-001`
 Status: Suspected
 Priority: P1
+Depends on: `BUG-260510-001`
+
+## Dependencies
+
+- `BUG-260510-001` must be resolved first because it establishes the reservation totals this release path consumes. This bug can proceed after that fix has merged and its buglist cleanup is complete.
 
 ## Observed Behaviour
 
@@ -61,6 +70,7 @@ Priority: P1
 
 ## Useful Headings
 
+- `## Dependencies` when `Depends on` is not `None`
 - `## Observed Behaviour`
 - `## Expected Behaviour`
 - `## Scope`
@@ -73,9 +83,19 @@ Priority: P1
 
 Use fewer headings when the investigation is simple.
 
+## Dependency Rules
+
+- List only direct prerequisites, matching the buglist entry exactly and in the same order. Use `Depends on: None` when there are none.
+- For each prerequisite, explain in simple English why it must finish first and the condition that clears the dependency. Do not merely repeat its title.
+- Do not copy transitive prerequisites into this file. A bug that depends on bug 2 does not also list bug 1 merely because bug 2 depends on bug 1.
+- Do not maintain a reverse `Blocks:` list here. Find dependants from the canonical buglist graph when needed.
+- Keep related-but-independent bugs under `## Related`; a shared area or root cause is not automatically a dependency.
+- When investigation evidence suggests a new, removed, or reversed dependency, update `docs/buglist.md` first after applying its cycle and target validation, then mirror the approved graph here.
+
 ## Final Check
 
 - [ ] The file explains evidence, reproduction, cause, or uncertainty that would not fit cleanly in `docs/buglist.md`.
+- [ ] `Depends on:` exactly matches the buglist entry, and every listed prerequisite has a clear rationale and completion condition under `## Dependencies`.
 - [ ] The `## Scope` section makes the boundary of the investigation and likely fix explicit without becoming a PR plan.
 - [ ] The buglist entry stays short and links to this file.
 - [ ] The investigation does not duplicate the buglist as a second index.
