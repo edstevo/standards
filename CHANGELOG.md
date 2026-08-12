@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.60 - 2026-08-12
+
+### Changed
+- Required all bug planning and user decisions to use the strongest intelligence model available at Ultra reasoning, while bug implementation and independent fix review use the strongest suitable model at Extra High reasoning, with future equivalent tiers replacing current Sol examples.
+
 ## 1.0.59 - 2026-08-12
 
 ### Changed

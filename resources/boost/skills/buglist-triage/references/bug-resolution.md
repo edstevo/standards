@@ -10,6 +10,8 @@ Use when working through buglist entries with the user from initial review throu
 - When choosing among similar priorities, rotate across modules or application areas and avoid files, invariants, or workflows touched by other in-flight fixes. Do not delay a materially higher-priority bug merely to rotate areas.
 - Let dependency order override priority and area rotation when building the review queue. Never implement bugs connected by a dependency path in parallel.
 - Start a dedicated user-facing decision side task for the selected bug. Title it exactly `<BUG-ID> Review`, preserving the complete stable bug ID; for example, use `BUG-260810-002 Review`. Do not add the bug title, priority, status, or another suffix. If the task-creation mechanism cannot set the title atomically, rename it immediately before sending the review prompt.
+- Inspect the model choices available at task-creation time. Bug planning always uses the strongest intelligence model available at Ultra reasoning, or the future equivalent maximum reasoning tier. Apply this to every `<BUG-ID> Review` task, including initial investigation, expected-behaviour decisions, scope formulation, and later scope-expansion decisions. Prefer reasoning quality over speed or cost. Do not hard-code a model version: Sol Ultra is the current-style example, and a more capable successor becomes the default when available.
+- If the task mechanism cannot set the model or reasoning effort explicitly, use the strongest available review-task configuration and tell the controller which limitation or fallback applied. Do not silently choose a cheaper or faster tier.
 - A side task may also be described as a side chat; its role is to review and decide the bug with the user, not to implement it. Do not substitute an internal-only subagent that cannot converse with the user.
 - Give the decision task the bug ID and direct it to `docs/buglist.md`, the linked investigation, stable project documentation, and relevant implementation paths. Do not give it a predetermined conclusion.
 
@@ -131,6 +133,8 @@ Work completed so far: <none or concise summary>
 
 The implementation subagent must not seek approval by expanding the work first. Keep `Implementation: In progress` while the controller obtains a decision. The controller must resume the existing `<BUG-ID> Review` task, or create it with that exact title when unavailable, explain the proposed expansion in simple English, and obtain explicit user confirmation. Only after the controller updates the authoritative behaviour and `## Scope` may implementation continue.
 
+Any resumed or recreated `<BUG-ID> Review` task used for scope expansion must use the same strongest-available model and maximum-reasoning rule as the original decision task.
+
 If the user declines, finish the original scope when independently viable; otherwise keep the bug tracked and report the precise blocker. Put genuinely separate work into a new bug only through the normal user decision and bug-recording workflow.
 
 ## Implement Through A Separate Subagent
@@ -139,7 +143,7 @@ When a bug is marked `Implementation: Ready` and every prerequisite is clear:
 
 - Re-read `docs/buglist.md` and its investigation, confirm that the approved behaviour and scope remain current, and confirm that no direct or transitive prerequisite remains unresolved.
 - Replace `Implementation: Ready` with `Implementation: In progress` in both files.
-- Spawn a new implementation subagent for that one bug. Never reuse the decision side task as the implementer.
+- Spawn a new implementation subagent for that one bug. Never reuse the decision side task as the implementer. Bug implementation always uses the strongest suitable coding model available at Extra High reasoning, or the future equivalent tier. Sol Extra High is the current-style example. Ultra is reserved for bug planning and user decisions unless the user explicitly requires it for implementation.
 - Give it the bug ID, the user-approved expected behaviour, the exact approved `## Scope`, relevant exclusions, investigation, project guidance, and required tests and documentation. Explicitly instruct it to stop and return a scope-expansion proposal rather than extending the work.
 - Require it to inspect current behaviour, implement the fix, run focused tests plus only the proportionate broader regression tests justified by the fix's risk or project rules, and update only required stable documentation or changelog material.
 - Do not let the implementation subagent change its implementation marker, merge, remove the buglist entry, delete the investigation, or approve its own work.
@@ -147,7 +151,7 @@ When a bug is marked `Implementation: Ready` and every prerequisite is clear:
 
 ## Require Independent Review
 
-After implementation finishes, spawn a different subagent to review the completed work. Do not reuse the implementation subagent as reviewer.
+After implementation finishes, spawn a different subagent to review the completed work. Do not reuse the implementation subagent as reviewer. Use the strongest suitable coding/review model at Extra High reasoning, or the future equivalent tier, unless the user or project explicitly requires Ultra.
 
 Replace `Implementation: In progress` with `Implementation: In review` in the buglist and investigation before starting the reviewer.
 
