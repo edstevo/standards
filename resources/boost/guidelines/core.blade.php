@@ -19,10 +19,9 @@ This file is compiled into `AGENTS.md`, so keep it as the always-loaded baseline
 
 - For larger refactors, project-sized work, or issue fixes, open a pull request so the work is stored and reviewable while it is in progress.
 - Open the PR against the project's `dev` branch unless the project has an explicit different integration-branch convention.
-- Add the plan and detailed checklist to the PR body at the start of the work. Do not create local `.md` plan files.
-- Keep that checklist updated in the PR body and check items off as the work develops so the PR remains the source of truth for progress.
+- For ordinary PR work without an ExecPlan, add the plan and detailed checklist to the PR body and keep it current; do not create ad hoc local plan files.
+- For complex features or significant refactors, activate `execution-plans` and use its indexed `docs/plans/<PLAN-ID>.md` workflow. Keep the authoritative plan documents current and make parent and stage PR bodies link to and summarize them without creating divergent copies.
 - When asked to prepare a rough request for PR Agent, activate `pr-agent-prompts` and return a concise local prompt. Do not create or update GitHub issues.
-- When writing complex features or significant refactors, activate `execution-plans` and use an ExecPlan from design to implementation as described in that skill.
 - When workflow behavior changes, activate `process-documentation` and update both process docs and related class/method documentation in the same change.
 
 ### Skills Activation

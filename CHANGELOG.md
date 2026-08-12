@@ -2,6 +2,13 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.61 - 2026-08-12
+
+### Changed
+- Reworked execution plans around a searchable plan index, concise authoritative master plans, and a required detailed document for every stage, with stable naming, separate authoring and orchestration workflows, controller-owned parent PRs, Ultra stage-planning chats, Extra High implementation and review agents, scoped child stage PRs, and durable stage-closing updates.
+- Aligned the core delivery workflow so ordinary PR checklists remain in PR bodies while formal ExecPlans use the indexed plan-document workflow.
+- Required orchestration startup to discover and resume an existing parent PR and its latest plan-branch documents before creating any new execution branch or PR, preventing duplicate plan executions.
+
 ## 1.0.60 - 2026-08-12
 
 ### Changed
