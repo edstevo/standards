@@ -9,7 +9,8 @@ Use when working through buglist entries with the user from initial review throu
 - Review one bug at a time in the selected order. Implementation and independent review for an earlier bug may run while the user reviews the next bug in its decision side task.
 - When choosing among similar priorities, rotate across modules or application areas and avoid files, invariants, or workflows touched by other in-flight fixes. Do not delay a materially higher-priority bug merely to rotate areas.
 - Let dependency order override priority and area rotation when building the review queue. Never implement bugs connected by a dependency path in parallel.
-- Start a dedicated user-facing decision side task for the selected bug. A side task may also be described as a side chat; its role is to review and decide the bug with the user, not to implement it. Do not substitute an internal-only subagent that cannot converse with the user.
+- Start a dedicated user-facing decision side task for the selected bug. Title it exactly `<BUG-ID> Review`, preserving the complete stable bug ID; for example, use `BUG-260810-002 Review`. Do not add the bug title, priority, status, or another suffix. If the task-creation mechanism cannot set the title atomically, rename it immediately before sending the review prompt.
+- A side task may also be described as a side chat; its role is to review and decide the bug with the user, not to implement it. Do not substitute an internal-only subagent that cannot converse with the user.
 - Give the decision task the bug ID and direct it to `docs/buglist.md`, the linked investigation, stable project documentation, and relevant implementation paths. Do not give it a predetermined conclusion.
 
 ## Review Bugs In Order

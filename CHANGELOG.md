@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.58 - 2026-08-12
+
+### Changed
+- Required each user-facing bug decision side task to use the exact title `<BUG-ID> Review`, such as `BUG-260810-002 Review`.
+
 ## 1.0.57 - 2026-08-12
 
 ### Added
