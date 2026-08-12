@@ -2,6 +2,11 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.59 - 2026-08-12
+
+### Changed
+- Made approved bug scope a hard implementation and review boundary: fix agents must avoid additional audits and opportunistic work, stop and request user-confirmed scope expansion when necessary, and independent reviewers must fail changes that escape the approved scope.
+
 ## 1.0.58 - 2026-08-12
 
 ### Changed

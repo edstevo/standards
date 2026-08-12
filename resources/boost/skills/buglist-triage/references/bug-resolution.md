@@ -104,6 +104,35 @@ When a confirmed or corrected bug's handoff says `Implementation requested: yes`
 
 Clear any stale implementation marker when a bug is classified as not a bug or future roadmap, or when the user does not request implementation.
 
+## Enforce The Approved Scope
+
+Treat the approved behaviour and the investigation's `## Scope` section as the implementation contract.
+
+The smallest necessary fix may include focused tests, required documentation or changelog updates, and minimal enabling edits without separate approval. It does not authorise broader work merely because the implementer notices it.
+
+The implementation subagent must:
+
+- Inspect only as far as needed to understand, implement, and verify the approved bug fix. Do not start an open-ended audit of the module, application, architecture, test suite, security posture, performance, or nearby code.
+- Make only changes necessary for the approved behaviour and its focused, proportionate verification.
+- Avoid opportunistic refactors, formatting unrelated files, dependency upgrades, broad test rewrites, architectural redesign, cleanup, and adjacent bug fixes.
+- Leave unrelated pre-existing failures and issues unchanged. Report them separately to the controller when material; do not absorb them into this fix.
+- Stop before making a materially out-of-scope change, even when it appears useful or required.
+
+When broader work appears necessary, return this proposal to the controller and wait:
+
+```text
+Scope expansion required for: <BUG-ID>
+Blocked objective: <what cannot be completed inside the approved scope>
+Evidence: <why the broader work appears necessary>
+Proposed expansion: <specific additional behaviour, files, migrations, APIs, or cleanup>
+Impact if declined: <what remains incomplete or alternative narrow outcome>
+Work completed so far: <none or concise summary>
+```
+
+The implementation subagent must not seek approval by expanding the work first. Keep `Implementation: In progress` while the controller obtains a decision. The controller must resume the existing `<BUG-ID> Review` task, or create it with that exact title when unavailable, explain the proposed expansion in simple English, and obtain explicit user confirmation. Only after the controller updates the authoritative behaviour and `## Scope` may implementation continue.
+
+If the user declines, finish the original scope when independently viable; otherwise keep the bug tracked and report the precise blocker. Put genuinely separate work into a new bug only through the normal user decision and bug-recording workflow.
+
 ## Implement Through A Separate Subagent
 
 When a bug is marked `Implementation: Ready` and every prerequisite is clear:
@@ -111,8 +140,8 @@ When a bug is marked `Implementation: Ready` and every prerequisite is clear:
 - Re-read `docs/buglist.md` and its investigation, confirm that the approved behaviour and scope remain current, and confirm that no direct or transitive prerequisite remains unresolved.
 - Replace `Implementation: Ready` with `Implementation: In progress` in both files.
 - Spawn a new implementation subagent for that one bug. Never reuse the decision side task as the implementer.
-- Give it the bug ID, the user-approved expected behaviour, scope boundaries, investigation, relevant project guidance, and required tests and documentation.
-- Require it to inspect current behaviour, implement the fix, run focused and proportionate broader tests, and update relevant stable documentation or changelog material.
+- Give it the bug ID, the user-approved expected behaviour, the exact approved `## Scope`, relevant exclusions, investigation, project guidance, and required tests and documentation. Explicitly instruct it to stop and return a scope-expansion proposal rather than extending the work.
+- Require it to inspect current behaviour, implement the fix, run focused tests plus only the proportionate broader regression tests justified by the fix's risk or project rules, and update only required stable documentation or changelog material.
 - Do not let the implementation subagent change its implementation marker, merge, remove the buglist entry, delete the investigation, or approve its own work.
 - Keep the controller open. It may continue the ordered user-decision pipeline, but must wait for implementation to finish before starting that fix's independent review.
 
@@ -125,10 +154,13 @@ Replace `Implementation: In progress` with `Implementation: In review` in the bu
 Require the reviewer to:
 
 - Compare the complete change against the user-approved behaviour and scope.
-- Inspect for regressions, incomplete paths, unrelated changes, and missing edge cases.
+- Inspect the complete diff and affected paths for scope escape, regressions, incomplete paths, unrelated changes, and missing edge cases. Do not turn the review into an open-ended audit of surrounding code.
+- Identify every change that is not necessary for the approved fix, focused verification, or required documentation. Treat opportunistic refactors, adjacent fixes, broad cleanup, unrelated formatting, dependency upgrades, and unapproved redesign as scope violations.
 - Run the relevant tests independently and report the commands and results.
 - Confirm that required stable behaviour documentation, technical documentation, and changelog material are accurate and complete.
-- Return an explicit pass or actionable findings. Treat uncertain or unverified requirements as a failed gate.
+- Return an explicit pass only when the whole change stays within the approved scope. Treat uncertain scope, unverified requirements, or any unapproved expansion as a failed gate.
+
+The reviewer must not fix scope violations or expand the implementation itself. Require the implementer to remove unrelated work, or return a specific scope-expansion proposal to the controller for explicit user confirmation through `<BUG-ID> Review`. Report unrelated issues as possible follow-up bugs; do not add them to the current fix.
 
 Do not merge when review fails. Replace `In review` with `In progress`, send findings back for correction, then restore `In review` and require another independent review pass of the corrected work.
 

@@ -18,6 +18,7 @@ Investigation files explain the issue. They are not PR prompts or architecture d
 - [ ] Separate observed behaviour from expected behaviour.
 - [ ] Add reproduction steps when known; write `Unknown` only when reproduction is not yet known.
 - [ ] Include a `## Scope` section that states the investigation and likely fix boundary.
+- [ ] Make `## Scope` explicit enough to act as the implementation contract: state the required outcome, permitted affected areas, and material exclusions.
 - [ ] Link affected files, tests, issues, PRs, or incidents only when they are useful evidence.
 - [ ] Mark uncertain facts as suspected.
 - [ ] Keep task checklists, acceptance criteria, and detailed implementation plans out of this file.
@@ -107,6 +108,7 @@ Use fewer headings when the investigation is simple.
 - [ ] `Depends on:` exactly matches the buglist entry, and every listed prerequisite has a clear rationale and completion condition under `## Dependencies`.
 - [ ] `Implementation:` matches the buglist when present and is not used to hide unresolved dependencies.
 - [ ] The `## Scope` section makes the boundary of the investigation and likely fix explicit without becoming a PR plan.
+- [ ] The scope distinguishes the smallest necessary fix and focused verification from unapproved audits, refactors, cleanup, and adjacent bug fixes.
 - [ ] The buglist entry stays short and links to this file.
 - [ ] The investigation does not duplicate the buglist as a second index.
 - [ ] The investigation does not read like a PR Agent prompt, architecture doc, or implementation plan.

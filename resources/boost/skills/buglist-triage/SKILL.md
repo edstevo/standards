@@ -19,7 +19,7 @@ Use this skill, and only this skill, as the workflow authority whenever the prim
 
 Do not activate or substitute another bug, issue-triage, debugging, planning, PR-prompt, code-review, merge, or resolution workflow skill. In particular, do not activate `pr-agent-prompts` for bug work; draft any PR Agent handoff through this skill's own reference.
 
-Allow decision, implementation, and review side tasks or subagents to load project-required language, framework, architecture, domain, coding-style, testing, documentation, or security guidance only as technical support. Do not let supporting guidance replace this skill or change its bug IDs, dependency graph, implementation readiness, release gates, user decision gate, control state, independent-review gate, merge gate, or cleanup rules.
+Allow decision, implementation, and review side tasks or subagents to load project-required language, framework, architecture, domain, coding-style, testing, documentation, or security guidance only as technical support. Do not let supporting guidance replace this skill or change its bug IDs, approved scope, dependency graph, implementation readiness, release gates, user decision gate, control state, independent-review gate, merge gate, or cleanup rules.
 
 ## Load References
 
@@ -77,6 +77,8 @@ Do not:
 When the user asks to work through bugs, resolve a bug, implement an agreed fix, or review and merge that fix, load `references/bug-resolution.md` and follow its controller, ordered review, readiness, implementation, independent review, merge, and cleanup gates.
 
 The main task is the controller and orchestrator. Keep it open while any side task or subagent it started is still running or waiting for the user. Review and formulate the decision for each bug with the user in a dedicated user-facing side task titled exactly `<BUG-ID> Review`, such as `BUG-260810-002 Review`, then pass the explicit decision back to the controller. Do not use an internal-only subagent that cannot converse with the user for this decision stage. The decision side task is read-only and must not implement the fix. Only the controller may start a separate implementation subagent after it receives the decision handoff and the user has asked for implementation.
+
+Treat the user-approved bug scope as a hard boundary for implementation and independent review. Implementation subagents must not perform open-ended audits, opportunistic refactors, adjacent fixes, broad cleanup, or other unapproved work. When materially broader work appears necessary, stop and return a scope-expansion proposal to the controller; obtain explicit user confirmation through the bug's review task before continuing. Independent reviewers must fail the gate when the change escapes the approved scope.
 
 Review bugs one at a time in dependency order, but do not wait for an earlier bug's implementation to finish before reviewing the next bug. Mark each approved bug ready for implementation. A ready dependant waits in the queue until its prerequisites clear, then the controller starts it without asking for implementation approval again. Never implement connected bugs in parallel.
 

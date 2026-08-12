@@ -4,6 +4,8 @@ Use only when grouping buglist entries for PR Agent or moving handed-off entries
 
 Keep the handoff inside `buglist-triage`; do not activate a separate PR-prompt or issue-planning skill. Draft the prompt directly with concise `Current implementation`, `Target behavior`, `Scope`, and `Open questions` sections unless the project or user requires another format.
 
+Treat `Scope` as a hard implementation boundary. Instruct PR Agent not to perform broader audits, opportunistic refactors, adjacent fixes, cleanup, or redesign. If broader work appears necessary, it must stop and report a specific scope-expansion proposal for user confirmation before continuing.
+
 ## Pick A Cluster
 
 - Choose bugs sharing a domain when the app has domains; otherwise choose by module, workflow, invariant, lifecycle transition, integration payload, or failing test area.
