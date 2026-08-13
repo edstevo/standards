@@ -16,7 +16,7 @@ Use this reference only when orchestrating, executing, resuming, or completing a
 ## Keep The Main Task As Controller
 
 - Resolve the requested entry from `docs/planlist.md`, then read its `docs/plans/<PLAN-ID>.md` master document and current stage document. Read a completed stage document only when the current stage names it as a direct dependency or its handoff links a required contract or decision. Do not load every stage by default.
-- Treat the main task as controller and orchestrator. It owns plan state, branches, PRs, task dispatch, handoffs, stage transitions, and final completion.
+- Treat the main task as controller and orchestrator, and run it with `gpt-5.6-sol` at `high`. It owns plan state, branches, PRs, task dispatch, handoffs, stage transitions, and final completion. If the task mechanism cannot provide the exact configuration, use the nearest available setting and record the fallback before dispatching work.
 - Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it started remains active or awaits the user.
 - Do not recreate, renumber, or silently redesign the plan. Record required changes through the plan's decision and revision mechanisms.
 - If the plan is `Draft`, explain what prevents orchestration and return it to the separate authoring process. Start or resume when it is `Ready to orchestrate`, `In progress`, `Blocked`, or `In review` as appropriate.

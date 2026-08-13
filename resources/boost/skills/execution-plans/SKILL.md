@@ -57,7 +57,7 @@ When creating a plan:
 When the user says `orchestrate PLAN-1234` or refers to a unique plan title:
 
 - Resolve and read the existing plan; do not create a replacement.
-- Make the main task the long-lived controller and follow `references/plan-orchestration.md` literally.
+- Make the main task the long-lived `gpt-5.6-sol` `high` controller and follow `references/plan-orchestration.md` literally.
 - Search for an existing parent PR before creating branches or PRs. If one exists, check out its head branch and reread the latest master and stage documents from that branch; create the parent integration branch and draft PR only when no matching parent PR exists.
 - Run each pre-stage planning and approval gate with the user in a dedicated `gpt-5.6-sol` `xhigh` side chat. That chat returns the approved stage plan to the controller and never implements it.
 - Implement each approved stage through one `gpt-5.6-sol` `high` subagent and one child stage PR.
@@ -77,6 +77,7 @@ Require observable behaviour, exact verification commands, and expected results.
 | Work | Model | Reasoning |
 |---|---|---|
 | Overall initial plan and stage/subplan map creation | `gpt-5.6-sol` | `Ultra` |
+| Plan controller/orchestrator | `gpt-5.6-sol` | `high` |
 | Pre-stage/subplan planning and approval gate | `gpt-5.6-sol` | `xhigh` |
 | Laravel implementation | `gpt-5.6-sol` | `high` |
 | Implementation review | `gpt-5.6-sol` | `xhigh` |

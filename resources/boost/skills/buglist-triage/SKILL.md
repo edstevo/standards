@@ -54,7 +54,7 @@ Keep entries short enough to scan, group, prioritise, de-duplicate, and hand ove
 
 ## Reconcile Mode
 
-When the user asks to "reconcile the buglist", treat it as an audit-and-alignment pass only. Load `references/buglist-entry.md` and `references/investigation-file.md`; do not load PR Agent handoff guidance unless the user separately asks for PR Agent work.
+When the user asks to "reconcile the buglist", run an audit-and-alignment pass with `gpt-5.6-sol` at `xhigh`. Load `references/buglist-entry.md` and `references/investigation-file.md`; do not load PR Agent handoff guidance unless the user separately asks for PR Agent work.
 
 Do:
 - Review every active bug, risk, and watch entry for duplicates, overlaps, stale wording, wrong priority, wrong grouping, invalid implementation states, stale release-blocker targets, and invalid or stale dependencies.
@@ -76,19 +76,34 @@ Do not:
 
 When the user asks to work through bugs, resolve a bug, implement an agreed fix, or review and merge that fix, load `references/bug-resolution.md` and follow its controller, ordered review, readiness, implementation, independent review, merge, and cleanup gates.
 
-The main task is the controller and orchestrator. Keep it open while any side task or subagent it started is still running or waiting for the user. Review and formulate the decision for each bug with the user in a dedicated user-facing side task titled exactly `<BUG-ID> Review`, such as `BUG-260810-002 Review`, then pass the explicit decision back to the controller. Bug planning always uses the strongest intelligence model currently available at Ultra reasoning, or the future equivalent maximum reasoning tier. This is a capability rule, not a permanently pinned model name: Sol Ultra is the current-style example, and a more capable successor must replace it when available. Do not use an internal-only subagent that cannot converse with the user for this decision stage. The decision side task is read-only and must not implement the fix. Only the controller may start a separate implementation subagent after it receives the decision handoff and the user has asked for implementation.
+The main task is the `gpt-5.6-sol` `high` controller and orchestrator. Keep it open while any side task or subagent it started is still running or waiting for the user. Review and formulate the decision for each bug with the user in a dedicated user-facing side task titled exactly `<BUG-ID> Review`, such as `BUG-260810-002 Review`, then pass the explicit decision back to the controller. Bug planning always uses the strongest intelligence model currently available at Ultra reasoning, or the future equivalent maximum reasoning tier. This is a capability rule, not a permanently pinned model name: Sol Ultra is the current-style example, and a more capable successor must replace it when available. Do not use an internal-only subagent that cannot converse with the user for this decision stage. The decision side task is read-only and must not implement the fix. Only the controller may start a separate implementation subagent after it receives the decision handoff and the user has asked for implementation.
 
-Treat the user-approved bug scope as a hard boundary for implementation and independent review. Implementation subagents must not perform open-ended audits, opportunistic refactors, adjacent fixes, broad cleanup, or other unapproved work. When materially broader work appears necessary, stop and return a scope-expansion proposal to the controller; obtain explicit user confirmation through the bug's review task before continuing. Independent reviewers must fail the gate when the change escapes the approved scope.
+Treat the user-approved bug scope as a hard boundary for implementation and independent review. Implementation subagents must not perform open-ended audits, opportunistic refactors, adjacent fixes, broad cleanup, or other unapproved work. When materially broader work appears necessary, stop and return the proposal to the controller. This is not a separate scope-expansion phase: resume the existing `<BUG-ID> Review` task and return to the normal Ultra bug-investigation and user-decision process before continuing. Independent reviewers must fail the gate when the change escapes the approved scope.
 
-Bug implementation always uses the strongest suitable coding model currently available at Extra High reasoning, or the future equivalent tier. Sol Extra High is the current-style example. Independent fix review uses the same Extra High tier unless the user or project explicitly requires Ultra.
+Use `gpt-5.6-sol` at `high` for Laravel bug implementation and `gpt-5.6-sol` at `xhigh` for independent implementation review.
 
 Review bugs one at a time in dependency order, but do not wait for an earlier bug's implementation to finish before reviewing the next bug. Mark each approved bug ready for implementation. A ready dependant waits in the queue until its prerequisites clear, then the controller starts it without asking for implementation approval again. Never implement connected bugs in parallel.
+
+Before dispatching a ready bug, compare the current relevant state with the baseline certified by its Ultra review. When a prerequisite or relevant path changed after approval, run a focused `gpt-5.6-sol` `xhigh` readiness delta gate. Do not repeat the original investigation. Start automatically when the delta is compatible; when it materially conflicts with the approved behaviour or scope, return to `<BUG-ID> Review` at Ultra for a human decision.
 
 Treat dependant dispatch as part of closing every prerequisite bug. Before the controller finishes that closing step, find all bugs that depended on the closing bug, update their dependency metadata, and immediately start any ready dependant whose remaining prerequisites are clear.
 
 When working toward a release or go-live milestone, resolve bugs marked `Release blocker:` for that target and all of their transitive prerequisites before unrelated bugs. Do not declare the release ready while any required bug remains unresolved unless the user explicitly removes or changes the gate.
 
 Do not treat resolution mode as reconcile mode. Resolution mode may inspect implementation behaviour and may remove or transfer an entry, but only after the user decides its disposition or an independently reviewed fix has been merged.
+
+## Use The Required Model Routing
+
+| Work | Model | Reasoning |
+|---|---|---|
+| Buglist reconciliation, dependency mapping, and release-gate audit | `gpt-5.6-sol` | `xhigh` |
+| Buglist controller/orchestrator | `gpt-5.6-sol` | `high` |
+| Bug investigation and user decision in `<BUG-ID> Review` | Strongest intelligence model available | `Ultra` |
+| Pre-implementation readiness delta gate, when relevant state changed | `gpt-5.6-sol` | `xhigh` |
+| Laravel bug implementation | `gpt-5.6-sol` | `high` |
+| Independent implementation review | `gpt-5.6-sol` | `xhigh` |
+
+Treat broader-scope proposals as a return to the existing Ultra bug investigation and user decision row, never as a separate phase or an implementer decision. If a task mechanism cannot provide an exact model or reasoning level, use the nearest available configuration and tell the controller which fallback applied before relying on its output.
 
 ## Where Detail Belongs
 
