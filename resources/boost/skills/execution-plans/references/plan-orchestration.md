@@ -22,6 +22,7 @@ Use this reference only when orchestrating, executing, resuming, or completing a
 - Keep orchestration as the controller's primary role for the lifetime of the plan. When a human asks a question, answer it clearly, apply any resulting decision to the plan when relevant, and then resume orchestration from the current state. A question, status request, or brief discussion does not pause orchestration, transfer ownership, or turn the controller into a general-purpose side chat unless the human explicitly changes or stops the task.
 - After responding to the human, recheck active delegated work, pending gates, readiness transitions, CI or PR state, and the next controller action. Continue waiting or dispatching as appropriate; do not end the controller merely because the immediate question was answered.
 - While delegated work runs, continue safe controller work: provisionally plan later stages, plan independent stages, prepare controller-owned documentation, monitor CI, and prepare the next focused delta gate. Never start a dependent implementation before its prerequisite merges and its delta gate passes.
+- Treat receipt of every required handoff as a controller gate. Do not infer delivery from a side task reaching a final answer, and do not advance the stage until the controller has actually received the handoff through the correct channel.
 - Do not recreate, renumber, or silently redesign the plan. Record required changes through the plan's decision and revision mechanisms.
 - If the plan is `Draft`, explain what prevents orchestration and return it to the separate authoring process. Start or resume when it is `Ready to orchestrate`, `In progress`, `Blocked`, or `In review` as appropriate.
 
@@ -119,7 +120,24 @@ Relevant paths: <paths whose upstream change invalidates this gate>
 Invalidation conditions: <specific events requiring renewed planning>
 ```
 
-The planning chat owns the semantic dependency and cross-stage compatibility check. It stops after the handoff and must not implement its decision. The controller writes the result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, and appends a revision note.
+## Deliver Every Delegated Handoff Explicitly
+
+Codex side tasks are separate peer tasks. Their final answers are not automatically returned to the controller merely because they were created from a delegation.
+
+When a delegation or prompt contains `<codex_delegation source_thread_id="…">`, a `source_thread_id`, controller task ID, or equivalent return-task identifier, treat that identifier as the required delivery destination:
+
+1. Finish the gate handoff in the side task.
+2. Use the task-messaging tool to send the complete handoff explicitly to that controller task ID.
+3. Check that the tool call succeeded and record the destination and successful delivery in the side task.
+4. Only then report the gate task as complete.
+
+Do not treat a user-facing planning or review task like an internal subagent with automatic parent delivery. Do not rely on the handoff remaining visible only in the side task, and do not ask the human to relay it manually when task messaging is available.
+
+If the messaging tool is unavailable, the destination is invalid, or delivery fails, do not declare completion. Preserve the handoff in the side task, report `Handoff delivery: blocked` with the controller task ID and exact failure, and retry when possible. The controller must remain open and must not authorize the next gate until delivery succeeds.
+
+Internal subagents may return results through their native parent channel when that mechanism actually supplies the result to the controller. The completion requirement is successful controller receipt, not use of one particular tool. When `source_thread_id` identifies a separate Codex task, explicit task messaging is mandatory.
+
+The planning chat owns the semantic dependency and cross-stage compatibility check. It stops only after the handoff has been delivered successfully to the controller and must not implement its decision. The controller writes the received result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, records the delivery receipt, and appends a revision note.
 
 Classify readiness literally:
 
@@ -252,7 +270,7 @@ After implementation and focused validation finish:
 - Fail the gate for regressions, incomplete paths, missing evidence, or any scope escape. Do not turn review into an open-ended audit.
 - Do not let the reviewer implement fixes or approve expanded scope. Return in-scope corrections to implementation; route broader changes through the `gpt-5.6-sol` `xhigh` planning chat.
 
-Require the reviewer to return the review result, exact commits reviewed, evidence reused, correction coverage, invalidated evidence, independent verification, remaining environmental verification, and findings. The controller records this in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
+Require the reviewer to return the review result, exact commits reviewed, evidence reused, correction coverage, invalidated evidence, independent verification, remaining environmental verification, and findings. Require successful delivery to the controller under the explicit handoff-delivery gate above. The controller records the received result and delivery receipt in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
 
 Do not merge a failed stage. Mark it `In progress`, return in-scope findings to the existing implementer, then return the correction to the existing independent reviewer for a focused pass. Start a replacement implementer or fresh full review only under the correction-context rules above.
 

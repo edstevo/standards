@@ -203,6 +203,8 @@ Invalidation map: Pending
 
 Latest parent delta summary: None
 
+Controller task ID: Pending
+
 ### Planning To Implementation
 
 Gate result: Pending
@@ -237,6 +239,8 @@ Relevant paths: Pending
 
 Invalidation conditions: Pending
 
+Handoff delivery: Pending
+
 ### Implementation To Review
 
 Implementation commits: Pending
@@ -267,6 +271,8 @@ Scope deviations: None
 
 New discoveries: None
 
+Handoff delivery: Pending
+
 ### Review To Controller
 
 Review result: Pending
@@ -284,6 +290,8 @@ Invalidated evidence: None
 Remaining environmental verification: None
 
 Findings: Pending
+
+Handoff delivery: Pending
 
 ### Replacement Agent
 
@@ -323,6 +331,8 @@ A provisionally ready stage document must state its purpose, dependencies, bound
 When revising an older stage that uses `Provisionally approved` or combines `Approval state: provisional` with `Ready for implementation: no`, migrate it to the canonical implementation-readiness fields. Do not preserve the ambiguous combination.
 
 Treat `Gate Handoffs` as compact, versioned context, not duplicated narrative. `Context Routing` applies to every dispatched agent and keeps the reading boundaries, settled decisions, unresolved assumptions, parent delta, and invalidation map current. The planning handoff is the implementation context package: it records the approved outcome and exclusions plus only the upstream contracts, paths, commit references, and compatibility findings needed by this stage. The implementer records the candidate and implementation commits, changed-path-to-test map, changed and evidence-covered paths, focused validation, CI, invalidated evidence, environmental gaps, correction cycle, deviations, and discoveries. The reviewer records the exact commits reviewed, evidence reused or invalidated, correction coverage, independent verification, remaining environmental checks, result, and findings. Each downstream gate consumes the preceding handoff instead of recreating it.
+
+Record the controller task ID when delegation supplies one. Set each `Handoff delivery` field to the destination task ID and successful delivery result only after the controller has actually received that handoff. Leave it `Pending` while work continues and use `Blocked — <exact failure>` when delivery fails. A gate is not complete while its required delivery is pending or blocked.
 
 Use `Must read by gate`, `Read only if needed by gate`, and `Do not reread by gate` to control context loading separately for planning, implementation, review, and any replacement agent. Keep settled decisions distinct from assumptions that still need verification. Express the invalidation map as exact path or contract triggers and the context or evidence each trigger refreshes. When the parent advances, update `Latest parent delta summary` with both commits, changed paths, material contract or decision changes, triggered invalidations, and evidence that remains valid.
 
