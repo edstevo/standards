@@ -7,6 +7,7 @@ Use this reference when creating, cataloguing, reading, or revising an ExecPlan.
 - Catalogue plans
 - Start every plan with metadata
 - Maintain the master plan
+- Decompose the plan into small subplans
 - Create a document for every stage
 - Apply formatting rules
 
@@ -60,17 +61,31 @@ Explain why the work matters, what someone can do afterwards, how to observe it,
 
 ### Stages
 
-Describe the intended stages, their order, direct dependencies, outcomes, and final contribution. Give every stage a two-digit number and action-oriented title. A future stage may be provisional until its planning chat, but its purpose and prerequisites must be clear.
+Describe the intended stages, their order, direct dependencies, outcomes, and final contribution. Treat each stage as one subplan. Give every stage a two-digit number and action-oriented title. A future stage may be provisional until its planning chat, but its purpose and prerequisites must be clear.
 
 Use these stage states:
 
 - `Unplanned`
 - `Planning`
+- `Provisionally approved`
 - `Ready`
 - `In progress`
 - `In review`
 - `Complete`
 - `Blocked`
+
+### Decompose Into Small Subplans
+
+Make every stage the smallest useful component that can be implemented, verified, reviewed, and merged independently while leaving the repository coherent. A valid stage must:
+
+- deliver one coherent outcome;
+- have a narrow, explicit component boundary;
+- be understandable and implementable by one implementation agent;
+- fit in one focused child PR;
+- have focused tests or another independent verification signal; and
+- state direct dependencies on other stages instead of absorbing their work.
+
+If a proposed stage spans several components, needs multiple implementation agents, contains independently deliverable outcomes, or would produce a broad mixed PR, split it into separately numbered stage documents before marking any part `Ready`. Do not use an arbitrary line or file limit; use implementation, review, and verification isolation as the size test.
 
 Summarize and link every stage in this form:
 
@@ -86,7 +101,7 @@ Outcome: A user can connect and refresh a Revolut account.
 Depends on: None
 ```
 
-Each stage must be independently verifiable and leave the repository in a coherent state. Prefer additive migrations and temporary parallel paths when they keep tests passing and reduce risk. Use an explicit prototype stage when feasibility is uncertain, with promotion or rejection criteria.
+Prefer additive migrations and temporary parallel paths when they keep tests passing and reduce risk. Use a small explicit prototype stage when feasibility is uncertain, with promotion or rejection criteria.
 
 ### Progress
 
@@ -157,9 +172,57 @@ State the hard boundaries.
 
 Record prerequisite stages, affected paths, services, contracts, libraries, and symbols.
 
-## Implementation Slices
+## Gate Handoffs
 
-Describe one coherent slice or several explicitly independent slices.
+### Planning To Implementation
+
+Gate result: Pending
+
+Approval state: Pending
+
+Validated code baseline: Pending
+
+Validated upstream stages: Pending
+
+Provisional upstream assumptions: None
+
+Compatibility result: Pending
+
+Final delta result: Pending
+
+User reapproval required: Pending
+
+Inherited contracts and decisions: Pending
+
+Relevant paths: Pending
+
+Invalidation conditions: Pending
+
+### Implementation To Review
+
+Implementation commits: Pending
+
+Changed paths: Pending
+
+Tests and evidence: Pending
+
+Scope deviations: None
+
+New discoveries: None
+
+### Review To Controller
+
+Review result: Pending
+
+Reviewed commits: Pending
+
+Independent verification: Pending
+
+Findings: Pending
+
+## Implementation Approach
+
+Describe the focused steps one agent will use to implement this subplan. If several independent slices appear, create separate stage documents instead.
 
 ## Progress
 
@@ -186,7 +249,9 @@ Keep compact stage evidence and handoff material.
 Record each material stage-document change and why it was made.
 ```
 
-A provisional stage document must at least state its purpose, dependencies, and known boundaries. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, implementation slices, validation commands, risks, and user-approved decisions.
+A provisional stage document must at least state its purpose, dependencies, known boundaries, user-approved provisional scope, and upstream assumptions. Use `Status: Provisionally approved` when the user has approved the subplan but a prerequisite has not reached its reviewed final state. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, focused implementation approach, validation commands, risks, user-approved decisions, confirmation that it meets the small-subplan gate, and a final `Planning To Implementation` handoff.
+
+Treat `Gate Handoffs` as compact, versioned context, not duplicated narrative. The planning gate records only the upstream contracts, decisions, paths, commit references, and compatibility findings needed by this stage. The implementer records the resulting commits, changed paths, tests, deviations, and discoveries. The reviewer records the exact commits reviewed, independent verification, result, and findings. Each downstream gate consumes the preceding handoff instead of recreating it.
 
 The planning chat returns the approved stage content, but the controller creates and updates the file. The master plan remains authoritative for overall status, stage order, dependencies, cross-stage decisions, and final acceptance. Each stage document is authoritative for that stage's detailed scope and execution record. Immediately reflect any stage change that affects another stage or the overall plan in the master plan.
 

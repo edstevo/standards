@@ -2,6 +2,14 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.62 - 2026-08-13
+
+### Changed
+- Set explicit execution-plan model routing: `gpt-5.6-sol` at Ultra for overall plan and stage-map creation, `xhigh` for pre-stage planning gates, `high` for Laravel implementation, and `xhigh` for implementation review.
+- Required every ExecPlan stage to be a small, isolated subplan with one coherent component, one implementation agent, one child PR, and focused verification; oversized stages must be split before implementation.
+- Added versioned gate handoffs so planning, implementation, review, and closure carry forward certified context; downstream agents avoid rereading every stage or repeating upstream compatibility checks unless a relevant change explicitly invalidates the handoff.
+- Allowed dependent stages to receive user-approved provisional reviews while prerequisites are active, followed by a lightweight `xhigh` delta gate when final upstream commits land; compatible deltas promote automatically, while material conflicts return to the user for renewed sign-off.
+
 ## 1.0.61 - 2026-08-12
 
 ### Changed
