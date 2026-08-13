@@ -9,6 +9,7 @@ Use this reference when creating, cataloguing, reading, or revising an ExecPlan.
 - Maintain the master plan
 - Decompose the plan into small subplans
 - Create a document for every stage
+- Record reusable handoffs and fresh validation evidence
 - Apply formatting rules
 
 ## Catalogue Plans
@@ -61,18 +62,28 @@ Explain why the work matters, what someone can do afterwards, how to observe it,
 
 ### Stages
 
-Describe the intended stages, their order, direct dependencies, outcomes, and final contribution. Treat each stage as one subplan. Give every stage a two-digit number and action-oriented title. A future stage may be provisional until its planning chat, but its purpose and prerequisites must be clear.
+Describe the intended stages, their order, direct dependencies, outcomes, and final contribution. Treat each stage as one subplan. Give every stage a two-digit number and action-oriented title. A future stage remains `Unplanned` until its planning chat; after complete planning it may become `Provisionally ready` while a named freshness gate remains.
 
 Use these stage states:
 
 - `Unplanned`
 - `Planning`
-- `Provisionally approved`
+- `Provisionally ready`
 - `Ready`
 - `In progress`
 - `In review`
 - `Complete`
 - `Blocked`
+
+Track implementation authorization separately with one canonical field:
+
+- `Implementation readiness: not ready` means substantive planning or authorization is incomplete or blocked. Examples include unresolved user decisions, open questions, an oversized stage, an unresolved technical prerequisite, or a material contract conflict. More planning or user input is required.
+- `Implementation readiness: provisionally ready` means the design is complete, the user accepted every material decision, the stage is small and isolated, and no open question remains. Implementation waits only for a named upstream change or scheduling delay and its focused freshness or delta gate.
+- `Implementation readiness: ready` means every remaining focused gate passed and implementation dispatch is authorized.
+
+Do not use `provisionally ready` for generally incomplete work. A named active upstream stage qualifies only when its expected outcome is sufficiently settled to complete this stage's planning; an unknown prerequisite outcome or unresolved conflict remains `not ready`.
+
+For example, if every decision for `PLAN-0001 Stage 04` is settled and no technical prerequisite is missing, but scheduling requires one relevant-path delta check, record `Implementation readiness: provisionally ready`, name that exact check under `Remaining gate`, use `Automatic promotion: Yes`, and require no user reapproval unless the check finds the recorded material conflict.
 
 ### Decompose Into Small Subplans
 
@@ -86,6 +97,8 @@ Make every stage the smallest useful component that can be implemented, verified
 - state direct dependencies on other stages instead of absorbing their work.
 
 If a proposed stage spans several components, needs multiple implementation agents, contains independently deliverable outcomes, or would produce a broad mixed PR, split it into separately numbered stage documents before marking any part `Ready`. Do not use an arbitrary line or file limit; use implementation, review, and verification isolation as the size test.
+
+Before marking a stage `Ready`, ask whether one implementation agent can implement, verify, and hand off its outcome in one focused working session and one understandable PR. Split stages that combine separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies.
 
 Summarize and link every stage in this form:
 
@@ -141,7 +154,7 @@ Append a dated note after every material master-plan revision describing what ch
 
 ## Create A Document For Every Stage
 
-Create a document for every stage, including simple and provisional stages. Use `docs/plans/<PLAN-ID>/stages/STAGE-<NN>.md`; for example, `docs/plans/PLAN-1234/stages/STAGE-01.md`. Do not add stage documents to `docs/planlist.md` or give them separate plan IDs.
+Create a document for every stage, including simple and provisionally ready stages. Use `docs/plans/<PLAN-ID>/stages/STAGE-<NN>.md`; for example, `docs/plans/PLAN-1234/stages/STAGE-01.md`. Do not add stage documents to `docs/planlist.md` or give them separate plan IDs.
 
 Use this standard structure:
 
@@ -174,13 +187,41 @@ Record prerequisite stages, affected paths, services, contracts, libraries, and 
 
 ## Gate Handoffs
 
+### Context Routing
+
+Must read by gate: Pending
+
+Read only if needed by gate: Pending
+
+Do not reread by gate: Pending
+
+Settled decisions: Pending
+
+Unresolved assumptions: None
+
+Invalidation map: Pending
+
+Latest parent delta summary: None
+
 ### Planning To Implementation
 
 Gate result: Pending
 
-Approval state: Pending
+Implementation readiness: not ready
+
+Remaining gate: Complete stage planning
+
+Automatic promotion: No
+
+User reapproval required: Yes — planning decisions remain open
+
+Approved outcome: Pending
+
+Explicit exclusions: Pending
 
 Validated code baseline: Pending
+
+Starting parent commit: Pending
 
 Validated upstream stages: Pending
 
@@ -189,8 +230,6 @@ Provisional upstream assumptions: None
 Compatibility result: Pending
 
 Final delta result: Pending
-
-User reapproval required: Pending
 
 Inherited contracts and decisions: Pending
 
@@ -202,9 +241,27 @@ Invalidation conditions: Pending
 
 Implementation commits: Pending
 
+Validated candidate commit: Pending
+
 Changed paths: Pending
 
-Tests and evidence: Pending
+Changed-path-to-test map: Pending
+
+Evidence-covered paths: Pending
+
+Focused tests and results: Pending
+
+Static analysis and formatting: Pending
+
+CI evidence: Pending
+
+Known environmental gaps: None
+
+Remaining environmental verification: None
+
+Invalidated evidence: None
+
+Correction cycle: Initial candidate
 
 Scope deviations: None
 
@@ -216,9 +273,21 @@ Review result: Pending
 
 Reviewed commits: Pending
 
+Evidence reused: Pending
+
+Correction review coverage: Initial full review
+
 Independent verification: Pending
 
+Invalidated evidence: None
+
+Remaining environmental verification: None
+
 Findings: Pending
+
+### Replacement Agent
+
+Replacement handoff: Not required
 
 ## Implementation Approach
 
@@ -249,9 +318,17 @@ Keep compact stage evidence and handoff material.
 Record each material stage-document change and why it was made.
 ```
 
-A provisional stage document must at least state its purpose, dependencies, known boundaries, user-approved provisional scope, and upstream assumptions. Use `Status: Provisionally approved` when the user has approved the subplan but a prerequisite has not reached its reviewed final state. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, focused implementation approach, validation commands, risks, user-approved decisions, confirmation that it meets the small-subplan gate, and a final `Planning To Implementation` handoff.
+A provisionally ready stage document must state its purpose, dependencies, boundaries, accepted scope, upstream assumptions, and the exact remaining freshness gate. Use `Status: Provisionally ready` and `Implementation readiness: provisionally ready` only when every material decision is settled, there are no open questions, the subplan is small and isolated, and implementation is withheld solely for that named gate. Record `Automatic promotion: Yes` and `User reapproval required: No — unless <precise invalidation condition>`. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, focused implementation approach, validation commands, risks, user-approved decisions, confirmation that it meets the small-subplan gate, and a final `Planning To Implementation` handoff.
 
-Treat `Gate Handoffs` as compact, versioned context, not duplicated narrative. The planning gate records only the upstream contracts, decisions, paths, commit references, and compatibility findings needed by this stage. The implementer records the resulting commits, changed paths, tests, deviations, and discoveries. The reviewer records the exact commits reviewed, independent verification, result, and findings. Each downstream gate consumes the preceding handoff instead of recreating it.
+When revising an older stage that uses `Provisionally approved` or combines `Approval state: provisional` with `Ready for implementation: no`, migrate it to the canonical implementation-readiness fields. Do not preserve the ambiguous combination.
+
+Treat `Gate Handoffs` as compact, versioned context, not duplicated narrative. `Context Routing` applies to every dispatched agent and keeps the reading boundaries, settled decisions, unresolved assumptions, parent delta, and invalidation map current. The planning handoff is the implementation context package: it records the approved outcome and exclusions plus only the upstream contracts, paths, commit references, and compatibility findings needed by this stage. The implementer records the candidate and implementation commits, changed-path-to-test map, changed and evidence-covered paths, focused validation, CI, invalidated evidence, environmental gaps, correction cycle, deviations, and discoveries. The reviewer records the exact commits reviewed, evidence reused or invalidated, correction coverage, independent verification, remaining environmental checks, result, and findings. Each downstream gate consumes the preceding handoff instead of recreating it.
+
+Use `Must read by gate`, `Read only if needed by gate`, and `Do not reread by gate` to control context loading separately for planning, implementation, review, and any replacement agent. Keep settled decisions distinct from assumptions that still need verification. Express the invalidation map as exact path or contract triggers and the context or evidence each trigger refreshes. When the parent advances, update `Latest parent delta summary` with both commits, changed paths, material contract or decision changes, triggered invalidations, and evidence that remains valid.
+
+Complete `Replacement handoff` only when an agent must change. Record the current branch, starting parent and candidate commits, completed and remaining work, failing or pending tests, still-valid evidence, triggered invalidations, environmental gaps, and known traps. A replacement consumes this package instead of rereading the complete stage history.
+
+Append or clearly version correction cycles instead of erasing their history. Tie each validation result to an exact commit and covered paths. A later commit invalidates that evidence only when it changes covered production behaviour, the test itself, a shared dependency used by that behaviour, or relevant configuration or schema. Preserve evidence across documentation-only, status-only, and unrelated-path commits.
 
 The planning chat returns the approved stage content, but the controller creates and updates the file. The master plan remains authoritative for overall status, stage order, dependencies, cross-stage decisions, and final acceptance. Each stage document is authoritative for that stage's detailed scope and execution record. Immediately reflect any stage change that affects another stage or the overall plan in the master plan.
 

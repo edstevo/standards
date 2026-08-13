@@ -35,7 +35,9 @@ Treat every stage as a subplan. Each subplan must be a small, isolated, independ
 
 Carry context between gates through the current stage document's versioned handoffs. The pre-stage gate owns cross-stage compatibility and dependency discovery. Implementation and review must trust that certification and must not repeat it unless a recorded invalidation condition occurs.
 
-Allow a later stage to be provisionally reviewed while a prerequisite stage is still active. After the prerequisite merges, run a focused `xhigh` delta gate against the provisional assumptions. Promote the stage without asking the user again when the final upstream result is compatible; return to the user for explicit sign-off only when the delta creates a material conflict.
+Optimize the critical path without weakening gates. Treat each stage handoff as the minimum context package, with explicit reading boundaries, settled decisions, unresolved assumptions, commit-scoped evidence, and invalidation rules. Keep the stage's implementation agent and independent reviewer available until the stage merges, reuse them for in-scope correction cycles while their handoffs remain valid, and avoid synchronizing unrelated parent changes into active stage work.
+
+Allow a later stage to become `Provisionally ready` while a named upstream change or scheduling delay remains. Use the canonical readiness states `not ready`, `provisionally ready`, and `ready`; never present incomplete planning and completed-but-awaiting-freshness-check planning as equivalent. After the named condition clears, run a focused `xhigh` delta gate. Promote a compatible stage to `Ready` automatically without repeating planning or requesting approval; return to the user only when the delta creates a material conflict.
 
 Use stable IDs in the form `PLAN-1234`: uppercase `PLAN-` followed by a zero-padded, monotonically increasing four-digit number. Find the highest existing number in `docs/planlist.md` and `docs/plans/`, then allocate the next number. Never reuse or renumber an ID. Keep the filename ID-only so title changes do not rename it.
 
@@ -58,12 +60,15 @@ When the user says `orchestrate PLAN-1234` or refers to a unique plan title:
 
 - Resolve and read the existing plan; do not create a replacement.
 - Make the main task the long-lived `gpt-5.6-sol` `high` controller and follow `references/plan-orchestration.md` literally.
+- Keep orchestration as the controller's primary role. Answer human questions when they arise, then immediately return to coordinating active gates, agents, PRs, readiness, and stage transitions unless the human explicitly changes or stops the orchestration request.
 - Search for an existing parent PR before creating branches or PRs. If one exists, check out its head branch and reread the latest master and stage documents from that branch; create the parent integration branch and draft PR only when no matching parent PR exists.
 - Run each pre-stage planning and approval gate with the user in a dedicated `gpt-5.6-sol` `xhigh` side chat. That chat returns the approved stage plan to the controller and never implements it.
-- Implement each approved stage through one `gpt-5.6-sol` `high` subagent and one child stage PR.
-- Require a separate `gpt-5.6-sol` `xhigh` review before merging the stage PR into the parent plan branch.
+- Implement each approved stage through one `gpt-5.6-sol` `high` subagent and one child stage PR. Keep that implementation agent available for in-scope review corrections until the stage merges.
+- Require a separate `gpt-5.6-sol` `xhigh` reviewer before merging the stage PR into the parent plan branch. Prefer the same independent reviewer for focused re-review after corrections while its prior evidence remains valid.
 - Update the authoritative master plan and current stage document after every stage with progress, decisions, discoveries, scope movement, and evidence before advancing or finalizing the next stage.
 - Pass each agent only the current stage document, the preceding gate handoff, and explicitly referenced context. Do not make every agent reread the full master plan or all completed stages.
+- Preserve test and review evidence that still covers the candidate commit and relevant paths. Do not merge unrelated parent changes, rerun unaffected checks, or repeat broad discovery merely because another commit exists.
+- Provisionally plan safe later work while a stage is active, then immediately dispatch the next ready dependant after a compatible delta gate and durable stage closure.
 - Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it owns remains active.
 
 ## Preserve The Outcome

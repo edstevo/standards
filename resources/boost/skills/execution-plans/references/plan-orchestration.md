@@ -8,9 +8,10 @@ Use this reference only when orchestrating, executing, resuming, or completing a
 - Use official names
 - Establish or resume the parent PR
 - Plan one stage with the user
+- Optimize the critical path without weakening gates
 - Implement through a child PR
 - Require independent review
-- Close each stage before planning the next
+- Close each stage and dispatch the next ready stage
 - Complete the parent plan
 
 ## Keep The Main Task As Controller
@@ -18,6 +19,9 @@ Use this reference only when orchestrating, executing, resuming, or completing a
 - Resolve the requested entry from `docs/planlist.md`, then read its `docs/plans/<PLAN-ID>.md` master document and current stage document. Read a completed stage document only when the current stage names it as a direct dependency or its handoff links a required contract or decision. Do not load every stage by default.
 - Treat the main task as controller and orchestrator, and run it with `gpt-5.6-sol` at `high`. It owns plan state, branches, PRs, task dispatch, handoffs, stage transitions, and final completion. If the task mechanism cannot provide the exact configuration, use the nearest available setting and record the fallback before dispatching work.
 - Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it started remains active or awaits the user.
+- Keep orchestration as the controller's primary role for the lifetime of the plan. When a human asks a question, answer it clearly, apply any resulting decision to the plan when relevant, and then resume orchestration from the current state. A question, status request, or brief discussion does not pause orchestration, transfer ownership, or turn the controller into a general-purpose side chat unless the human explicitly changes or stops the task.
+- After responding to the human, recheck active delegated work, pending gates, readiness transitions, CI or PR state, and the next controller action. Continue waiting or dispatching as appropriate; do not end the controller merely because the immediate question was answered.
+- While delegated work runs, continue safe controller work: provisionally plan later stages, plan independent stages, prepare controller-owned documentation, monitor CI, and prepare the next focused delta gate. Never start a dependent implementation before its prerequisite merges and its delta gate passes.
 - Do not recreate, renumber, or silently redesign the plan. Record required changes through the plan's decision and revision mechanisms.
 - If the plan is `Draft`, explain what prevents orchestration and return it to the separate authoring process. Start or resume when it is `Ready to orchestrate`, `In progress`, `Blocked`, or `In review` as appropriate.
 
@@ -37,7 +41,7 @@ For `PLAN-1234`, use:
 | Stage branch | `codex/plan-1234-stage-01` |
 | Stage PR | `[PLAN-1234/S01] <stage title>` |
 
-Preserve the full four-digit plan ID and two-digit stage number. Use one implementation task per stage. Do not vary the planning-chat name because the controller may need to resume it for a scope decision.
+Preserve the full four-digit plan ID and two-digit stage number. Maintain only one active implementation task and one active independent review task per stage, and keep both available through correction cycles until the stage merges. Resume them by default; use a replacement only under the correction-context rules below. Do not vary the planning-chat name because the controller may need to resume it for a scope decision.
 
 ## Establish The Parent PR
 
@@ -67,11 +71,13 @@ If a parent PR already exists, verify that it is open, its head is the recorded 
 
 Keep the parent PR draft while stages remain. Never merge or close it while a stage PR or delegated task remains active.
 
-Commit controller-owned plan status, decisions, and stage-document updates directly to the parent plan branch. Keep implementation code on the stage branch. Give implementers and reviewers the current stage document and preceding handoff rather than the complete plan history. Synchronize the stage branch only when parent updates affect its code or recorded verification context.
+Commit controller-owned plan status, decisions, and stage-document updates directly to the parent plan branch. Keep implementation code on the stage branch. Give implementers and reviewers the current stage document and preceding handoff rather than the complete plan history.
+
+Record the exact parent commit from which each stage branch starts. While implementation or review is active, synchronize that branch with the parent only when a parent change touches a relevant path, changes an inherited contract or decision, creates a merge conflict, or invalidates recorded verification. Unrelated documentation, status, or other-stage changes may wait until stage closure; their existence alone must not trigger a merge, rebase, test run, or renewed review.
 
 ## Plan One Stage With The User
 
-Review stages in dependency order, but allow the next stage's planning chat to run while its prerequisite is being implemented or reviewed. Treat any user approval made before a prerequisite's reviewed result is merged as provisional. A provisionally approved stage must not enter implementation until every prerequisite completes and the focused final delta gate passes.
+Review stages in dependency order, but allow the next stage's planning chat to run while its prerequisite is being implemented or reviewed. A stage may become `Provisionally ready` before a named upstream result merges only when its design is complete, every material decision is accepted, it is small and isolated, and no open question remains. It must not enter implementation until the named condition clears and the focused final delta gate passes.
 
 For the current stage:
 
@@ -81,7 +87,7 @@ For the current stage:
 - Give it the master plan's concise stage map, the current stage document, direct dependency documents, explicitly relevant contracts and decisions, relevant project guidance, and repository access. Do not give it every completed stage or a predetermined conclusion.
 - Keep it read-only. It may investigate and discuss but must not edit files, implement, create PRs, start implementers, or merge anything.
 - Require it to explain material choices in simple English and formulate the stage decision with the user.
-- Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage.
+- Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. Ask: `Can one implementation agent implement, verify, and hand off this outcome in one focused working session and one understandable PR?` If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage. Treat separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies as strong evidence that a split is required.
 
 The planning chat returns:
 
@@ -100,7 +106,10 @@ Risks and constraints: <known concerns>
 User decisions: <explicit approvals>
 Open questions: <none or unresolved list>
 Small isolated subplan: <yes | no; if no, proposed split>
-Approval state: <final | provisional>
+Implementation readiness: <not ready | provisionally ready | ready>
+Remaining gate: <exact focused gate | none>
+Automatic promotion: <yes | no>
+User reapproval required: <no | no unless the precise invalidation condition occurs | yes and the precise conflict>
 Validated code baseline: <parent commit inspected>
 Validated upstream stages: <stage IDs and merge commits>
 Provisional upstream assumptions: <none | exact outcomes, contracts, and decisions expected from active prerequisites>
@@ -108,25 +117,32 @@ Compatibility result: <passed | blocked>
 Inherited contracts and decisions: <only context implementation must preserve>
 Relevant paths: <paths whose upstream change invalidates this gate>
 Invalidation conditions: <specific events requiring renewed planning>
-Ready for implementation: <yes | no>
 ```
 
-The planning chat owns the semantic dependency and cross-stage compatibility check. It stops after the handoff and must not implement its decision. The controller writes the result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, and appends a revision note. When a prerequisite is still active, record its expected outcome, contracts, and decisions under `Provisional upstream assumptions` and set the stage to `Provisionally approved`. Mark the stage `Ready` only when the handoff is final, every prerequisite is complete, compatibility passed, and `Small isolated subplan: yes`. Split and renumber an oversized stage before implementation.
+The planning chat owns the semantic dependency and cross-stage compatibility check. It stops after the handoff and must not implement its decision. The controller writes the result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, and appends a revision note.
+
+Classify readiness literally:
+
+- Use `not ready` when a substantive user decision, open question, stage split, technical prerequisite, or material conflict remains. Set `Automatic promotion: No` and state what further planning or user input is required.
+- Use `provisionally ready` only when planning is otherwise complete and implementation waits solely for a named upstream result or scheduling-time freshness check. Record that exact check under `Remaining gate`, the expected outcomes under `Provisional upstream assumptions`, `Automatic promotion: Yes`, and `User reapproval required: No — unless <precise invalidation condition>`. Set the stage status to `Provisionally ready`.
+- Use `ready` only when all prerequisites and focused gates have passed, compatibility passed, and `Small isolated subplan: yes`. Set the stage status to `Ready`, `Remaining gate: None`, and authorize implementation dispatch.
+
+Split and renumber an oversized stage before implementation. Never encode a provisionally ready stage as merely not ready.
 
 The controller updates `docs/plans/PLAN-1234/stages/STAGE-01.md` from the handoff and keeps its concise master-plan summary and link aligned. If a stage document is missing, repair the plan structure before implementation. Do not let the planning chat edit either document itself.
 
-## Finalize Provisional Approval With A Delta Gate
+## Finalize Provisional Readiness With A Delta Gate
 
-When the last active prerequisite of a `Provisionally approved` stage completes, run the pre-stage planning gate again with `gpt-5.6-sol` at `xhigh`, but limit it to the delta between:
+When the named upstream condition for a `Provisionally ready` stage clears—or the stage reaches its recorded scheduling-time freshness point—run the pre-stage planning gate again with `gpt-5.6-sol` at `xhigh`, but limit it to the delta between:
 
 - the recorded provisional upstream assumptions; and
 - the prerequisite's final merge commit, `Review To Controller` handoff, changed contracts, decisions, and relevant-path diff.
 
 Do not repeat the full stage review, reread unrelated completed stages, or reopen decisions that the final prerequisite result did not affect.
 
-If the final upstream result satisfies the provisional assumptions, update the validated baseline and upstream merge commits, record `Final delta result: Compatible` and `User reapproval required: No`, change `Approval state` to `Final`, and mark the stage `Ready` without asking the user to approve it again.
+If the final upstream result satisfies the provisional assumptions, update the validated baseline and upstream merge commits, record `Final delta result: Compatible`, `Implementation readiness: ready`, `Remaining gate: None`, `Automatic promotion: Yes`, and `User reapproval required: No`. Mark the stage `Ready` and dispatch it when scheduled without asking the user to approve it again.
 
-If the delta changes or contradicts the approved scope, outcome, interface, dependency, validation, or inherited decision, record `Final delta result: Conflict` and `User reapproval required: Yes`. Resume the existing `PLAN-1234 Stage 01 Planning` chat, explain only the material differences in simple English, and obtain explicit user sign-off before updating the stage and marking it `Ready`. Do not dispatch implementation while that decision remains open.
+If the delta changes or contradicts the approved scope, outcome, interface, dependency, validation, or inherited decision, record `Final delta result: Conflict`, `Implementation readiness: not ready`, `Automatic promotion: No`, and `User reapproval required: Yes — <precise conflict>`. Resume the existing `PLAN-1234 Stage 01 Planning` chat, explain only the material differences in simple English, and obtain explicit user sign-off before updating the stage and marking it `Ready`. Do not dispatch implementation while that decision remains open.
 
 ## Carry Context Forward Without Repeating Discovery
 
@@ -141,22 +157,73 @@ Before dispatching implementation or review, the controller checks the recorded 
 
 When the handoff remains valid, downstream agents must trust it and start their own gate's work. Do not announce or perform another broad discovery pass. When a final handoff is invalid, return to `PLAN-1234 Stage 01 Planning`, refresh only the affected certification and user decisions, and then resume downstream work.
 
+Treat the current stage handoffs as its minimum context package. Before dispatch, give every agent three explicit reading lists:
+
+- `Must read`: the current handoff and exact files needed to perform this gate;
+- `Read only if needed`: narrowly relevant supporting context to open only when a named condition occurs; and
+- `Do not reread`: completed stages, settled investigations, or broad repository material already certified by an earlier gate.
+
+Record settled decisions separately from unresolved assumptions. Agents must preserve settled decisions and must not reopen them unless new evidence directly conflicts. Pair relevant paths and inherited contracts with an invalidation map stating exactly which handoff section, decision, or evidence must be refreshed if each item changes; otherwise trust it.
+
+When the parent branch advances, the controller supplies a short delta summary containing the old and new parent commits, changed paths, affected contracts or decisions, triggered invalidation rules, and evidence that remains valid. Do not ask a downstream agent to rediscover this delta.
+
+## Optimize The Critical Path Without Weakening Gates
+
+Every stage still requires an approved small scope, cleared prerequisites, one implementation owner, one child PR, focused validation, and an independent review. Optimize waiting and repetition, never those gates.
+
+### Reuse Correction Context
+
+- Use fresh agents where independence or a new work boundary matters: the initial planning chat for a stage, the first implementation of that stage, and its initial independent review. Reuse existing agents only for continuity within that stage, such as clarified planning or scope decisions, in-scope corrections, and focused re-review.
+- Keep the implementation agent available until the stage PR merges. Send every in-scope review correction back to that same agent by default because it already owns the implementation context.
+- Start a replacement implementer only when the original is unavailable, the approved stage scope changed materially, or its handoff became invalid. Never run two implementation agents for the same stage concurrently.
+- Keep the independent reviewer available through corrections. Prefer the same reviewer for re-review so independence from implementation remains intact while review context is preserved.
+- On re-review, inspect the correction, confirm it resolves the finding, check the correction for new problems, and rerun only affected or invalidated verification. Do not repeat the full first review while its evidence remains valid.
+- Require a fresh full review when a correction materially changes the stage design or invalidates most previous review evidence. The reviewer must always remain different from the implementation agent.
+
+When any agent must be replaced, give its replacement a compact handoff containing the current branch, starting parent and candidate commits, approved outcome and exclusions, settled decisions, unresolved assumptions, completed and remaining work, changed paths, failing or pending tests, evidence still valid, triggered invalidations, environmental gaps, and known traps. Do not make the replacement reconstruct current state from the full history.
+
+### Use A Validation Ladder
+
+During implementation:
+
+1. Run the smallest relevant test while developing.
+2. Run the complete focused stage suite before review.
+3. Run changed-path static analysis and formatting once the candidate is ready.
+4. Run specialist database, browser, or external-service CI only when local checks cannot prove the required behaviour or project rules require it.
+
+During independent review, rerun proportionate focused verification independently; do not default to the whole repository suite. At plan completion, run the integrated or full-plan validation. Require a full repository suite for an individual stage only when its risk, shared surface, or project rules genuinely justify it.
+
+### Preserve Fresh Evidence
+
+- Record the exact commit and paths covered by every validation result.
+- Invalidate evidence only when a later commit changes covered production behaviour, the test itself, a shared dependency used by that behaviour, or relevant configuration or schema.
+- Preserve unaffected evidence across corrections. Documentation-only, plan-status-only, and unrelated-path commits do not invalidate passing implementation tests or completed review work.
+- Record invalidated evidence and remaining environmental verification explicitly instead of silently rerunning everything.
+
+### Reduce Branch And CI Churn
+
+Prefer this stage push cadence: push once to create the draft PR, develop and validate locally, push one locally green review candidate, then push only review corrections. Do not require a push after every internal implementation slice unless the user requests that visibility.
+
+Where existing repository controls permit it, cancel superseded CI runs, avoid duplicate equivalent workflows on both `push` and `pull_request`, and use path filters for specialist checks. Do not change shared CI configuration merely to accelerate one stage unless that change is inside the approved scope. A newer commit does not by itself require rerunning unaffected workflows.
+
 ## Implement Through A Child PR
 
 For a ready stage:
 
 1. Mark the stage `In progress` on the parent plan branch, commit, and push that state.
-2. Create `codex/plan-1234-stage-01` from the latest parent plan branch.
-3. Open a draft stage PR targeting the parent plan branch, titled `[PLAN-1234/S01] <stage title>`. Link the parent PR, master plan, and stage document; copy only the approved stage scope and acceptance criteria needed for review.
+2. Create `codex/plan-1234-stage-01` from the latest parent plan branch and record that exact commit as `Starting parent commit`.
+3. Push the initial stage branch and open a draft stage PR targeting the parent plan branch, titled `[PLAN-1234/S01] <stage title>`. Link the parent PR, master plan, and stage document; copy only the approved stage scope and acceptance criteria needed for review.
 4. Start a separate implementation subagent named `PLAN-1234 Stage 01 Implementation`.
 5. Use `gpt-5.6-sol` at `high` for Laravel implementation.
-6. Give the implementer the current stage document, its `Planning To Implementation` handoff, and only the linked project guidance needed for implementation. Tell it the upstream compatibility result is certified and must not be reinvestigated unless an invalidation condition is observed.
+6. Give the implementer the approved outcome and exclusions, exact starting commit, inherited contracts, relevant paths, invalidation conditions, current stage document, `Planning To Implementation` handoff, and only the linked project guidance needed for implementation. Tell it the upstream compatibility result is certified and must not be reinvestigated unless an invalidation condition is observed.
 
 One stage document, one implementation subagent, and one child PR form the subplan boundary. If implementation requires multiple independent agents or produces independently mergeable components, stop and split the stage through its planning gate instead of coordinating a large mixed stage.
 
+Keep that implementation subagent available until the stage merges. When independent review returns an in-scope defect, send the finding and affected evidence back to the same agent. Replace it only under the correction-context rules above.
+
 Treat approved scope as a hard boundary. Implementers must avoid open-ended audits, opportunistic refactors, adjacent fixes, broad cleanup, unrelated dependency changes, and unapproved redesign. They may make only the smallest enabling changes, focused tests, and required documentation needed for the approved outcome.
 
-When implementation finishes, require a compact handoff containing the implementation commits, changed paths, tests and evidence, scope deviations, and new discoveries. The controller records it in `Gate Handoffs > Implementation To Review`; do not ask the reviewer to reconstruct this context from the full history.
+When implementation finishes, require a compact handoff containing the validated candidate commit, implementation commits, changed paths, a changed-path-to-test map, evidence-covered paths, focused tests and results, static analysis and formatting, CI evidence, known environmental gaps, remaining environmental verification, invalidated evidence, correction cycle, scope deviations, and new discoveries. The controller records it in `Gate Handoffs > Implementation To Review`; do not ask the reviewer to reconstruct this context from the full history.
 
 If materially broader work is required, stop and return:
 
@@ -177,27 +244,29 @@ After implementation and focused validation finish:
 
 - Mark the stage `In review`.
 - Start a different subagent named `PLAN-1234 Stage 01 Review` using `gpt-5.6-sol` at `xhigh`.
-- Give it the current stage document, the planning certification, the `Implementation To Review` handoff, and the stage diff. Do not give it unrelated completed-stage documents.
+- Keep this reviewer available until the stage merges so it can perform focused re-review after corrections.
+- Give it the current stage document, the planning certification, the `Implementation To Review` handoff, its changed-path-to-test map, and the stage diff. Do not give it unrelated completed-stage documents or ask it to reconstruct implementation history.
 - Require it to compare the complete stage diff with the approved outcome, scope, exclusions, interfaces, tests, documentation, and acceptance criteria.
 - Require it to confirm the PR still represents only the approved small, isolated subplan and has not accumulated another component or outcome.
 - Require it to run proportionate verification independently and report commands and results.
 - Fail the gate for regressions, incomplete paths, missing evidence, or any scope escape. Do not turn review into an open-ended audit.
 - Do not let the reviewer implement fixes or approve expanded scope. Return in-scope corrections to implementation; route broader changes through the `gpt-5.6-sol` `xhigh` planning chat.
 
-Require the reviewer to return the review result, exact commits reviewed, independent verification, and findings. The controller records this in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
+Require the reviewer to return the review result, exact commits reviewed, evidence reused, correction coverage, invalidated evidence, independent verification, remaining environmental verification, and findings. The controller records this in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
 
-Do not merge a failed stage. Mark it `In progress`, correct it, then require another independent review pass.
+Do not merge a failed stage. Mark it `In progress`, return in-scope findings to the existing implementer, then return the correction to the existing independent reviewer for a focused pass. Start a replacement implementer or fresh full review only under the correction-context rules above.
 
-## Close Each Stage Before Planning The Next
+## Close Each Stage And Dispatch The Next Ready Stage
 
 After review passes:
 
 1. Confirm the reviewed commits are exactly what the stage PR will merge.
 2. Merge the stage PR into the parent plan branch using project conventions.
-3. Update the stage document with checked progress, decisions, discoveries, approved scope movement, and validation evidence. Update the master plan with the concise stage outcome and every cross-stage or overall effect.
-4. Mark the stage `Complete`, update `Current stage`, and append a revision note.
-5. Update the parent PR's short stage/child-PR summary and push all plan updates.
-6. Finalize any provisionally approved dependent stage through its focused delta gate. Open a new planning chat only for the next stage that has not already been provisionally reviewed.
+3. Persist the returned review handoff and update the stage document with checked progress, decisions, discoveries, approved scope movement, and validation evidence. Update the master plan with the concise stage outcome and every cross-stage or overall effect.
+4. Mark the stage `Complete`, update `Current stage`, append a revision note, then commit and push this closure as one controller-owned update so the review handoff and completed state are durable.
+5. Immediately run the focused delta gate for every `Provisionally ready` dependant whose named condition just cleared. Promote each compatible dependant to `Ready` without asking the user again.
+6. Dispatch the next ready stage in dependency order through the normal `In progress` transition. Open a new planning chat only for a stage that has not already reached `Provisionally ready` or `Ready`.
+7. Update the parent PR's short stage/child-PR summary. This dashboard update may follow dispatch and must not create an avoidable idle gap in the next ready implementation.
 
 Do not consider a stage closed until its plan update is durable on the parent branch.
 
@@ -205,7 +274,7 @@ Do not consider a stage closed until its plan update is durable on the parent br
 
 After all stages are complete:
 
-- Set the plan to `In review` and run combined validation against the plan's final acceptance criteria.
+- Set the plan to `In review` and run integrated or full-plan validation against the plan's final acceptance criteria. This is where broad cross-stage verification normally belongs.
 - Require an independent `gpt-5.6-sol` `xhigh` review of the integrated parent diff when project rules or risk justify it.
 - Update `Purpose / Big Picture` with the achieved result, remaining gaps, and lessons learned; finalize evidence and revision notes.
 - Set `Status: Complete`, set `Current stage: Complete`, and make the parent PR ready for review.
