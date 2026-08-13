@@ -87,8 +87,46 @@ For the current stage:
 - Use `gpt-5.6-sol` at `xhigh`. This is the pre-stage/subplan review gate; `Ultra` is reserved for the separate overall initial plan and stage-map creation process. If the task mechanism cannot provide the exact configuration, use the nearest available setting and tell the controller which fallback applied.
 - Give it the master plan's concise stage map, the current stage document, direct dependency documents, explicitly relevant contracts and decisions, relevant project guidance, and repository access. Do not give it every completed stage or a predetermined conclusion.
 - Keep it read-only. It may investigate and discuss but must not edit files, implement, create PRs, start implementers, or merge anything.
-- Require it to explain material choices in simple English and formulate the stage decision with the user.
+- Require it to use the user-facing decision-brief method below and formulate the stage decision with the user.
 - Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. Ask: `Can one implementation agent implement, verify, and hand off this outcome in one focused working session and one understandable PR?` If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage. Treat separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies as strong evidence that a split is required.
+
+### Separate The User Review From The Execution Handoff
+
+Whenever the user must review or approve a plan, design, stage, policy, workflow, interface, or technical decision, first provide a user-facing decision brief. Do not present the formal execution handoff as the review.
+
+Write the review in plain English at the user's level of technical knowledge:
+
+- Lead with the proposed outcome and why it matters.
+- Organize the review around the decisions the user is being asked to approve. Choose headings that fit the subject; do not force topic-specific headings from an unrelated example.
+- Explain what will happen, who or what is affected, important boundaries, failure cases, and observable consequences.
+- Preserve every material rule, tradeoff, risk, exclusion, and unresolved question.
+- Use short sentences and one idea per bullet.
+- Define unfamiliar terms on first use.
+- Describe behaviour and consequences before implementation mechanics.
+- Do not make the user interpret repository paths, class names, schemas, enums, internal identifiers, commit hashes, validation commands, context-routing instructions, or handoff metadata unless one is itself a material decision.
+- When exact technical detail matters, state its plain-English meaning first, followed by the exact detail in a short technical note.
+- Avoid both extremes: do not replace the review with a high-level summary, and do not bury the decisions inside an engineering specification.
+- End with what is settled, what remains open, and exactly what approval or choice is needed.
+
+Use progressive disclosure:
+
+1. Present the complete plain-English decision brief.
+2. Answer questions or expand individual areas as requested.
+3. After approval, produce the full structured execution handoff separately.
+
+The execution handoff must retain every precise interface, path, identifier, validation requirement, risk, assumption, readiness field, invalidation condition, and context-routing instruction. Readability in the user review must never remove required detail from the durable handoff.
+
+Before sending a review, check:
+
+- Can the user understand it on the first read?
+- Is it clear what they are approving?
+- Are all material consequences and boundaries visible?
+- Are internal implementation details included only where they affect the decision?
+- Is the detailed handoff separate?
+
+If any answer is no, rewrite the review before sending it.
+
+The following structure is an execution record for agents and the controller. It must not be copied verbatim into the user-facing review.
 
 The planning chat returns:
 
