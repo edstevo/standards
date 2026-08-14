@@ -14,6 +14,8 @@ Current stage: Not started
 ### Stage 01 — <Action-oriented stage title>
 
 Status: Unplanned
+Implementation readiness: not ready
+Current phase: Not started
 Details: [STAGE-01](PLAN-1234/stages/STAGE-01.md)
 Outcome: <One coherent observable outcome.>
 Depends on: None
@@ -25,15 +27,21 @@ Depends on: None
 
 ## Surprises & Discoveries
 
-None.
+Observation: <none | plan-level material finding>
+Evidence: <none | concise proof>
 
 ## Decision Log
 
-None.
+Decision: <none | cross-stage or plan-level decision>
+Rationale: <none | why>
+Date/Author: <none | date and actor>
 
 ## Validation and Acceptance
 
-<Describe how to exercise the completed system, exact commands and working directory, and observable expected results.>
+Complete behaviour: <what a user or system can do>
+Validation commands: <exact commands and working directory>
+Expected results: <observable outputs>
+Environment assumptions: <none | requirements>
 
 ## End-To-End Readiness
 
@@ -43,7 +51,8 @@ None.
 
 ## Interfaces and Dependencies
 
-<Describe the stage dependency graph and contracts shared across stages.>
+Stage dependency graph: <ordered dependencies>
+Shared contracts: <cross-stage interfaces and decisions>
 
 ## Artifacts and Notes
 
@@ -51,7 +60,9 @@ None.
 
 ## Outcomes & Retrospective
 
-Not completed.
+Achieved outcome: <not completed | observable result>
+Remaining gaps: <not completed | none | exact list>
+Lessons learned: <not completed | none | concise lessons>
 
 ## Revision Notes
 
