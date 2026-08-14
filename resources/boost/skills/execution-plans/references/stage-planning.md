@@ -24,6 +24,14 @@ Build a private decision register separating:
 - E2E effects; and
 - exclusions and outside-stage suggestions.
 
+## Limit Investigation To Planning Needs
+
+Start from the controller's validated context package. Inspect only enough repository evidence to resolve a material user decision, confirm the single-component boundary, name the implementation seams, and design observable acceptance.
+
+Do not run routine test suites, prove implementation correctness before implementation exists, repeat a closed dependency's code review, audit unrelated or future-stage areas, or search broadly after the required plan fields are supported. Existing handoffs and commit-scoped evidence are sufficient while their baselines and relevant paths remain valid.
+
+Stop discovery when every material planning decision is settled and the stage document contains enough context for implementation and review. Record a non-material technical uncertainty as an implementation check instead of extending planning. Block only when the uncertainty can change scope, user behaviour, dependency compatibility, safety, or readiness.
+
 ## Guided User Review
 
 1. Start with a short plain-English orientation: proposed outcome, why it matters, current position, important boundaries, and one realistic example.
@@ -44,7 +52,7 @@ Before recommending readiness, confirm:
 - the stage is one small isolated component;
 - direct dependencies and inherited contracts are known;
 - every affected complete journey was identified;
-- relevant existing E2E scenarios were inspected;
+- relevant existing E2E scenarios were identified and inspected only as far as needed to judge planned coverage;
 - required E2E additions or adjustments and their owner are in scope;
 - observable acceptance, exact validation, environment assumptions, and safe recovery are defined;
 - no material question remains; and

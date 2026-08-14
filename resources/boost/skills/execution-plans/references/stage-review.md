@@ -19,7 +19,9 @@ Compare the complete stage diff with the approved outcome, scope, exclusions, in
 - required E2E changes are present with current evidence or a valid named later gate; and
 - focused verification is proportionate and reproducible.
 
-Run independent checks needed to support the result. Do not repeat planning discovery, conduct an open-ended repository audit, question the user, reopen settled product decisions, implement fixes, or approve expanded scope.
+Form an independent judgment from the complete diff, but do not equate independence with repeating every earlier command. Reuse exact-candidate implementation evidence when its scope and result are clear. Run the smallest independent checks needed for high-risk behaviour, suspected findings, missing evidence, or reviewer conclusions; do not automatically rerun the entire focused suite.
+
+Do not repeat planning discovery, conduct an open-ended repository audit, question the user, reopen settled product decisions, implement fixes, or approve expanded scope.
 
 Fail the gate for defects, missing paths, invalid evidence, incomplete E2E duties, or scope escape. Send in-scope corrections to the controller for the existing implementer. Send material expansion to planning and human approval.
 

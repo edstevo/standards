@@ -45,6 +45,8 @@ Every dispatch gives three boundaries when useful: `Must read`, `Read if needed`
 
 Never infer handoff receipt from task completion. Do not advance until explicit delivery succeeds.
 
+Accept a completed gate by checking delivery, ownership boundaries, required fields, internal consistency, baseline freshness, and the recorded result. Do not repeat its repository investigation, dependency analysis, validation design, test execution, or diff review. Return it only for a missing requirement, contradiction, scope escape, stale relevant baseline, or triggered invalidation.
+
 ## Stage Loop
 
 For each stage in dependency order:
@@ -75,8 +77,10 @@ After review passes:
 
 Do not close a stage until its record is durable and task cleanup is complete or precisely blocked.
 
+Closure is a receipt and identity gate, not another technical review. Do not rerun tests or re-audit the diff when the reviewed candidate is unchanged and the review evidence remains valid.
+
 ## Plan Completion
 
-After every stage closes, run integrated acceptance and the plan-wide E2E journey map. Resolve all deferred E2E obligations. Use an independent integrated review when project rules or risk require it. Record the achieved outcome, remaining gaps, lessons, and final evidence; then mark the plan complete and make the parent PR ready for review.
+After every stage closes, run integrated acceptance for cross-stage behaviour and the plan-wide E2E journey map. Resolve deferred obligations, but do not rerun every stage's focused suite unless integration changed or invalidated its evidence. Use an independent integrated review when project rules or risk require it. Record the achieved outcome, remaining gaps, lessons, and final evidence; then mark the plan complete and make the parent PR ready for review.
 
 Do not merge the parent PR or release unless the user explicitly requested that final action or established workflow grants it. Finish the controller only after its final ledger confirms no active task, handoff, gate, or stage PR remains.

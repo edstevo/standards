@@ -48,6 +48,18 @@ Use IDs `PLAN-1234`: uppercase, zero-padded, monotonic, never reused or renumber
 - Keep the controller open while any owned task, handoff, stage PR, or gate remains active, queued, waiting, or unresolved. Report material events only and monitor quietly with compact state.
 - Keep plan documents self-contained enough for a fresh agent to resume from the working tree without chat history. Self-contained means necessary context once, not repeated narrative.
 
+## Assurance Ownership
+
+| Concern | Owning gate |
+|---|---|
+| Product decisions, scope, dependencies, interfaces, and planned acceptance | Stage planning |
+| Code changes and candidate-scoped test evidence | Implementation |
+| Correctness and scope judgment on the final diff | Independent review |
+| Handoff receipt, state coherence, dispatch, and cleanup | Controller |
+| Cross-stage journeys and deferred obligations | Final plan validation |
+
+Each gate consumes the earlier owner's result. Do not repeat that work merely for confidence. Reopen it only when evidence is missing, contradictory, stale for a relevant path, or a recorded invalidation condition fires.
+
 ## Readiness
 
 Use exactly:

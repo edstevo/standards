@@ -35,13 +35,15 @@ Do not implement the expansion. The controller routes it to the planning task an
 
 ## Validation Ladder
 
-1. Run the smallest relevant test while developing.
-2. Run the complete focused stage suite for the candidate.
+1. Run the smallest relevant tests while developing when they provide useful feedback; do not rerun unchanged checks after every edit.
+2. Run the complete focused stage suite once for each review candidate.
 3. Add or adjust the approved E2E scenarios and run them at the earliest executable gate.
 4. Run changed-path static analysis and formatting.
 5. Use broader, specialist, or external-service validation only when risk, project rules, or an environmental gap requires it.
 
 Record commands, outcomes, covered paths, and exact candidate commit. Preserve still-valid evidence; a new commit invalidates it only when it changes covered behaviour, tests, shared dependencies, configuration, or schema.
+
+Move through the ladder proportionately. Do not rerun an earlier rung unless later changes invalidate it, and do not add broad verification that the reviewed plan, project rules, or observed risk does not require.
 
 Prefer one push to create the PR, one locally green review candidate, and pushes for review corrections. Do not create branch or CI churn for unrelated parent changes.
 

@@ -45,8 +45,8 @@ Implementation steps: <small ordered sequence>
 Affected complete journeys: <journeys or none with evidence>
 Existing E2E coverage: <named scenarios and sufficiency>
 Required E2E changes and owner: <changes and execution gate | none>
-Focused tests: <named tests to add, adjust, or run>
-Validation commands: <exact commands and working directory>
+Planned focused tests: <named tests to add, adjust, or run>
+Planned validation commands: <exact commands and working directory>
 Acceptance: <observable expected results>
 Environment assumptions: <none | requirements>
 Recovery and retry: <safe retry, rollback, or not applicable>
