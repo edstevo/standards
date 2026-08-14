@@ -90,6 +90,22 @@ For the current stage:
 - Require it to use the user-facing decision-brief method below and formulate the stage decision with the user.
 - Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. Ask: `Can one implementation agent implement, verify, and hand off this outcome in one focused working session and one understandable PR?` If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage. Treat separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies as strong evidence that a split is required.
 
+### Run A Guided Decision Review
+
+Use this protocol in every user-facing planning or scope-decision review, including a resumed review caused by scope movement or a material delta conflict. It does not apply to an independent implementation reviewer, which reviews the approved contract and code without reopening settled product decisions or questioning the user.
+
+1. Start with a short orientation. State the proposed outcome, why it matters, the current position, the important boundaries, and one representative real-world example.
+2. Build and maintain a private decision register with separate entries for inherited decisions, verified facts, genuinely open choices, risks, failure cases, and exclusions. Use it to guide the conversation; do not make the user read internal bookkeeping.
+3. Ask exactly one genuine decision question per turn, in plain English. Before asking, explain the consequences and tradeoffs and give a realistic example. Never require the user to interpret code, schemas, hashes, or internal names to answer.
+4. If the user asks for clarification, answer it first, then repeat only the still-pending question. Do not introduce another decision in the same turn.
+5. Record each answer immediately as settled. Do not reopen it unless new evidence directly contradicts the basis on which it was accepted.
+6. If a new issue appears, add it to the decision register, preserve the current pending question, and resume the ordered sequence without losing earlier answers.
+7. After the final open decision is answered, present one complete user-facing decision brief. Include all outcomes, material decisions, examples, failure cases, risks, exclusions, stage splits, and readiness consequences.
+8. Ask for explicit approval only after the user has seen that complete brief.
+9. After approval, create the separate technical execution handoff and deliver it to the controller. Do not use the technical handoff as the user review.
+
+For a resumed review, ask only about the new or invalidated decisions. Carry forward every settled decision that remains supported by current evidence.
+
 ### Separate The User Review From The Execution Handoff
 
 Whenever the user must review or approve a plan, design, stage, policy, workflow, interface, or technical decision, first provide a user-facing decision brief. Do not present the formal execution handoff as the review.
@@ -110,9 +126,11 @@ Write the review in plain English at the user's level of technical knowledge:
 
 Use progressive disclosure:
 
-1. Present the complete plain-English decision brief.
-2. Answer questions or expand individual areas as requested.
-3. After approval, produce the full structured execution handoff separately.
+1. Give the short orientation, then work through one open decision at a time.
+2. Answer clarification requests and expand individual areas without adding a second decision question.
+3. After the last decision, present the complete plain-English decision brief.
+4. Ask for explicit approval of that complete brief.
+5. After approval, produce the full structured execution handoff separately.
 
 The execution handoff must retain every precise interface, path, identifier, validation requirement, risk, assumption, readiness field, invalidation condition, and context-routing instruction. Readability in the user review must never remove required detail from the durable handoff.
 
@@ -144,6 +162,8 @@ Validation and acceptance: <commands and observations>
 Risks and constraints: <known concerns>
 User decisions: <explicit approvals>
 Open questions: <none or unresolved list>
+Guided decision review: <complete | incomplete>
+Final decision brief approved: <yes | no>
 Small isolated subplan: <yes | no; if no, proposed split>
 Implementation readiness: <not ready | provisionally ready | ready>
 Remaining gate: <exact focused gate | none>
@@ -177,6 +197,18 @@ Internal subagents may return results through their native parent channel when t
 
 The planning chat owns the semantic dependency and cross-stage compatibility check. It stops only after the handoff has been delivered successfully to the controller and must not implement its decision. The controller writes the received result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, records the delivery receipt, and appends a revision note.
 
+Before accepting a planning handoff, the controller verifies that:
+
+- `Guided decision review` is `complete`;
+- the review began with the required orientation;
+- each open decision was discussed one at a time with its consequences and an example;
+- settled answers were preserved unless contradictory evidence invalidated them;
+- the final decision brief covered every material outcome, boundary, failure case, risk, exclusion, stage split, and readiness consequence;
+- the user explicitly approved that complete brief; and
+- the separate technical handoff was delivered successfully.
+
+If any item is missing, return the handoff to the planning task for completion. Do not authorize implementation from an incomplete guided review.
+
 Classify readiness literally:
 
 - Use `not ready` when a substantive user decision, open question, stage split, technical prerequisite, or material conflict remains. Set `Automatic promotion: No` and state what further planning or user input is required.
@@ -199,6 +231,8 @@ Do not repeat the full stage review, reread unrelated completed stages, or reope
 If the final upstream result satisfies the provisional assumptions, update the validated baseline and upstream merge commits, record `Final delta result: Compatible`, `Implementation readiness: ready`, `Remaining gate: None`, `Automatic promotion: Yes`, and `User reapproval required: No`. Mark the stage `Ready` and dispatch it when scheduled without asking the user to approve it again.
 
 If the delta changes or contradicts the approved scope, outcome, interface, dependency, validation, or inherited decision, record `Final delta result: Conflict`, `Implementation readiness: not ready`, `Automatic promotion: No`, and `User reapproval required: Yes — <precise conflict>`. Resume the existing `PLAN-1234 Stage 01 Planning` chat, explain only the material differences in simple English, and obtain explicit user sign-off before updating the stage and marking it `Ready`. Do not dispatch implementation while that decision remains open.
+
+When user sign-off is required, resume the guided decision review for the conflicting or newly open decisions only. Do not repeat orientation or questions for unaffected settled decisions. The final decision brief must still show the complete resulting outcome, but may identify unchanged decisions concisely as carried forward.
 
 ## Carry Context Forward Without Repeating Discovery
 

@@ -209,6 +209,10 @@ Controller task ID: Pending
 
 Gate result: Pending
 
+Guided decision review: Incomplete
+
+Final decision brief approved: No
+
 Implementation readiness: not ready
 
 Remaining gate: Complete stage planning
