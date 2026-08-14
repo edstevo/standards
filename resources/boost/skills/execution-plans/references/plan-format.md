@@ -7,6 +7,7 @@ Use this reference when creating, cataloguing, reading, or revising an ExecPlan.
 - Catalogue plans
 - Start every plan with metadata
 - Maintain the master plan
+- Maintain plan-wide and stage-level E2E readiness
 - Decompose the plan into small subplans
 - Create a document for every stage
 - Record reusable handoffs and fresh validation evidence
@@ -140,6 +141,18 @@ Include stage-boundary changes, changed dependencies, and decisions affecting mo
 
 Describe how to exercise the completed system and what a human should observe. Give exact commands, working directories, inputs, outputs, relevant test names, and environmental assumptions. Prefer observable behaviour over internal implementation claims.
 
+### End-To-End Readiness
+
+Maintain the plan-wide map of complete user or system journeys. For each journey, record the stages that affect it, the existing end-to-end (E2E) scenario, any required addition or adjustment, and the final evidence. Update this map whenever a stage changes behaviour, scope, dependencies, or acceptance.
+
+```markdown
+| Complete journey | Affected stages | Existing E2E coverage | Required change | Final evidence |
+|---|---|---|---|---|
+| Connect and refresh an account | 01, 03 | `tests/e2e/connect-account.*` | Add refresh-expiry path in Stage 03 | Pending |
+```
+
+Do not defer all E2E thinking to final plan validation. A stage may record that no E2E change is required only after assessing its affected complete journeys and explaining why existing scenarios remain sufficient. If a journey cannot run until a later stage or environment is available, name the owning stage or final verification gate and preserve that obligation in the master plan.
+
 ### Artifacts and Notes
 
 Keep compact integrated evidence that helps someone verify or resume the plan. Keep stage-only evidence in the stage document. Do not paste full logs or large diffs.
@@ -185,6 +198,18 @@ State the hard boundaries.
 
 Record prerequisite stages, affected paths, services, contracts, libraries, and symbols.
 
+## End-To-End Readiness
+
+Affected complete journeys: Pending
+
+Existing E2E coverage assessment: Pending
+
+Required E2E scenario changes: Pending
+
+E2E execution and evidence: Pending
+
+Deferred E2E verification owner: None
+
 ## Gate Handoffs
 
 ### Context Routing
@@ -225,6 +250,14 @@ Approved outcome: Pending
 
 Explicit exclusions: Pending
 
+Affected complete journeys: Pending
+
+Existing E2E coverage assessment: Pending
+
+Required E2E scenario changes: Pending
+
+E2E readiness disposition: Pending
+
 Validated code baseline: Pending
 
 Starting parent commit: Pending
@@ -259,6 +292,10 @@ Evidence-covered paths: Pending
 
 Focused tests and results: Pending
 
+E2E scenarios added or adjusted: Pending
+
+E2E results: Pending
+
 Static analysis and formatting: Pending
 
 CI evidence: Pending
@@ -288,6 +325,8 @@ Evidence reused: Pending
 Correction review coverage: Initial full review
 
 Independent verification: Pending
+
+E2E readiness review: Pending
 
 Invalidated evidence: None
 
@@ -330,7 +369,9 @@ Keep compact stage evidence and handoff material.
 Record each material stage-document change and why it was made.
 ```
 
-A provisionally ready stage document must state its purpose, dependencies, boundaries, accepted scope, upstream assumptions, and the exact remaining freshness gate. Use `Status: Provisionally ready` and `Implementation readiness: provisionally ready` only when every material decision is settled, there are no open questions, the subplan is small and isolated, and implementation is withheld solely for that named gate. Record `Automatic promotion: Yes` and `User reapproval required: No — unless <precise invalidation condition>`. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, focused implementation approach, validation commands, risks, user-approved decisions, confirmation that it meets the small-subplan gate, and a final `Planning To Implementation` handoff.
+A provisionally ready stage document must state its purpose, dependencies, boundaries, accepted scope, upstream assumptions, and the exact remaining freshness gate. Use `Status: Provisionally ready` and `Implementation readiness: provisionally ready` only when every material decision is settled, there are no open questions, the subplan is small and isolated, and implementation is withheld solely for that named gate. Record `Automatic promotion: Yes` and `User reapproval required: No — unless <precise invalidation condition>`. Before the stage becomes `Ready`, record its observable acceptance, included scope, explicit exclusions, prerequisites, affected interfaces, focused implementation approach, validation commands, risks, user-approved decisions, confirmation that it meets the small-subplan gate, its affected complete journeys, the sufficiency of existing E2E coverage, any required scenario work, and a final `Planning To Implementation` handoff.
+
+Every stage must complete its E2E assessment, including stages whose implementation is internal or structural. Use `Affected complete journeys: None — <evidence-based rationale>` only when the stage truly cannot change an observable complete journey. Existing coverage may be accepted without changes when the stage document names the scenarios and explains why they remain sufficient. Missing local infrastructure is an environmental gap, not proof of readiness: record the scenario, expected result, remaining execution, and owning gate.
 
 When revising an older stage that uses `Provisionally approved` or combines `Approval state: provisional` with `Ready for implementation: no`, migrate it to the canonical implementation-readiness fields. Do not preserve the ambiguous combination.
 

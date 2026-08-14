@@ -33,6 +33,8 @@ Maintain three required layers:
 
 Treat every stage as a subplan. Each subplan must be a small, isolated, independently implementable component of the overall plan with one coherent outcome, one implementation agent, one child PR, and focused verification. Split an oversized stage before it can become `Ready`.
 
+Treat end-to-end (E2E) readiness as a standing requirement for the whole plan and every stage. Each stage must identify the complete user or system journeys it affects, assess whether existing E2E scenarios cover those effects sufficiently, and add or adjust the relevant scenarios when needed. A stage cannot become `Ready` or `Complete` without that documented assessment; the plan cannot become `Complete` until its integrated journey coverage is sufficient and evidenced.
+
 Carry context between gates through the current stage document's versioned handoffs. The pre-stage gate owns cross-stage compatibility and dependency discovery. Implementation and review must trust that certification and must not repeat it unless a recorded invalidation condition occurs.
 
 Optimize the critical path without weakening gates. Treat each stage handoff as the minimum context package, with explicit reading boundaries, settled decisions, unresolved assumptions, commit-scoped evidence, and invalidation rules. Keep the stage's implementation agent and independent reviewer available until the stage merges, reuse them for in-scope correction cycles while their handoffs remain valid, and avoid synchronizing unrelated parent changes into active stage work.
@@ -50,6 +52,7 @@ When creating a plan:
 - Inspect the repository and formulate the design before declaring it ready.
 - Use `gpt-5.6-sol` at `Ultra` for overall initial plan creation and the initial stage/subplan map.
 - Break the work into the smallest useful subplans that can be implemented and reviewed independently while leaving the repository coherent. Record dependencies instead of combining dependent components into one large stage.
+- Define the plan-wide complete-journey coverage map and assign every required E2E scenario addition or adjustment to the stage that owns the affected behaviour.
 - Create or update the index entry, authoritative master plan, and one detailed document for every defined stage together.
 - Keep `Status: Draft` until the plan is self-contained, staged, and demonstrably executable; then use `Status: Ready to orchestrate`.
 - Do not create a branch or PR merely because the plan was authored. Orchestration owns that transition unless the user explicitly combines both processes.
@@ -70,6 +73,7 @@ When the user says `orchestrate PLAN-1234` or refers to a unique plan title:
 - Pass each agent only the current stage document, the preceding gate handoff, and explicitly referenced context. Do not make every agent reread the full master plan or all completed stages.
 - Treat handoff delivery as part of every delegated gate. A side task must not report success until its required handoff reached the controller; on missing tooling or failed delivery, keep the handoff available and report the precise delivery blocker.
 - Preserve test and review evidence that still covers the candidate commit and relevant paths. Do not merge unrelated parent changes, rerun unaffected checks, or repeat broad discovery merely because another commit exists.
+- Keep the master plan's E2E journey map current. Require every stage handoff to state its affected complete journeys, existing coverage assessment, required scenario changes, and current evidence.
 - Provisionally plan safe later work while a stage is active, then immediately dispatch the next ready dependant after a compatible delta gate and durable stage closure.
 - Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it owns remains active.
 

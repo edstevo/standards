@@ -89,6 +89,7 @@ For the current stage:
 - Keep it read-only. It may investigate and discuss but must not edit files, implement, create PRs, start implementers, or merge anything.
 - Require it to use the user-facing decision-brief method below and formulate the stage decision with the user.
 - Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. Ask: `Can one implementation agent implement, verify, and hand off this outcome in one focused working session and one understandable PR?` If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage. Treat separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies as strong evidence that a split is required.
+- Require it to identify every complete user or system journey the stage can affect, inspect the relevant existing E2E scenarios, decide whether they remain sufficient, and include any required scenario addition or adjustment in the approved stage scope. If execution must wait for a later stage or environment, name that gate and owner explicitly.
 
 ### Run A Guided Decision Review
 
@@ -154,6 +155,10 @@ Stage: 01 — <title>
 Outcome: <observable result>
 Included scope: <approved work>
 Explicit exclusions: <boundaries>
+Affected complete journeys: <journeys or none with evidence-based rationale>
+Existing E2E coverage assessment: <scenarios inspected and sufficiency result>
+Required E2E scenario changes: <additions or adjustments | none with rationale>
+E2E readiness disposition: <existing coverage sufficient | scenario changes in scope | deferred to named owner/gate | blocked>
 Prerequisites: <completed or unresolved dependencies>
 Interfaces and affected areas: <paths, systems, contracts>
 Component boundary: <the single isolated subcomponent>
@@ -204,6 +209,7 @@ Before accepting a planning handoff, the controller verifies that:
 - each open decision was discussed one at a time with its consequences and an example;
 - settled answers were preserved unless contradictory evidence invalidated them;
 - the final decision brief covered every material outcome, boundary, failure case, risk, exclusion, stage split, and readiness consequence;
+- the stage's affected complete journeys and E2E coverage decision are explicit, with required scenario work in scope or assigned to a named later gate;
 - the user explicitly approved that complete brief; and
 - the separate technical handoff was delivered successfully.
 
@@ -213,7 +219,7 @@ Classify readiness literally:
 
 - Use `not ready` when a substantive user decision, open question, stage split, technical prerequisite, or material conflict remains. Set `Automatic promotion: No` and state what further planning or user input is required.
 - Use `provisionally ready` only when planning is otherwise complete and implementation waits solely for a named upstream result or scheduling-time freshness check. Record that exact check under `Remaining gate`, the expected outcomes under `Provisional upstream assumptions`, `Automatic promotion: Yes`, and `User reapproval required: No — unless <precise invalidation condition>`. Set the stage status to `Provisionally ready`.
-- Use `ready` only when all prerequisites and focused gates have passed, compatibility passed, and `Small isolated subplan: yes`. Set the stage status to `Ready`, `Remaining gate: None`, and authorize implementation dispatch.
+- Use `ready` only when all prerequisites and focused gates have passed, compatibility passed, `Small isolated subplan: yes`, and the E2E assessment is complete with any required scenario work included or assigned to an explicit executable gate. Set the stage status to `Ready`, `Remaining gate: None`, and authorize implementation dispatch.
 
 Split and renumber an oversized stage before implementation. Never encode a provisionally ready stage as merely not ready.
 
@@ -278,8 +284,9 @@ During implementation:
 
 1. Run the smallest relevant test while developing.
 2. Run the complete focused stage suite before review.
-3. Run changed-path static analysis and formatting once the candidate is ready.
-4. Run specialist database, browser, or external-service CI only when local checks cannot prove the required behaviour or project rules require it.
+3. Add or adjust the E2E scenarios required by the stage's approved readiness assessment, and run them at the earliest gate where the complete journey is executable.
+4. Run changed-path static analysis and formatting once the candidate is ready.
+5. Run specialist database, browser, or external-service CI only when local checks cannot prove the required behaviour or project rules require it.
 
 During independent review, rerun proportionate focused verification independently; do not default to the whole repository suite. At plan completion, run the integrated or full-plan validation. Require a full repository suite for an individual stage only when its risk, shared surface, or project rules genuinely justify it.
 
@@ -305,7 +312,7 @@ For a ready stage:
 3. Push the initial stage branch and open a draft stage PR targeting the parent plan branch, titled `[PLAN-1234/S01] <stage title>`. Link the parent PR, master plan, and stage document; copy only the approved stage scope and acceptance criteria needed for review.
 4. Start a separate implementation subagent named `PLAN-1234 Stage 01 Implementation`.
 5. Use `gpt-5.6-sol` at `high` for Laravel implementation.
-6. Give the implementer the approved outcome and exclusions, exact starting commit, inherited contracts, relevant paths, invalidation conditions, current stage document, `Planning To Implementation` handoff, and only the linked project guidance needed for implementation. Tell it the upstream compatibility result is certified and must not be reinvestigated unless an invalidation condition is observed.
+6. Give the implementer the approved outcome and exclusions, exact starting commit, inherited contracts, relevant paths, invalidation conditions, affected complete journeys, E2E coverage assessment and required scenario work, current stage document, `Planning To Implementation` handoff, and only the linked project guidance needed for implementation. Tell it the upstream compatibility result is certified and must not be reinvestigated unless an invalidation condition is observed.
 
 One stage document, one implementation subagent, and one child PR form the subplan boundary. If implementation requires multiple independent agents or produces independently mergeable components, stop and split the stage through its planning gate instead of coordinating a large mixed stage.
 
@@ -313,7 +320,7 @@ Keep that implementation subagent available until the stage merges. When indepen
 
 Treat approved scope as a hard boundary. Implementers must avoid open-ended audits, opportunistic refactors, adjacent fixes, broad cleanup, unrelated dependency changes, and unapproved redesign. They may make only the smallest enabling changes, focused tests, and required documentation needed for the approved outcome.
 
-When implementation finishes, require a compact handoff containing the validated candidate commit, implementation commits, changed paths, a changed-path-to-test map, evidence-covered paths, focused tests and results, static analysis and formatting, CI evidence, known environmental gaps, remaining environmental verification, invalidated evidence, correction cycle, scope deviations, and new discoveries. The controller records it in `Gate Handoffs > Implementation To Review`; do not ask the reviewer to reconstruct this context from the full history.
+When implementation finishes, require a compact handoff containing the validated candidate commit, implementation commits, changed paths, a changed-path-to-test map, evidence-covered paths, focused tests and results, E2E scenarios added or adjusted, E2E results or a named remaining execution gate, static analysis and formatting, CI evidence, known environmental gaps, remaining environmental verification, invalidated evidence, correction cycle, scope deviations, and new discoveries. The controller records it in `Gate Handoffs > Implementation To Review`; do not ask the reviewer to reconstruct this context from the full history.
 
 If materially broader work is required, stop and return:
 
@@ -337,12 +344,13 @@ After implementation and focused validation finish:
 - Keep this reviewer available until the stage merges so it can perform focused re-review after corrections.
 - Give it the current stage document, the planning certification, the `Implementation To Review` handoff, its changed-path-to-test map, and the stage diff. Do not give it unrelated completed-stage documents or ask it to reconstruct implementation history.
 - Require it to compare the complete stage diff with the approved outcome, scope, exclusions, interfaces, tests, documentation, and acceptance criteria.
+- Require it to confirm that the stage identified all affected complete journeys, judged existing E2E coverage reasonably, made every required scenario change, and supplied current evidence or a valid named remaining execution gate.
 - Require it to confirm the PR still represents only the approved small, isolated subplan and has not accumulated another component or outcome.
 - Require it to run proportionate verification independently and report commands and results.
 - Fail the gate for regressions, incomplete paths, missing evidence, or any scope escape. Do not turn review into an open-ended audit.
 - Do not let the reviewer implement fixes or approve expanded scope. Return in-scope corrections to implementation; route broader changes through the `gpt-5.6-sol` `xhigh` planning chat.
 
-Require the reviewer to return the review result, exact commits reviewed, evidence reused, correction coverage, invalidated evidence, independent verification, remaining environmental verification, and findings. Require successful delivery to the controller under the explicit handoff-delivery gate above. The controller records the received result and delivery receipt in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
+Require the reviewer to return the review result, exact commits reviewed, evidence reused, correction coverage, invalidated evidence, independent verification, E2E readiness review, remaining environmental verification, and findings. Require successful delivery to the controller under the explicit handoff-delivery gate above. The controller records the received result and delivery receipt in `Gate Handoffs > Review To Controller` and uses it for stage closure without repeating the review.
 
 Do not merge a failed stage. Mark it `In progress`, return in-scope findings to the existing implementer, then return the correction to the existing independent reviewer for a focused pass. Start a replacement implementer or fresh full review only under the correction-context rules above.
 
@@ -351,12 +359,13 @@ Do not merge a failed stage. Mark it `In progress`, return in-scope findings to 
 After review passes:
 
 1. Confirm the reviewed commits are exactly what the stage PR will merge.
-2. Merge the stage PR into the parent plan branch using project conventions.
-3. Persist the returned review handoff and update the stage document with checked progress, decisions, discoveries, approved scope movement, and validation evidence. Update the master plan with the concise stage outcome and every cross-stage or overall effect.
-4. Mark the stage `Complete`, update `Current stage`, append a revision note, then commit and push this closure as one controller-owned update so the review handoff and completed state are durable.
-5. Immediately run the focused delta gate for every `Provisionally ready` dependant whose named condition just cleared. Promote each compatible dependant to `Ready` without asking the user again.
-6. Dispatch the next ready stage in dependency order through the normal `In progress` transition. Open a new planning chat only for a stage that has not already reached `Provisionally ready` or `Ready`.
-7. Update the parent PR's short stage/child-PR summary. This dashboard update may follow dispatch and must not create an avoidable idle gap in the next ready implementation.
+2. Confirm the E2E assessment is resolved: existing coverage is demonstrably sufficient or every required scenario change is present and reviewed. Allow deferred execution only when its scenario, expected result, owner, and executable later gate are explicit.
+3. Merge the stage PR into the parent plan branch using project conventions.
+4. Persist the returned review handoff and update the stage document with checked progress, decisions, discoveries, approved scope movement, validation evidence, and the final E2E readiness disposition and evidence. Update the master plan with the concise stage outcome, every cross-stage or overall effect, and the current complete-journey coverage map.
+5. Mark the stage `Complete`, update `Current stage`, append a revision note, then commit and push this closure as one controller-owned update so the review handoff and completed state are durable.
+6. Immediately run the focused delta gate for every `Provisionally ready` dependant whose named condition just cleared. Promote each compatible dependant to `Ready` without asking the user again.
+7. Dispatch the next ready stage in dependency order through the normal `In progress` transition. Open a new planning chat only for a stage that has not already reached `Provisionally ready` or `Ready`.
+8. Update the parent PR's short stage/child-PR summary. This dashboard update may follow dispatch and must not create an avoidable idle gap in the next ready implementation.
 
 Do not consider a stage closed until its plan update is durable on the parent branch.
 
@@ -364,10 +373,11 @@ Do not consider a stage closed until its plan update is durable on the parent br
 
 After all stages are complete:
 
-- Set the plan to `In review` and run integrated or full-plan validation against the plan's final acceptance criteria. This is where broad cross-stage verification normally belongs.
+- Set the plan to `In review` and run integrated or full-plan validation against the plan's final acceptance criteria. Execute the plan-wide E2E journey map, confirm every affected complete journey has sufficient current coverage, and resolve every deferred E2E obligation. This is where broad cross-stage verification normally belongs.
 - Require an independent `gpt-5.6-sol` `xhigh` review of the integrated parent diff when project rules or risk justify it.
 - Update `Purpose / Big Picture` with the achieved result, remaining gaps, and lessons learned; finalize evidence and revision notes.
 - Set `Status: Complete`, set `Current stage: Complete`, and make the parent PR ready for review.
+- Do not mark the plan `Complete` while any journey lacks sufficient E2E coverage or any deferred E2E execution remains unresolved.
 - Do not merge the parent PR into its target branch or release the result unless the user explicitly requested that final action or established project workflow clearly grants that authority.
 
 The controller may finish only when no delegated work remains and the parent PR accurately reflects the completed or precisely blocked state.
