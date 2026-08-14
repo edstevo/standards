@@ -1,99 +1,71 @@
 ---
 name: execution-plans
-description: Create, catalogue, maintain, and orchestrate self-contained ExecPlans for complex features and significant refactors. Use when drafting or revising a plan document, maintaining `docs/planlist.md`, looking up a plan by ID or title, or when the user asks to orchestrate, execute, resume, or review a staged plan through a controller, planning side chats, implementation subagents, independent review, a parent PR, and stage PRs.
-license: MIT
-metadata:
-  domain: workflow
-  role: specialist
-  scope: planning
-  triggers: ExecPlan, execution plan, plan list, plan document, PLAN ID, orchestrate plan, execute plan, resume plan, pull request plan, PR plan, complex feature, significant refactor, design doc, milestone, living plan, staged plan
+description: Create, catalogue, maintain, or orchestrate staged ExecPlans for complex features and significant refactors. Use for plan documents, `docs/planlist.md`, PLAN IDs, staged implementation, planning reviews, parent PRs, child stage PRs, implementation, independent review, or resuming an existing plan.
 ---
 
 # Execution Plans
 
-Use this skill for two separate processes:
+Use one of two workflows:
 
-1. **Plan authoring:** create or revise a durable ExecPlan and its plan-list entry.
-2. **Plan orchestration:** execute an existing plan through staged planning, implementation, review, and pull requests.
+1. **Authoring** creates or revises the durable plan and stage map.
+2. **Orchestration** executes an existing plan. Never recreate it merely because execution was requested.
 
-Do not recreate or substantially redesign an existing plan merely because the user asks to orchestrate it.
+## Load Only The Reference For The Current Role
 
-## Load References
+Do not read every reference.
 
-- Load `references/plan-format.md` whenever creating, cataloguing, reading, or revising an ExecPlan.
-- Load both `references/plan-format.md` and `references/plan-orchestration.md` whenever the user asks to orchestrate, execute, resume, or complete an existing plan.
+| Current role or action | Read |
+|---|---|
+| Create a master plan | Copy `assets/master-plan.md`, then read `references/master-plan.md` |
+| Catalogue, revise, or validate a master plan | `references/master-plan.md` |
+| Create a stage document | Copy `assets/stage-document.md`, then read `references/stage-document.md` |
+| Revise or validate a stage document | `references/stage-document.md` |
+| Start, resume, monitor, or complete orchestration | `references/controller.md` |
+| Conduct a stage planning review, freshness gate, or scope decision | `references/stage-planning.md` and `references/stage-document.md` |
+| Implement an approved stage or correct its code | `references/stage-implementation.md` |
+| Independently review or re-review a stage | `references/stage-review.md` |
 
-## Use Stable Plan Records
+The controller reads the reference for the next gate immediately before dispatching or accepting that gate. Implementation and review agents receive the current stage document and handoff; they do not load authoring, planning, or controller references.
 
-Maintain three required layers:
+## Stable Records
 
-- `docs/planlist.md` is the short, searchable index. It contains only a linked plan ID and title for each active or retained plan.
-- `docs/plans/PLAN-1234.md` is the authoritative master plan. It contains plan metadata, the overall purpose, a concise linked stage map, cross-stage progress and decisions, final validation, and overall evidence.
-- `docs/plans/PLAN-1234/stages/STAGE-01.md` is the required detailed document for Stage 01. Every stage has one; the master plan links to it and retains only the stage's state, purpose, dependencies, and outcome.
+- `docs/planlist.md`: ID-and-title index only.
+- `docs/plans/PLAN-1234.md`: authoritative master plan.
+- `docs/plans/PLAN-1234/stages/STAGE-01.md`: authoritative detailed stage record.
+- Parent and child PR bodies: short operational dashboards linking to those documents.
 
-Treat every stage as a subplan. Each subplan must be a small, isolated, independently implementable component of the overall plan with one coherent outcome, one implementation agent, one child PR, and focused verification. Split an oversized stage before it can become `Ready`.
+Use IDs `PLAN-1234`: uppercase, zero-padded, monotonic, never reused or renumbered. Resolve exact IDs, bare numbers, and unique title phrases case-insensitively.
 
-Treat end-to-end (E2E) readiness as a standing requirement for the whole plan and every stage. Each stage must identify the complete user or system journeys it affects, assess whether existing E2E scenarios cover those effects sufficiently, and add or adjust the relevant scenarios when needed. A stage cannot become `Ready` or `Complete` without that documented assessment; the plan cannot become `Complete` until its integrated journey coverage is sufficient and evidenced.
+## Universal Gates
 
-Carry context between gates through the current stage document's versioned handoffs. The pre-stage gate owns cross-stage compatibility and dependency discovery. Implementation and review must trust that certification and must not repeat it unless a recorded invalidation condition occurs.
+- Make every stage one small, coherent, independently implementable component with one implementation agent, one child PR, and focused verification. Split it before implementation if that boundary fails.
+- Treat E2E readiness as mandatory for every stage and the complete plan. Identify affected complete journeys, assess existing scenarios, and own any required changes or named deferred execution gate.
+- Keep approved scope hard. Implementation and review must not expand into audits, cleanup, refactors, or adjacent fixes. Route material expansion back through planning and human approval.
+- Carry context through the current stage document and compact handoffs. Trust settled decisions and valid evidence until a recorded invalidation condition fires; reread relevant sources when context is missing, stale, contradicted, or transferred.
+- Require explicit handoff delivery. A separate task is not complete until its handoff reaches the controller and delivery is confirmed.
+- Keep only one stage-planning task active across the plan. It may overlap with implementation or review of an earlier stage.
+- Keep implementation and independent-review tasks available for their stage's correction loops until merge, then close or archive tasks no longer needed.
+- Keep the controller open while any owned task, handoff, stage PR, or gate remains active, queued, waiting, or unresolved. Report material events only and monitor quietly with compact state.
+- Keep plan documents self-contained enough for a fresh agent to resume from the working tree without chat history. Self-contained means necessary context once, not repeated narrative.
 
-Optimize the critical path without weakening gates. Treat each stage handoff as the minimum context package, with explicit reading boundaries, settled decisions, unresolved assumptions, commit-scoped evidence, and invalidation rules. Keep the stage's implementation agent and independent reviewer available until the stage merges, reuse them for in-scope correction cycles while their handoffs remain valid, and avoid synchronizing unrelated parent changes into active stage work.
+## Readiness
 
-Allow a later stage to become `Provisionally ready` while a named upstream change or scheduling delay remains. Use the canonical readiness states `not ready`, `provisionally ready`, and `ready`; never present incomplete planning and completed-but-awaiting-freshness-check planning as equivalent. After the named condition clears, run a focused `xhigh` delta gate. Promote a compatible stage to `Ready` automatically without repeating planning or requesting approval; return to the user only when the delta creates a material conflict.
+Use exactly:
 
-Use stable IDs in the form `PLAN-1234`: uppercase `PLAN-` followed by a zero-padded, monotonically increasing four-digit number. Find the highest existing number in `docs/planlist.md` and `docs/plans/`, then allocate the next number. Never reuse or renumber an ID. Keep the filename ID-only so title changes do not rename it.
+- `not ready`: planning, authorization, scope, dependency, or a material decision remains unresolved.
+- `provisionally ready`: planning and approval are complete; only a named upstream or scheduling freshness gate remains.
+- `ready`: the remaining gate passed and implementation may start.
 
-Resolve user references case-insensitively. Accept the exact ID, a bare number, or a unique title phrase; for example, `PLAN-1234`, `plan 1234`, and `the Revolut plan` may all resolve to the same document. Ask the user only when a title phrase matches more than one plan.
+A compatible provisional delta promotes automatically. Return to the human only when it creates a material conflict with an approved decision, contract, scope, or validation requirement.
 
-## Author Plans Separately
-
-When creating a plan:
-
-- Inspect the repository and formulate the design before declaring it ready.
-- Use `gpt-5.6-sol` at `Ultra` for overall initial plan creation and the initial stage/subplan map.
-- Break the work into the smallest useful subplans that can be implemented and reviewed independently while leaving the repository coherent. Record dependencies instead of combining dependent components into one large stage.
-- Define the plan-wide complete-journey coverage map and assign every required E2E scenario addition or adjustment to the stage that owns the affected behaviour.
-- Create or update the index entry, authoritative master plan, and one detailed document for every defined stage together.
-- Keep `Status: Draft` until the plan is self-contained, staged, and demonstrably executable; then use `Status: Ready to orchestrate`.
-- Do not create a branch or PR merely because the plan was authored. Orchestration owns that transition unless the user explicitly combines both processes.
-
-## Orchestrate Existing Plans
-
-When the user says `orchestrate PLAN-1234` or refers to a unique plan title:
-
-- Resolve and read the existing plan; do not create a replacement.
-- Make the main task the long-lived `gpt-5.6-sol` `high` controller and follow `references/plan-orchestration.md` literally.
-- Keep orchestration as the controller's primary role. Answer human questions when they arise, then immediately return to coordinating active gates, agents, PRs, readiness, and stage transitions unless the human explicitly changes or stops the orchestration request.
-- Search for an existing parent PR before creating branches or PRs. If one exists, check out its head branch and reread the latest master and stage documents from that branch; create the parent integration branch and draft PR only when no matching parent PR exists.
-- Run each pre-stage planning and approval gate with the user in a dedicated `gpt-5.6-sol` `xhigh` side chat. Give that task write access only to its own current stage document so it can preserve settled decisions and its final handoff directly. It must return suggested master-plan or other-stage changes to the controller rather than editing them, and it never implements the plan. When its delegation supplies a controller `source_thread_id`, require the side chat to send the handoff and stage-document change summary explicitly to that task with the task-messaging tool and confirm delivery before declaring completion; never assume a separate Codex task reports back automatically.
-- Keep at most one stage-planning side chat active across the plan. It may run concurrently with implementation or independent review for earlier stages, but the controller must receive and accept its handoff and release its stage-document ownership before starting another planning chat.
-- Run every user-facing planning or scope-decision review as a guided decision review: begin with a short orientation, keep a private decision register, ask exactly one plain-English decision question at a time with consequences and an example, then present the complete decision brief for explicit approval. Create and deliver the precise structured handoff only after that approval.
-- Implement each approved stage through one `gpt-5.6-sol` `high` subagent and one child stage PR. Keep that implementation agent available for in-scope review corrections until the stage merges.
-- Require a separate `gpt-5.6-sol` `xhigh` reviewer before merging the stage PR into the parent plan branch. Prefer the same independent reviewer for focused re-review after corrections while its prior evidence remains valid.
-- Update the authoritative master plan and current stage document after every stage with progress, decisions, discoveries, scope movement, and evidence before advancing or finalizing the next stage.
-- Pass each agent only the current stage document, the preceding gate handoff, and explicitly referenced context. Do not make every agent reread the full master plan or all completed stages.
-- Treat handoff delivery as part of every delegated gate. A side task must not report success until its required handoff reached the controller; on missing tooling or failed delivery, keep the handoff available and report the precise delivery blocker.
-- Preserve test and review evidence that still covers the candidate commit and relevant paths. Do not merge unrelated parent changes, rerun unaffected checks, or repeat broad discovery merely because another commit exists.
-- Keep the master plan's E2E journey map current. Require every stage handoff to state its affected complete journeys, existing coverage assessment, required scenario changes, and current evidence.
-- Provisionally plan safe later work while a stage is active, then immediately dispatch the next ready dependant after a compatible delta gate and durable stage closure.
-- Treat stage-task cleanup as a mandatory closure gate. Once a stage is durably complete and no correction, scope-decision, review, or handoff work can return to its planning, implementation, or review tasks, close or archive those tasks and record the result in the stage document.
-- Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it owns remains active, queued, waiting, or awaiting a required handoff. Finish only after a final active-work check confirms that none remain.
-- Monitor delegated work with compact waits or status snapshots and a small active-work ledger. Conserve tokens by relying on current validated handoffs and cursors rather than routinely rereading full histories. Refresh the relevant source context whenever a handoff is incomplete, stale, contradicted, invalidated by a recorded condition, or transferred to a replacement agent. Report only material transitions, blockers, decisions, or completed gates rather than narrating routine progress or unchanged checks.
-
-## Preserve The Outcome
-
-Every ExecPlan must remain self-contained enough that a novice can understand the intended journey from the plan document and can implement any stage marked ready using only the plan and working tree. Future stages may remain provisional, but their purpose, ordering, dependencies, and contribution to final acceptance must remain clear.
-
-Require observable behaviour, exact verification commands, and expected results. Define unfamiliar terms in plain English. Record why the design changed, not only what changed.
-
-## Use The Required Model Routing
+## Model Routing
 
 | Work | Model | Reasoning |
 |---|---|---|
-| Overall initial plan and stage/subplan map creation | `gpt-5.6-sol` | `Ultra` |
-| Plan controller/orchestrator | `gpt-5.6-sol` | `high` |
-| Pre-stage/subplan planning and approval gate | `gpt-5.6-sol` | `xhigh` |
+| Initial overall plan and stage map | `gpt-5.6-sol` | `Ultra` |
+| Controller/orchestrator | `gpt-5.6-sol` | `high` |
+| Stage planning and human approval | `gpt-5.6-sol` | `xhigh` |
 | Laravel implementation | `gpt-5.6-sol` | `high` |
-| Implementation review | `gpt-5.6-sol` | `xhigh` |
+| Independent implementation review | `gpt-5.6-sol` | `xhigh` |
 
-Treat these as the default execution settings, not suggestions to choose a cheaper or faster model. If the task mechanism cannot provide the exact model or reasoning level, use the nearest available configuration and tell the controller which fallback applied before relying on its output.
+Use the nearest available configuration only when the exact setting is unavailable, and report the fallback to the controller before relying on its output.
