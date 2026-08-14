@@ -5,7 +5,11 @@ Use when working through buglist entries with the user from initial review throu
 ## Keep The Main Task As Controller
 
 - Treat the main task as the controller and orchestrator for the full bug lifecycle, and run it with `gpt-5.6-sol` at `high`. It selects bugs, starts side tasks, receives their handoffs, authorises each next stage, and owns final completion. If the exact configuration is unavailable, use the nearest available setting and record the fallback before dispatching work.
-- Keep the controller open while any decision task, implementation subagent, or review subagent it started is still running or waiting for the user. Do not report the controller task as complete, close it, or stop waiting while delegated work remains active.
+- Keep the controller open while any decision task, implementation subagent, or review subagent it started is running, queued, waiting for the user or controller, or awaiting a required handoff. Do not report the controller task as complete, close it, or stop waiting while delegated work remains active. Before finishing, perform one final active-work check and confirm every owned task and subagent reached a terminal state and every required handoff was received.
+- Maintain a compact active-work ledger containing only each owned task or subagent, its current gate, its latest meaningful state or cursor, and its expected handoff. Use bounded waits or compact status snapshots, act promptly when work completes or needs attention, and continue monitoring until the ledger is empty. Do not repeatedly reread full task histories or poll unchanged work without a useful waiting interval.
+- Keep controller communication proportional. Tell the human about decisions they must make, material blockers or conflicts, meaningful gate transitions, failed delivery, completed implementation or review, merges, cleanup, dependant dispatch, and release readiness. Do not report every command, routine subagent message, unchanged monitor result, intermediate test, or expected background step. When asked for status, give one compact summary of active work and the next controller action.
+- Preserve enough context to orchestrate correctly: the canonical buglist entry, linked investigation, latest applicable handoffs, dependency and implementation-readiness state, relevant baseline or cursor, and invalidation conditions. Conserve tokens by consuming these compact context packages and reusing evidence only while its recorded baseline remains valid.
+- Reread the relevant source documents or task history when a handoff is missing or ambiguous, its baseline or relevant paths changed, contradictory evidence appears, an invalidation condition triggers, or an agent must be replaced. Otherwise avoid broad rediscovery and repeated summaries of facts already recorded in the buglist or investigation. Quiet monitoring is active orchestration; it is not permission to reduce understanding, stop the controller, or miss a required handoff.
 - Review one bug at a time in the selected order. Implementation and independent review for an earlier bug may run while the user reviews the next bug in its decision side task.
 - When choosing among similar priorities, rotate across modules or application areas and avoid files, invariants, or workflows touched by other in-flight fixes. Do not delay a materially higher-priority bug merely to rotate areas.
 - Let dependency order override priority and area rotation when building the review queue. Never implement bugs connected by a dependency path in parallel.
@@ -55,7 +59,23 @@ When the user is preparing a release or go-live milestone:
 
 The decision side task must remain read-only. It may inspect code, tests, documentation, history, logs, or runtime behaviour, but it must not edit files, implement a fix, start an implementation agent, merge changes, remove the buglist entry, or delete its investigation.
 
-Read `docs/buglist.md` and the bug's linked investigation before discussing the bug with the user. Explain these separately in simple English:
+Read `docs/buglist.md` and the bug's linked investigation before discussing the bug with the user.
+
+### Run A Guided Bug Decision Review
+
+1. Start with a short plain-English orientation. State what is reported to be wrong, why it matters, the current position, the important boundaries or dependencies, and one representative real-world example.
+2. Build and maintain a private decision register. Separate inherited or already settled decisions, verified facts, genuinely open choices, risks, failure cases, dependencies, release-gate effects, and exclusions. Use it to guide the review; do not make the user read the internal register.
+3. Ask exactly one genuine decision question per turn. Before asking, explain the consequences and tradeoffs and give a realistic example. Describe behaviour before implementation mechanics, and do not require the user to interpret code, schemas, paths, hashes, or internal names.
+4. If the user asks for clarification, answer it first, then repeat only the still-pending question. Do not introduce a second decision question in the same turn.
+5. Record each answer immediately as settled. Do not reopen it unless new evidence directly contradicts the basis on which it was accepted.
+6. If a new issue appears, add it to the register, preserve the current pending question, and resume the sequence without losing earlier answers.
+7. After the final open decision is answered, present one complete plain-English decision brief. Include the disposition, approved behaviour, scope and exclusions, dependencies, release-gate consequences, failure cases, risks, implementation request, and any remaining constraints.
+8. Ask for explicit approval only after the user has seen that complete brief.
+9. After approval, create and send the separate technical handoff to the controller. Do not present that handoff as the user review, and do not implement the decision.
+
+For a resumed review caused by changed evidence or a scope-expansion proposal, ask only about the new or invalidated decisions. Carry forward every settled decision that remains supported. The final brief must still show the complete resulting decision, with unchanged decisions identified concisely as carried forward.
+
+As the review proceeds, explain these separately in simple English:
 
 1. What the bug report claims is wrong and what evidence supports it.
 2. What the bug report says should happen instead.
@@ -65,14 +85,14 @@ Read `docs/buglist.md` and the bug's linked investigation before discussing the 
 
 Call out missing evidence, contradictions, and uncertainty. Do not silently replace the reported expected behaviour with a new interpretation.
 
-Formulate an explicit decision with the user. Ask them to confirm or correct a short decision statement that records:
+Formulate an explicit decision with the user. The complete final decision brief must record:
 
 - the disposition: not a bug, confirmed as written, corrected expected behaviour, or future roadmap;
 - the approved expected behaviour in plain English;
 - the approved scope and important boundaries; and
 - whether the user is asking the controller to implement a fix now.
 
-Do not treat an explanation or recommendation as approval. Continue the side-task discussion until the user's decision is explicit, or report that the decision remains unresolved.
+Do not treat an explanation, recommendation, or answer to an individual question as approval of the complete decision. Continue the guided review until the final brief is explicitly approved, or report that the decision remains unresolved.
 
 ## Pass The Decision To The Controller
 
@@ -80,6 +100,8 @@ After the user decides, send the controller a concise handoff containing:
 
 ```text
 Bug: <BUG-ID>
+Guided decision review: <complete>
+Final decision brief approved: <yes>
 Disposition: <not a bug | confirmed as written | corrected expected behaviour | future roadmap>
 Approved behaviour: <plain-English decision>
 Scope and boundaries: <approved scope>
@@ -92,11 +114,11 @@ Invalidation conditions: <specific prerequisite outcomes or changes that require
 Open questions or constraints: <none or explicit list>
 ```
 
-The side task stops after sending the handoff. It must not act on the decision itself. If the user has not decided, keep the decision task open and tell the controller what remains unresolved; the controller must also remain open.
+The side task stops after sending the handoff. It must not act on the decision itself. If the user has not approved the complete final brief, keep the decision task open and tell the controller what remains unresolved; the controller must also remain open.
 
 ## Controller Applies The User's Disposition
 
-Verify that the handoff contains the user's explicit decision. If it is incomplete or ambiguous, return it to the decision task instead of inferring approval.
+Verify that the handoff contains `Guided decision review: complete`, `Final decision brief approved: yes`, and the user's explicit decision. Confirm that the orientation, one-question sequence, consequences and examples, preservation of settled answers, complete final brief, and separate technical handoff were all completed. If any part is incomplete or ambiguous, return it to the decision task instead of inferring approval or authorising implementation.
 
 If the bug is a release blocker, preserve that gate through disposition and implementation. A not-a-bug, future-roadmap, waiver, or re-targeting decision must explicitly say whether the current release remains blocked.
 

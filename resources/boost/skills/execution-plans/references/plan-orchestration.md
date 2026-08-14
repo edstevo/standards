@@ -18,10 +18,15 @@ Use this reference only when orchestrating, executing, resuming, or completing a
 
 - Resolve the requested entry from `docs/planlist.md`, then read its `docs/plans/<PLAN-ID>.md` master document and current stage document. Read a completed stage document only when the current stage names it as a direct dependency or its handoff links a required contract or decision. Do not load every stage by default.
 - Treat the main task as controller and orchestrator, and run it with `gpt-5.6-sol` at `high`. It owns plan state, branches, PRs, task dispatch, handoffs, stage transitions, and final completion. If the task mechanism cannot provide the exact configuration, use the nearest available setting and record the fallback before dispatching work.
-- Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it started remains active or awaits the user.
+- Keep the controller open while any planning chat, implementation subagent, review subagent, or stage PR it started is running, queued, waiting for the user or controller, or awaiting a required handoff. Before finishing, perform one final active-work check and confirm that every owned task and subagent reached a terminal state and every required handoff was received.
 - Keep orchestration as the controller's primary role for the lifetime of the plan. When a human asks a question, answer it clearly, apply any resulting decision to the plan when relevant, and then resume orchestration from the current state. A question, status request, or brief discussion does not pause orchestration, transfer ownership, or turn the controller into a general-purpose side chat unless the human explicitly changes or stops the task.
 - After responding to the human, recheck active delegated work, pending gates, readiness transitions, CI or PR state, and the next controller action. Continue waiting or dispatching as appropriate; do not end the controller merely because the immediate question was answered.
-- While delegated work runs, continue safe controller work: provisionally plan later stages, plan independent stages, prepare controller-owned documentation, monitor CI, and prepare the next focused delta gate. Never start a dependent implementation before its prerequisite merges and its delta gate passes.
+- While delegated work runs, continue safe controller work: progress the single active planning chat for the next eligible stage, prepare controller-owned documentation, monitor CI, and prepare the next focused delta gate. Never start a second planning chat concurrently, and never start a dependent implementation before its prerequisite merges and its delta gate passes.
+- Maintain a compact active-work ledger containing only each owned task or subagent, its current gate, its latest meaningful state or cursor, and its expected handoff. Use bounded waits or compact status snapshots, act promptly when a task completes or needs attention, and continue monitoring until the ledger is empty. Do not repeatedly reread full task histories or poll unchanged work without a useful waiting interval.
+- Keep completed stage tasks in the ledger until their required handoffs and reusable evidence are durable and the controller has explicitly closed or archived every task that no longer has a correction, scope-decision, or re-review role. Do not rely on remembering this cleanup later.
+- Keep controller communication proportional. Tell the human about decisions they must make, material blockers or conflicts, meaningful gate transitions, failed delivery, completed implementation or review, merges, and final readiness. Do not report every command, routine subagent message, unchanged monitor result, intermediate test, or expected background step. When asked for status, give one compact summary of active work and the next controller action.
+- Preserve enough context to orchestrate correctly: the authoritative master plan, current stage document, latest applicable handoffs, dependency and readiness state, relevant commit or cursor, and invalidation conditions. Conserve tokens by passing and consuming these compact context packages and reusing evidence only while its recorded baseline remains valid.
+- Reread the relevant source documents or task history when a handoff is missing or ambiguous, its baseline or relevant paths changed, contradictory evidence appears, an invalidation condition triggers, or an agent must be replaced. Otherwise avoid broad rediscovery and repeated summaries of facts already recorded in the plan documents. Quiet monitoring is active orchestration; it is not permission to reduce understanding, stop the controller, or miss a required handoff.
 - Treat receipt of every required handoff as a controller gate. Do not infer delivery from a side task reaching a final answer, and do not advance the stage until the controller has actually received the handoff through the correct channel.
 - Do not recreate, renumber, or silently redesign the plan. Record required changes through the plan's decision and revision mechanisms.
 - If the plan is `Draft`, explain what prevents orchestration and return it to the separate authoring process. Start or resume when it is `Ready to orchestrate`, `In progress`, `Blocked`, or `In review` as appropriate.
@@ -42,7 +47,7 @@ For `PLAN-1234`, use:
 | Stage branch | `codex/plan-1234-stage-01` |
 | Stage PR | `[PLAN-1234/S01] <stage title>` |
 
-Preserve the full four-digit plan ID and two-digit stage number. Maintain only one active implementation task and one active independent review task per stage, and keep both available through correction cycles until the stage merges. Resume them by default; use a replacement only under the correction-context rules below. Do not vary the planning-chat name because the controller may need to resume it for a scope decision.
+Preserve the full four-digit plan ID and two-digit stage number. Maintain at most one active stage-planning chat across the entire plan. Maintain only one active implementation task and one active independent review task per stage, and keep both available through correction cycles until the stage merges. The single planning chat may overlap with implementation and independent review for earlier stages. Resume existing tasks by default; use a replacement only under the correction-context rules below. Do not vary the planning-chat name because the controller may need to resume it for a scope decision.
 
 ## Establish The Parent PR
 
@@ -78,7 +83,7 @@ Record the exact parent commit from which each stage branch starts. While implem
 
 ## Plan One Stage With The User
 
-Review stages in dependency order, but allow the next stage's planning chat to run while its prerequisite is being implemented or reviewed. A stage may become `Provisionally ready` before a named upstream result merges only when its design is complete, every material decision is accepted, it is small and isolated, and no open question remains. It must not enter implementation until the named condition clears and the focused final delta gate passes.
+Review stages in dependency order. Allow one next-stage planning chat to run while its prerequisite is being implemented or independently reviewed, but never run two stage-planning chats at once. Start the following planning chat only after the current planning handoff has been delivered, accepted by the controller, and its stage-document ownership has ended. A stage may become `Provisionally ready` before a named upstream result merges only when its design is complete, every material decision is accepted, it is small and isolated, and no open question remains. It must not enter implementation until the named condition clears and the focused final delta gate passes.
 
 For the current stage:
 
@@ -86,7 +91,8 @@ For the current stage:
 - Create or resume the dedicated user-facing side chat titled exactly `PLAN-1234 Stage 01 Planning`.
 - Use `gpt-5.6-sol` at `xhigh`. This is the pre-stage/subplan review gate; `Ultra` is reserved for the separate overall initial plan and stage-map creation process. If the task mechanism cannot provide the exact configuration, use the nearest available setting and tell the controller which fallback applied.
 - Give it the master plan's concise stage map, the current stage document, direct dependency documents, explicitly relevant contracts and decisions, relevant project guidance, and repository access. Do not give it every completed stage or a predetermined conclusion.
-- Keep it read-only. It may investigate and discuss but must not edit files, implement, create PRs, start implementers, or merge anything.
+- Give it narrow write ownership of its current stage document only, such as `docs/plans/PLAN-1234/stages/STAGE-01.md`. It may keep settled decisions current during the discussion and, after approval, write the final stage plan and `Planning To Implementation` handoff into that file. It must not edit the master plan, another stage document, source code, tests, configuration, branches, PRs, or other files; it must not commit, push, implement, start implementers, or merge anything.
+- Treat readiness written by the planning task as a recommendation until the controller accepts the handoff. Leave the stage's top-level status under controller control. Put every proposed change to the master plan, an earlier stage, or a future stage into the handoff as a suggestion rather than editing that file.
 - Require it to use the user-facing decision-brief method below and formulate the stage decision with the user.
 - Require it to verify that the stage is one small, isolated subplan with one coherent outcome, one component boundary, one implementation agent, one child PR, and focused verification. Ask: `Can one implementation agent implement, verify, and hand off this outcome in one focused working session and one understandable PR?` If not, formulate the split with the user and return separate proposed stages instead of approving an oversized stage. Treat separate models, workflows, interfaces, independently useful outcomes, or unrelated validation strategies as strong evidence that a split is required.
 - Require it to identify every complete user or system journey the stage can affect, inspect the relevant existing E2E scenarios, decide whether they remain sufficient, and include any required scenario addition or adjustment in the approved stage scope. If execution must wait for a later stage or environment, name that gate and owner explicitly.
@@ -181,6 +187,10 @@ Compatibility result: <passed | blocked>
 Inherited contracts and decisions: <only context implementation must preserve>
 Relevant paths: <paths whose upstream change invalidates this gate>
 Invalidation conditions: <specific events requiring renewed planning>
+Stage document edited: <exact owned path | no, with reason>
+Stage document change summary: <concise sections and decisions changed>
+Suggested changes outside owned stage: <none | exact master-plan or other-stage suggestions and rationale>
+Recommended controller action: <accept readiness | keep planning | resolve blocker | split stage | other precise next step>
 ```
 
 ## Deliver Every Delegated Handoff Explicitly
@@ -200,7 +210,11 @@ If the messaging tool is unavailable, the destination is invalid, or delivery fa
 
 Internal subagents may return results through their native parent channel when that mechanism actually supplies the result to the controller. The completion requirement is successful controller receipt, not use of one particular tool. When `source_thread_id` identifies a separate Codex task, explicit task messaging is mandatory.
 
-The planning chat owns the semantic dependency and cross-stage compatibility check. It stops only after the handoff has been delivered successfully to the controller and must not implement its decision. The controller writes the received result into `Gate Handoffs > Planning To Implementation`, verifies explicit user approval, updates every affected plan section, records the delivery receipt, and appends a revision note.
+The planning chat owns the semantic dependency and cross-stage compatibility check. After approval, it reconciles its owned stage document to the approved outcome, writes the technical handoff there, and sends the controller the complete handoff plus a concise change summary and all suggested changes outside that stage. It stops only after delivery succeeds and must not implement its decision.
+
+The controller inspects the stage-document delta and confirms that no file outside the owned stage document changed. It verifies explicit user approval, the guided-review fields, technical completeness, and the recommended readiness. If accepted, it applies any appropriate master-plan or other-stage suggestions itself, updates controller-owned status and cross-stage state, records the delivery receipt, appends revision notes, and commits and pushes the documentation update. It should consume the planning task's edits rather than reconstructing or rewriting the same stage plan from the handoff.
+
+If the planning task cannot write into the controller's plan worktree, it returns an exact patch for its owned stage document with the handoff. The controller applies that patch after the same checks. Do not create another branch or PR merely to transport planning-document edits.
 
 Before accepting a planning handoff, the controller verifies that:
 
@@ -210,6 +224,7 @@ Before accepting a planning handoff, the controller verifies that:
 - settled answers were preserved unless contradictory evidence invalidated them;
 - the final decision brief covered every material outcome, boundary, failure case, risk, exclusion, stage split, and readiness consequence;
 - the stage's affected complete journeys and E2E coverage decision are explicit, with required scenario work in scope or assigned to a named later gate;
+- the stage-document change summary matches the actual delta and every suggestion outside the owned stage remained a suggestion;
 - the user explicitly approved that complete brief; and
 - the separate technical handoff was delivered successfully.
 
@@ -223,7 +238,7 @@ Classify readiness literally:
 
 Split and renumber an oversized stage before implementation. Never encode a provisionally ready stage as merely not ready.
 
-The controller updates `docs/plans/PLAN-1234/stages/STAGE-01.md` from the handoff and keeps its concise master-plan summary and link aligned. If a stage document is missing, repair the plan structure before implementation. Do not let the planning chat edit either document itself.
+The controller accepts or returns the planning task's update to `docs/plans/PLAN-1234/stages/STAGE-01.md`, then keeps the concise master-plan summary and link aligned itself. If the stage document is missing, the controller repairs the plan structure before dispatching planning. The planning task must never create or edit the master plan or another stage document.
 
 ## Finalize Provisional Readiness With A Delta Gate
 
@@ -333,7 +348,7 @@ Impact if declined: <narrow alternative or remaining gap>
 Work completed: <concise status>
 ```
 
-The controller resumes `PLAN-1234 Stage 01 Planning` with `gpt-5.6-sol` at `xhigh`, explains the proposed movement to the user, records the decision, updates scope and acceptance in the stage document and every affected master-plan section, and only then authorizes continued implementation. The implementer must not approve or perform the expansion first.
+The controller resumes `PLAN-1234 Stage 01 Planning` with `gpt-5.6-sol` at `xhigh` and explains the proposed movement to the user. After approval, the planning task updates its owned stage document and returns any cross-stage or master-plan suggestions. The controller accepts the stage-document delta, applies approved changes elsewhere, and only then authorizes continued implementation. The implementer must not approve or perform the expansion first.
 
 ## Require Independent Review
 
@@ -363,11 +378,12 @@ After review passes:
 3. Merge the stage PR into the parent plan branch using project conventions.
 4. Persist the returned review handoff and update the stage document with checked progress, decisions, discoveries, approved scope movement, validation evidence, and the final E2E readiness disposition and evidence. Update the master plan with the concise stage outcome, every cross-stage or overall effect, and the current complete-journey coverage map.
 5. Mark the stage `Complete`, update `Current stage`, append a revision note, then commit and push this closure as one controller-owned update so the review handoff and completed state are durable.
-6. Immediately run the focused delta gate for every `Provisionally ready` dependant whose named condition just cleared. Promote each compatible dependant to `Ready` without asking the user again.
-7. Dispatch the next ready stage in dependency order through the normal `In progress` transition. Open a new planning chat only for a stage that has not already reached `Provisionally ready` or `Ready`.
-8. Update the parent PR's short stage/child-PR summary. This dashboard update may follow dispatch and must not create an avoidable idle gap in the next ready implementation.
+6. Confirm the stage's planning, implementation, and independent review tasks have delivered every required handoff and are no longer needed for clarification, scope decisions, corrections, or re-review. Close or archive each no-longer-needed task with the available task-management tool, then record each result under `Stage Task Cleanup`. Do not remove a task from the active-work ledger until this cleanup succeeds or an exact tooling blocker is recorded for retry before plan completion.
+7. Immediately run the focused delta gate for every `Provisionally ready` dependant whose named condition just cleared. Promote each compatible dependant to `Ready` without asking the user again.
+8. Dispatch the next ready stage in dependency order through the normal `In progress` transition. Open a new planning chat only for a stage that has not already reached `Provisionally ready` or `Ready`.
+9. Update the parent PR's short stage/child-PR summary. This dashboard update may follow dispatch and must not create an avoidable idle gap in the next ready implementation.
 
-Do not consider a stage closed until its plan update is durable on the parent branch.
+Do not consider a stage closed until its plan update is durable on the parent branch and its no-longer-needed stage tasks have been closed or archived. If a stage is abandoned, replaced, or split instead of merged, perform the same task-cleanup check after its final disposition is durable.
 
 ## Complete The Parent Plan
 
@@ -378,6 +394,7 @@ After all stages are complete:
 - Update `Purpose / Big Picture` with the achieved result, remaining gaps, and lessons learned; finalize evidence and revision notes.
 - Set `Status: Complete`, set `Current stage: Complete`, and make the parent PR ready for review.
 - Do not mark the plan `Complete` while any journey lacks sufficient E2E coverage or any deferred E2E execution remains unresolved.
+- Before plan completion, resolve every recorded `Stage Task Cleanup` blocker and confirm no obsolete stage task remains open.
 - Do not merge the parent PR into its target branch or release the result unless the user explicitly requested that final action or established project workflow clearly grants that authority.
 
-The controller may finish only when no delegated work remains and the parent PR accurately reflects the completed or precisely blocked state.
+The controller may finish only after its final active-work check confirms that no delegated task, subagent, required handoff, or owned stage PR remains active and the parent PR accurately reflects the completed or precisely blocked state.

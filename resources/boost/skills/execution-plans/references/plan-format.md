@@ -276,6 +276,14 @@ Relevant paths: Pending
 
 Invalidation conditions: Pending
 
+Stage document edited: Pending
+
+Stage document change summary: Pending
+
+Suggested changes outside owned stage: None
+
+Recommended controller action: Pending
+
 Handoff delivery: Pending
 
 ### Implementation To Review
@@ -340,6 +348,16 @@ Handoff delivery: Pending
 
 Replacement handoff: Not required
 
+### Stage Task Cleanup
+
+Planning task: Pending
+
+Implementation task: Pending
+
+Independent review task: Pending
+
+Cleanup result: Pending
+
 ## Implementation Approach
 
 Describe the focused steps one agent will use to implement this subplan. If several independent slices appear, create separate stage documents instead.
@@ -385,7 +403,9 @@ Complete `Replacement handoff` only when an agent must change. Record the curren
 
 Append or clearly version correction cycles instead of erasing their history. Tie each validation result to an exact commit and covered paths. A later commit invalidates that evidence only when it changes covered production behaviour, the test itself, a shared dependency used by that behaviour, or relevant configuration or schema. Preserve evidence across documentation-only, status-only, and unrelated-path commits.
 
-The planning chat returns the approved stage content, but the controller creates and updates the file. The master plan remains authoritative for overall status, stage order, dependencies, cross-stage decisions, and final acceptance. Each stage document is authoritative for that stage's detailed scope and execution record. Immediately reflect any stage change that affects another stage or the overall plan in the master plan.
+The planning task may update only its own existing stage document. It keeps settled decisions current, writes the approved stage content and final `Planning To Implementation` handoff there, and returns a concise change summary. It must return proposed changes to the master plan or any other stage as suggestions for the controller rather than editing those files. The controller verifies and accepts the stage delta, applies appropriate suggestions elsewhere, owns top-level stage status, cross-stage state, and `Stage Task Cleanup`, and commits the documentation update. If the task cannot write into the controller's worktree, it returns an exact patch for only its owned stage document.
+
+The master plan remains authoritative for overall status, stage order, dependencies, cross-stage decisions, and final acceptance. Each stage document is authoritative for that stage's detailed scope and execution record. Immediately reflect any accepted stage change that affects another stage or the overall plan in the master plan.
 
 ## Formatting Rules
 
