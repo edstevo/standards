@@ -61,6 +61,7 @@ Automatic promotion: <yes | no>
 User reapproval: <not required | precise invalidation condition>
 Invalidation conditions: <relevant path, contract, or evidence changes>
 Latest relevant delta: <none | concise result>
+Freshness gate handoff: <not required | task and controller receipt | pending | blocked>
 Small isolated stage: <yes | no and required split>
 Open questions: <none | list>
 Suggestions outside this stage: <none | controller suggestions>

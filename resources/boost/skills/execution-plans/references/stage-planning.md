@@ -1,6 +1,6 @@
 # Stage Planning Review
 
-Read this reference only for a stage planning review, freshness gate, or scope-expansion decision.
+Read this reference only for a stage planning review or scope-expansion decision. A dispatch-time freshness check for an already approved stage follows `freshness-gate.md` and does not occupy the planning-task slot.
 
 ## Task Boundary
 
@@ -65,12 +65,6 @@ Before recommending readiness, confirm:
 - `ready`: prerequisites and compatibility passed, the small-stage and E2E gates passed, and implementation is authorized.
 
 The controller treats this as a recommendation until it accepts the document delta and handoff.
-
-## Focused Freshness Gate
-
-For a provisionally ready stage, compare the recorded baseline and assumptions only with the prerequisite's final commit, final handoff, changed contracts or decisions, and relevant-path diff.
-
-Do not repeat planning, reread unrelated stages, or reopen unaffected decisions. If compatible, update the baseline and promote to `ready` automatically. If materially conflicting, set `not ready`, resume the same planning task, explain only the conflict in plain English, and obtain approval for the affected decisions.
 
 ## Scope Expansion
 

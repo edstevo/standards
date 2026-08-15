@@ -28,7 +28,7 @@ Keep the template's section and field order. Replace placeholders only when thei
 
 - Overall plan author: `Original Stage Assignment`.
 - Stage planning task: `Repository Orientation`, `Reviewed Plan`, planning decisions, and planning discoveries.
-- Controller: top-level metadata, accepted handoffs, progress, final evidence, retrospective, and closure.
+- Controller: top-level metadata, accepted freshness results and readiness promotion, accepted handoffs, progress, final evidence, retrospective, and closure.
 - Implementation and review agents: return handoffs; they do not edit the stage document unless the controller explicitly grants that narrow ownership.
 
 The planning task may edit only its own stage document. It returns proposed master-plan or other-stage changes to the controller as suggestions.
@@ -49,6 +49,8 @@ Complete every applicable field supplied by the asset. Use plain prose and short
 ## Readiness And Freshness
 
 A provisionally ready stage has no open decisions and waits only for an exact freshness gate. Record `Remaining gate`, `Automatic promotion: Yes`, and `User reapproval required: No — unless <material invalidation condition>`.
+
+The freshness task is read-only. It returns its baseline and result to the controller, which records `Latest relevant delta`, the freshness handoff receipt, and any readiness change. A contained upstream mismatch may keep the stage provisionally ready behind a revised named gate; only invalidation of the approved stage returns it to substantive planning and human approval.
 
 Use `Affected complete journeys: None — <evidence>` only when the stage truly cannot change an observable journey. Missing infrastructure is an environmental gap, not proof of readiness; name the scenario, expected result, owner, and later gate.
 

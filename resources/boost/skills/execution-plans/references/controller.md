@@ -26,6 +26,7 @@ When no parent PR exists, create `codex/plan-1234-<slug>` from the intended targ
 |---|---|
 | Controller | `PLAN-1234 Orchestrator` |
 | Planning task | `PLAN-1234 Stage 01 Planning` |
+| Freshness task | `PLAN-1234 Stage 01 Freshness` |
 | Implementation task | `PLAN-1234 Stage 01 Implementation` |
 | Review task | `PLAN-1234 Stage 01 Review` |
 | Parent branch | `codex/plan-1234-<slug>` |
@@ -33,7 +34,7 @@ When no parent PR exists, create `codex/plan-1234-<slug>` from the intended targ
 | Parent PR | `[PLAN-1234] <title>` |
 | Stage PR | `[PLAN-1234/S01] <stage title>` |
 
-Keep one planning task across the plan, one implementation task per stage, and one independent reviewer per stage. Resume them for same-stage decisions or corrections while their context remains valid.
+Keep one substantive planning task across the plan, one implementation task per stage, and one independent reviewer per stage. Resume them for same-stage decisions or corrections while their context remains valid. A short-lived freshness task is not a planning task: it checks an already approved contract without asking questions or making new decisions.
 
 ## Context Discipline
 
@@ -52,13 +53,13 @@ Accept a completed gate by checking delivery, ownership boundaries, required fie
 For each stage in dependency order:
 
 1. Read `stage-planning.md` and dispatch or resume planning. Accept its stage-document delta and explicit handoff before changing readiness.
-2. For a provisionally ready stage, run its named focused delta gate when the upstream condition clears. Promote automatically when compatible; return only material conflicts to planning and the human.
+2. For a provisionally ready stage, read `freshness-gate.md` and run its named focused gate when the upstream condition clears. Promote automatically when compatible. Keep it provisional when a contained upstream correction can restore the approved contract. Return to planning and the human only when the approved stage itself is materially invalidated.
 3. Read `stage-implementation.md`, create the child branch/PR, and dispatch one implementer when ready.
 4. Read `stage-review.md` and dispatch a different independent reviewer for the validated candidate.
 5. Route in-scope findings back to the same implementer and focused re-review back to the same reviewer. Route expansion to planning and human approval.
 6. Merge only a passing reviewed candidate, persist evidence, update the stage and master plan, clean up no-longer-needed tasks, then dispatch newly ready dependants.
 
-Only one planning task may be active at a time, but planning for a later stage may overlap implementation or review of an earlier stage. Never implement a dependant before its prerequisite merges and its focused gate passes.
+Only one substantive planning task may be active at a time, but planning for a later stage may overlap implementation or review of an earlier stage. Read-only freshness gates for other approved stages may also run concurrently; they do not consume the planning slot. Never run two freshness gates for the same stage or implement a dependant before its prerequisite merges and its focused gate passes.
 
 Commit controller-owned plan state directly to the parent branch. Keep implementation code on child branches. Avoid synchronizing unrelated parent changes into active stage work; a new commit alone does not invalidate evidence.
 
@@ -71,7 +72,7 @@ After review passes:
 3. Merge the stage PR using repository conventions.
 4. Persist implementation and review evidence in the stage document; update only cross-stage effects and the journey map in the master plan.
 5. Mark the stage complete and push the durable controller update.
-6. Close or archive planning, implementation, and review tasks no longer needed. Keep cleanup blockers in the ledger until resolved.
+6. Close or archive planning, freshness, implementation, and review tasks no longer needed. Keep cleanup blockers in the ledger until resolved.
 7. Check every dependant, run any newly unblocked delta gate, and dispatch the next ready stage without unnecessary idle time.
 8. Update the parent PR's concise dashboard.
 

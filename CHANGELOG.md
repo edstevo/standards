@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.73 - 2026-08-15
+
+### Changed
+- Distinguished dispatch-time freshness checks from substantive stage planning: approved-stage compatibility audits no longer consume the single planning-task slot, may run alongside planning for another stage, and cannot repeat guided review or reopen settled decisions.
+- Added explicit freshness outcomes for automatic promotion, contained upstream correction while remaining provisional, and genuine approved-plan invalidation requiring renewed planning and human approval.
+
 ## 1.0.62 - 2026-08-13
 
 ### Changed
