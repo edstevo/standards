@@ -2,6 +2,12 @@
 
 All notable changes to `edstevo/protocol` will be documented in this file.
 
+## 1.0.74 - 2026-08-16
+
+### Changed
+- Added preparation-only planning-thread warm-up so one likely next stage can gather bounded context while the current stage is reviewed, then activate through a focused delta against final relevant earlier-stage plans without restarting discovery.
+- Prohibited planning handoffs from copying the authoritative stage document into chat; messages now carry its path and delta plus explicit required wider-plan alignment and optional outside-stage suggestions for the controller to disposition.
+
 ## 1.0.73 - 2026-08-15
 
 ### Changed

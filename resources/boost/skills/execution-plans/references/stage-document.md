@@ -20,9 +20,11 @@ Keep the template's section and field order. Replace placeholders only when thei
 
 - `Status`: `Unplanned`, `Planning`, `Provisionally ready`, `Ready`, `In progress`, `In review`, `Complete`, or `Blocked`.
 - `Implementation readiness`: `not ready`, `provisionally ready`, or `ready`.
-- `Current phase`: `Not started`, `Stage planning review`, `Awaiting freshness gate`, `Awaiting implementation`, `Implementation`, `Independent review`, `Controller closure`, or `Complete`.
+- `Current phase`: `Not started`, `Planning warm-up`, `Stage planning review`, `Awaiting freshness gate`, `Awaiting implementation`, `Implementation`, `Independent review`, `Controller closure`, or `Complete`.
 
 `Status` is the overall lifecycle, implementation readiness authorizes dispatch, and current phase identifies where work is happening. `Blocked` is a status, not a phase; retain the phase in which the blocker occurred.
+
+During preparation-only warm-up, keep `Status: Unplanned` and `Implementation readiness: not ready`; the controller may set `Current phase: Planning warm-up`. The warm-up task does not edit the document. On activation, the controller changes the phase to `Stage planning review` before granting the planning task its normal document ownership.
 
 ## Section Ownership
 
@@ -31,7 +33,7 @@ Keep the template's section and field order. Replace placeholders only when thei
 - Controller: top-level metadata, accepted freshness results and readiness promotion, accepted handoffs, progress, final evidence, retrospective, and closure.
 - Implementation and review agents: return handoffs; they do not edit the stage document unless the controller explicitly grants that narrow ownership.
 
-The planning task may edit only its own stage document. It returns proposed master-plan or other-stage changes to the controller as suggestions.
+The planning task may edit only its own stage document. In its handoff, it classifies proposed changes elsewhere as required wider-plan alignment or optional outside-stage suggestions. It identifies the target document and section, proposed state, reason, affected stages, and readiness or invalidation effect without editing those documents.
 
 Complete every applicable field supplied by the asset. Use plain prose and short lists only where they improve scope or validation. Put each material choice and rationale once in `Decision Log`; do not restate it in receipts or later phases.
 
@@ -57,3 +59,5 @@ Use `Affected complete journeys: None — <evidence>` only when the stage truly 
 Use `Must read`, `Read if needed`, and `Do not reread` only when they materially reduce downstream loading. Pair relevant paths with exact invalidation conditions. Replace an old delta summary with the latest material delta rather than accumulating history.
 
 Every handoff records the destination controller task and successful receipt. `Pending` or `Blocked — <reason>` means the gate is incomplete.
+
+Planning handoff messages reference this document and its changed sections only. They never duplicate its content; loss of controller access is a delivery blocker, not permission to paste the document into chat.

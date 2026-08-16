@@ -72,7 +72,14 @@ When implementation or review reports broader required work, resume this task. S
 
 ## Controller Handoff
 
-The stage document is the complete technical record. The message to a controller that can access it contains only:
+The stage document is the complete technical record. The handoff message is only a pointer, state transition, and concise document delta:
+
+Classify every proposed change outside the owned stage document:
+
+- `Required wider-plan alignment`: necessary to keep the master plan, dependency graph, shared contracts, E2E ownership, or another stage consistent with the approved review. Give the target document and section, concise proposed new state, reason, affected stage IDs, and readiness or invalidation consequence.
+- `Optional outside-stage suggestion`: useful but not required for this stage's approved plan. Give the target and concise suggestion without investigating or designing it further.
+
+Use `None` explicitly for either class. Do not imply that the planning task applied these changes.
 
 ```text
 Plan and stage: <ID and title>
@@ -85,8 +92,9 @@ Automatic promotion: <yes | no>
 User reapproval: <condition | not required>
 Guided review: <complete | incomplete>
 Final decision brief: <approved | pending>
-Outside-stage suggestions: <none | concise list>
+Required wider-plan alignment: <none | target document and section — proposed state, reason, affected stages, readiness/invalidation effect>
+Optional outside-stage suggestions: <none | target and concise suggestion>
 Recommended controller action: <next step>
 ```
 
-Send this explicitly to the supplied controller task and confirm receipt before reporting completion. If delivery fails, keep the handoff available and report the exact blocker. Do not repeat the reviewed plan in the message unless the controller cannot read the document.
+Send this explicitly to the supplied controller task and confirm receipt before reporting completion. Never paste, quote, summarize section-by-section, or otherwise reproduce the stage document in the message. If the controller cannot access the document, report a blocked delivery and resolve access rather than copying it into chat. If delivery fails, keep the compact handoff available and report the exact blocker.

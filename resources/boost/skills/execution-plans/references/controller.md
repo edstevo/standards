@@ -6,7 +6,7 @@ Read this reference only in the main orchestration task.
 
 The controller owns plan state, branches, PRs, dispatch, handoffs, readiness, stage transitions, cleanup, and completion. Orchestration remains its primary role. Answer human questions, apply relevant decisions, then return to active work unless the human explicitly stops or changes the request.
 
-Remain open while any owned planning, implementation, review, handoff, gate, or stage PR is running, queued, waiting, or unresolved. Before finishing, confirm zero active delegated work and all required handoffs received.
+Remain open while any owned warm-up, planning, implementation, review, handoff, gate, or stage PR is running, queued, waiting, or unresolved. Before finishing, confirm zero active delegated work and all required handoffs received.
 
 Maintain a compact ledger containing each active task, gate, meaningful state or cursor, and expected handoff. Use bounded waits and compact snapshots. Report only human decisions, material blockers or conflicts, failed delivery, meaningful gate transitions, completed reviews or implementations, merges, and final readiness.
 
@@ -34,7 +34,7 @@ When no parent PR exists, create `codex/plan-1234-<slug>` from the intended targ
 | Parent PR | `[PLAN-1234] <title>` |
 | Stage PR | `[PLAN-1234/S01] <stage title>` |
 
-Keep one substantive planning task across the plan, one implementation task per stage, and one independent reviewer per stage. Resume them for same-stage decisions or corrections while their context remains valid. A short-lived freshness task is not a planning task: it checks an already approved contract without asking questions or making new decisions.
+Keep one substantive planning task across the plan, one implementation task per stage, and one independent reviewer per stage. Resume them for same-stage decisions or corrections while their context remains valid. One likely next-stage planning thread may remain open in preparation-only warm-up. A short-lived freshness task is not a planning task: it checks an already approved contract without asking questions or making new decisions.
 
 ## Context Discipline
 
@@ -44,22 +44,30 @@ Trust this package while its baseline remains valid. Reread relevant sources or 
 
 Every dispatch gives three boundaries when useful: `Must read`, `Read if needed`, and `Do not reread`. When the parent advances, provide only the old/new commits, relevant changed paths, affected contracts, triggered invalidations, and still-valid evidence.
 
-Never infer handoff receipt from task completion. Do not advance until explicit delivery succeeds.
+Never infer handoff receipt from task completion. Do not advance until explicit delivery succeeds. Planning handoff messages link to the authoritative stage document and summarize its delta; they never paste or reproduce the document.
 
-Accept a completed gate by checking delivery, ownership boundaries, required fields, internal consistency, baseline freshness, and the recorded result. Do not repeat its repository investigation, dependency analysis, validation design, test execution, or diff review. Return it only for a missing requirement, contradiction, scope escape, stale relevant baseline, or triggered invalidation.
+Accept a completed gate by checking delivery, ownership boundaries, required fields, internal consistency, baseline freshness, and the recorded result. For planning:
+
+- apply controller-owned required alignment;
+- route changes to another stage's settled decisions through that stage's planning and user;
+- return unsupported proposals and withhold readiness while required alignment remains unresolved; and
+- apply, decline, or defer optional suggestions explicitly.
+
+Do not repeat the gate's repository investigation, dependency analysis, validation design, test execution, or diff review.
 
 ## Stage Loop
 
 For each stage in dependency order:
 
-1. Read `stage-planning.md` and dispatch or resume planning. Accept its stage-document delta and explicit handoff before changing readiness.
-2. For a provisionally ready stage, read `freshness-gate.md` and run its named focused gate when the upstream condition clears. Promote automatically when compatible. Keep it provisional when a contained upstream correction can restore the approved contract. Return to planning and the human only when the approved stage itself is materially invalidated.
-3. Read `stage-implementation.md`, create the child branch/PR, and dispatch one implementer when ready.
-4. Read `stage-review.md` and dispatch a different independent reviewer for the validated candidate.
-5. Route in-scope findings back to the same implementer and focused re-review back to the same reviewer. Route expansion to planning and human approval.
-6. Merge only a passing reviewed candidate, persist evidence, update the stage and master plan, clean up no-longer-needed tasks, then dispatch newly ready dependants.
+1. When the next likely stage is stable and capacity permits, read `planning-warmup.md` and warm that one future planning thread while the current user review continues.
+2. After the current planning handoff is accepted and no substantive planning task remains active, activate the warmed thread with the focused delta from final relevant earlier-stage plans. Then read `stage-planning.md` and begin or resume guided planning. Accept its stage-document delta, disposition its required wider-plan alignment and optional suggestions, and confirm explicit handoff delivery before changing readiness.
+3. For a provisionally ready stage, read `freshness-gate.md` and run its named focused gate when the upstream condition clears. Promote automatically when compatible. Keep it provisional when a contained upstream correction can restore the approved contract. Return to planning and the human only when the approved stage itself is materially invalidated.
+4. Read `stage-implementation.md`, create the child branch/PR, and dispatch one implementer when ready.
+5. Read `stage-review.md` and dispatch a different independent reviewer for the validated candidate.
+6. Route in-scope findings back to the same implementer and focused re-review back to the same reviewer. Route expansion to planning and human approval.
+7. Merge only a passing reviewed candidate, persist evidence, update the stage and master plan, clean up no-longer-needed tasks, then dispatch newly ready dependants.
 
-Only one substantive planning task may be active at a time, but planning for a later stage may overlap implementation or review of an earlier stage. Read-only freshness gates for other approved stages may also run concurrently; they do not consume the planning slot. Never run two freshness gates for the same stage or implement a dependant before its prerequisite merges and its focused gate passes.
+Only one substantive planning task may be active at a time, but one future thread may warm while the current stage is planned. Warm-up becomes substantive only after the current planning handoff is accepted; activate it with a narrow delta against final relevant earlier-stage plans, not a full reread. Planning may overlap implementation or review of an earlier stage. Read-only freshness gates for other approved stages may also run concurrently. Never run two freshness gates for the same stage or implement a dependant before its prerequisite merges and its focused gate passes.
 
 Commit controller-owned plan state directly to the parent branch. Keep implementation code on child branches. Avoid synchronizing unrelated parent changes into active stage work; a new commit alone does not invalidate evidence.
 
@@ -72,7 +80,7 @@ After review passes:
 3. Merge the stage PR using repository conventions.
 4. Persist implementation and review evidence in the stage document; update only cross-stage effects and the journey map in the master plan.
 5. Mark the stage complete and push the durable controller update.
-6. Close or archive planning, freshness, implementation, and review tasks no longer needed. Keep cleanup blockers in the ledger until resolved.
+6. Close or archive warm-up, planning, freshness, implementation, and review tasks no longer needed. Keep cleanup blockers in the ledger until resolved.
 7. Check every dependant, run any newly unblocked delta gate, and dispatch the next ready stage without unnecessary idle time.
 8. Update the parent PR's concise dashboard.
 

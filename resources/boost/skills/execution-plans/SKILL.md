@@ -21,6 +21,7 @@ Do not read every reference.
 | Create a stage document | Copy `assets/stage-document.md`, then read `references/stage-document.md` |
 | Revise or validate a stage document | `references/stage-document.md` |
 | Start, resume, monitor, or complete orchestration | `references/controller.md` |
+| Warm the next likely stage-planning thread | `references/planning-warmup.md` |
 | Conduct a stage planning review or scope decision | `references/stage-planning.md` and `references/stage-document.md` |
 | Run a dispatch-time freshness check for an approved stage | `references/freshness-gate.md` and `references/stage-document.md` |
 | Implement an approved stage or correct its code | `references/stage-implementation.md` |
@@ -44,7 +45,7 @@ Use IDs `PLAN-1234`: uppercase, zero-padded, monotonic, never reused or renumber
 - Keep approved scope hard. Implementation and review must not expand into audits, cleanup, refactors, or adjacent fixes. Route material expansion back through planning and human approval.
 - Carry context through the current stage document and compact handoffs. Trust settled decisions and valid evidence until a recorded invalidation condition fires; reread relevant sources when context is missing, stale, contradicted, or transferred.
 - Require explicit handoff delivery. A separate task is not complete until its handoff reaches the controller and delivery is confirmed.
-- Keep only one substantive stage-planning task active across the plan. A focused freshness gate for an already approved stage is a read-only compatibility audit, not planning, and may run concurrently.
+- Keep only one substantive stage-planning task active across the plan. One next-stage thread may perform bounded preparation-only warm-up concurrently; it cannot ask decisions, edit plan documents, or become authoritative until activated. A focused freshness gate for an already approved stage is also a read-only compatibility audit, not planning.
 - Keep implementation and independent-review tasks available for their stage's correction loops until merge, then close or archive tasks no longer needed.
 - Keep the controller open while any owned task, handoff, stage PR, or gate remains active, queued, waiting, or unresolved. Report material events only and monitor quietly with compact state.
 - Keep plan documents self-contained enough for a fresh agent to resume from the working tree without chat history. Self-contained means necessary context once, not repeated narrative.
@@ -78,6 +79,7 @@ A compatible provisional delta promotes automatically. A contained upstream mism
 |---|---|---|
 | Initial overall plan and stage map | `gpt-5.6-sol` | `Ultra` |
 | Controller/orchestrator | `gpt-5.6-sol` | `high` |
+| Planning-thread warm-up | `gpt-5.6-sol` | `xhigh` |
 | Stage planning and human approval | `gpt-5.6-sol` | `xhigh` |
 | Focused dispatch-time freshness gate | `gpt-5.6-sol` | `xhigh` |
 | Laravel implementation | `gpt-5.6-sol` | `high` |
